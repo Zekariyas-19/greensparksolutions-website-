@@ -1,64 +1,25 @@
 'use client';
 import { useState } from 'react';
 
-// የቋንቋ ምርጫዎች (Translations)
-const translations = {
-  am: {
-    title: 'የሰራተኞች መግቢያ (Admin Login)',
-    username: 'ዩዘርኔም (Username):',
-    password: 'ፓስዋርድ (Password):',
-    loginBtn: 'ግባ',
-    error: 'የተሳሳተ ዩዘርኔም ወይም ፓስዋርድ!',
-    dashboardTitle: 'የድርጅት አስተዳደር ዳሽቦርድ',
-    onlineBookings: 'በኦንላይን የተያዙ (Online Bookings)',
-    walkInTitle: 'በአካል የመጡ ሰዎችን/ተሽከርካሪዎችን መመዝገቢያ',
-    namePlaceholder: 'ስም ወይም ተሽከርካሪ ቁጥር...',
-    phonePlaceholder: 'ስልክ ቁጥር...',
-    registerBtn: 'መዝግብ',
-    logout: 'ውጣ (Logout)',
-    langToggle: 'English',
-  },
-  en: {
-    title: 'Staff Admin Login',
-    username: 'Username:',
-    password: 'Password:',
-    loginBtn: 'Login',
-    error: 'Invalid username or password!',
-    dashboardTitle: 'Company Management Dashboard',
-    onlineBookings: 'Online Bookings',
-    walkInTitle: 'Walk-in Registration',
-    namePlaceholder: 'Name or Vehicle Number...',
-    phonePlaceholder: 'Phone Number...',
-    registerBtn: 'Register',
-    logout: 'Logout',
-    langToggle: 'አማርኛ',
-  }
-};
-
 export default function AdminPage() {
-  const [lang, setLang] = useState<'am' | 'en'>('am');
-  const t = translations[lang];
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  // ለሙከራ የሚሆን ዩዘርኔም እና ፓስዋርድ (ለጊዜው)
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (username === 'admin' && password === '1234') {
       setIsLoggedIn(true);
       setLoginError('');
     } else {
-      setLoginError(t.error);
+      setLoginError('Invalid username or password!');
     }
   };
 
-  // የቦኪንግ እና ዎች-ኢን መረጃዎች ሁኔታ
-  const [bookings, setBookings] = useState([
-    { id: 1, name: 'ከበደ መኮንን', type: 'መኪና - A12345', status: 'በኦንላይን የተያዘ' },
-    { id: 2, name: 'አበበ በላቸው', type: 'ሰው - ፊት ለፊት', status: 'በኦንላይን የተያዘ' }
+  const [records, setRecords] = useState([
+    { id: 1, name: 'Kebede Mekonnen', type: 'Car - A12345', status: 'Online Booked' },
+    { id: 2, name: 'Abebe Balcha', type: 'Walk-in', status: 'Online Booked' }
   ]);
 
   const [walkInName, setWalkInName] = useState('');
@@ -68,124 +29,118 @@ export default function AdminPage() {
     e.preventDefault();
     if (!walkInName) return;
     const newEntry = {
-      id: bookings.length + 1,
+      id: records.length + 1,
       name: walkInName,
-      type: walkInPhone ? `በአካል (${walkInPhone})` : 'በአካል (Walk-in)',
-      status: 'ተመዝግቧል'
+      type: walkInPhone ? `Walk-in (${walkInPhone})` : 'Walk-in',
+      status: 'Registered'
     };
-    setBookings([...bookings, newEntry]);
+    setRecords([...records, newEntry]);
     setWalkInName('');
     setWalkInPhone('');
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6">
-      {/* የቋንቋ መቀየሪያ ቁልፍ */}
-      <div className="flex justify-end mb-4">
-        <button 
-          onClick={() => setLang(lang === 'am' ? 'en' : 'am')}
-          className="bg-slate-800 border border-slate-700 px-4 py-2 rounded text-sm hover:bg-slate-700 transition"
-        >
-          {t.langToggle}
-        </button>
-      </div>
-
+    <div style={{ minHeight: '100vh', backgroundColor: '#020617', color: '#ffffff', padding: '24px', fontFamily: 'sans-serif' }}>
       {!isLoggedIn ? (
-        /* የሎጊን ገጽ (Login Form) */
-        <div className="max-w-md mx-auto mt-20 bg-slate-900 p-8 rounded-xl border border-slate-800 shadow-xl">
-          <h1 className="text-2xl font-bold mb-6 text-green-400 text-center">{t.title}</h1>
+        <div style={{ maxWidth: '400px', margin: '80px auto', backgroundColor: '#0f172a', padding: '32px', borderRadius: '12px', border: '1px solid #1e293b', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', color: '#4ade80', textAlign: 'center' }}>
+            Staff Admin Login
+          </h1>
           
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <label className="block text-sm font-medium mb-1">{t.username}</label>
+              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
+                Username:
+              </label>
               <input 
                 type="text" 
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-3 rounded bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-green-500"
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">{t.password}</label>
+              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
+                Password:
+              </label>
               <input 
                 type="password" 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 rounded bg-slate-800 border border-slate-700 text-white focus:outline-none focus:border-green-500"
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
                 required
               />
             </div>
 
-            {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
+            {loginError && <p style={{ color: '#f87171', fontSize: '14px' }}>{loginError}</p>}
 
             <button 
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded font-bold transition"
+              style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
             >
-              {t.loginBtn}
+              Login
             </button>
           </form>
         </div>
       ) : (
-        /* ዋናው ዳሽቦርድ (Main Dashboard) */
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="flex justify-between items-center bg-slate-900 p-6 rounded-xl border border-slate-800">
-            <h1 className="text-2xl font-bold text-green-400">{t.dashboardTitle}</h1>
+        <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0f172a', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b' }}>
+            <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#4ade80' }}>
+              Company Management Dashboard
+            </h1>
             <button 
               onClick={() => setIsLoggedIn(false)}
-              className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm transition"
+              style={{ backgroundColor: '#dc2626', color: '#ffffff', padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
             >
-              {t.logout}
+              Logout
             </button>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* በኦንላይን የተያዙ መረጃዎች ማሳያ */}
-            <div className="bg-slate-900 p-6 rounded-xl border border-slate-800">
-              <h2 className="text-xl font-semibold mb-4 text-slate-200">{t.onlineBookings}</h2>
-              <div className="space-y-3">
-                {bookings.map((item) => (
-                  <div key={item.id} className="p-3 bg-slate-800 rounded border border-slate-700 flex justify-between items-center">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+            <div style={{ backgroundColor: '#0f172a', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 'semibold', marginBottom: '16px', color: '#e2e8f0' }}>
+                Online Bookings
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {records.map((item) => (
+                  <div key={item.id} style={{ padding: '12px', backgroundColor: '#1e293b', borderRadius: '6px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                      <p className="font-bold">{item.name}</p>
-                      <p className="text-xs text-slate-400">{item.type}</p>
+                      <p style={{ fontWeight: 'bold', margin: 0 }}>{item.name}</p>
+                      <p style={{ fontSize: '12px', color: '#94a3b8', margin: '4px 0 0 0' }}>{item.type}</p>
                     </div>
-                    <span className="text-xs bg-green-900 text-green-300 px-2 py-1 rounded">{item.status}</span>
+                    <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '4px 8px', borderRadius: '4px' }}>{item.status}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* በአካል መጥተው የሚመዘገቡበት ክፍል (Walk-in Form) */}
-            <div className="bg-slate-900 p-6 rounded-xl border border-slate-800">
-              <h2 className="text-xl font-semibold mb-4 text-slate-200">{t.walkInTitle}</h2>
-              <form onSubmit={handleWalkInSubmit} className="space-y-4">
-                <div>
-                  <input 
-                    type="text" 
-                    value={walkInName}
-                    onChange={(e) => setWalkInName(e.target.value)}
-                    placeholder={t.namePlaceholder}
-                    className="w-full p-3 rounded bg-slate-800 border border-slate-700 text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <input 
-                    type="text" 
-                    value={walkInPhone}
-                    onChange={(e) => setWalkInPhone(e.target.value)}
-                    placeholder={t.phonePlaceholder}
-                    className="w-full p-3 rounded bg-slate-800 border border-slate-700 text-white"
-                  />
-                </div>
+            <div style={{ backgroundColor: '#0f172a', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 'semibold', marginBottom: '16px', color: '#e2e8f0' }}>
+                Walk-in Registration
+              </h2>
+              <form onSubmit={handleWalkInSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <input 
+                  type="text" 
+                  value={walkInName}
+                  onChange={(e) => setWalkInName(e.target.value)}
+                  placeholder="Name or Vehicle Number..."
+                  style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                  required
+                />
+                <input 
+                  type="text" 
+                  value={walkInPhone}
+                  onChange={(e) => setWalkInPhone(e.target.value)}
+                  placeholder="Phone Number..."
+                  style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                />
                 <button 
                   type="submit"
-                  className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded font-bold transition"
+                  style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
                 >
-                  {t.registerBtn}
+                  Register
                 </button>
               </form>
             </div>
