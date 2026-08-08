@@ -1,19 +1,36 @@
 'use client';
 import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'admin' && password === '1234') {
-      setIsLoggedIn(true);
-      setLoginError('');
-    } else {
-      setLoginError('Invalid username or password!');
+    setLoading(true);
+    setLoginError('');
+
+    try {
+      const { data, error } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('user_name', username)
+        .eq('password', password)
+        .single();
+
+      if (error || !data) {
+        setLoginError('Invalid username or password!');
+      } else {
+        setIsLoggedIn(true);
+      }
+    } catch (err) {
+      setLoginError('An error occurred during login.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,8 +96,9 @@ export default function AdminPage() {
             <button 
               type="submit"
               style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
+              disabled={loading}
             >
-              Login
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
         </div>
