@@ -6,6 +6,7 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // የይለፍ ቃሉን ማሳያ/መደበቂያ ስቴት
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -52,8 +53,8 @@ export default function AdminPage() {
       status: 'Registered'
     };
     setRecords([...records, newEntry]);
-    setWalkInName('');
-    setWalkInPhone('');
+    walkInName('');
+    walkInPhone('');
   };
 
   return (
@@ -82,13 +83,34 @@ export default function AdminPage() {
               <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
                 Password:
               </label>
-              <input 
-                type="password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                required
-              />
+              {/* የይለፍ ቃል ኢንፑት ከነ 'አሳይ/ደብቅ' አዝራሩ */}
+              <div style={{ position: 'relative' }}>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{ width: '100%', padding: '10px', paddingRight: '60px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: '#4ade80',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {showPassword ? "ደብቅ" : "አሳይ"}
+                </button>
+              </div>
             </div>
 
             {loginError && <p style={{ color: '#f87171', fontSize: '14px' }}>{loginError}</p>}
