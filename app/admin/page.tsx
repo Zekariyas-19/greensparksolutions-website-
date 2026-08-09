@@ -53,8 +53,8 @@ export default function AdminPage() {
       status: 'Registered'
     };
     setRecords([...records, newEntry]);
-    walkInName('');
-    walkInPhone('');
+    setWalkInName('');
+    setWalkInPhone('');
   };
 
   return (
