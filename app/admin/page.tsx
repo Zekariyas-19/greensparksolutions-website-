@@ -10,14 +10,16 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // የትር ስሞች: 'register' (ዝርዝር ማየት እና መረጃ መመልከቻ) እና 'new-registration' (አዲስ መመዝገቢያ)
+  // ዋና ትሮች: 'register' እና 'new-registration'
   const [activeTab, setActiveTab] = useState<'register' | 'new-registration'>('register');
+  // 'register' ውስጥ የሚገኙ ንዑስ ትሮች: ግለሰብ ወይስ ድርጅት
+  const [subRegisterTab, setSubRegisterTab] = useState<'personal' | 'corporate'>('personal');
+
   const [registrationType, setRegistrationType] = useState<'personal' | 'corporate'>('personal');
 
   const [allRecords, setAllRecords] = useState<any[]>([]);
   const [fetchingRecords, setFetchingRecords] = useState(false);
 
-  // የተመረጠው ሰው ሙሉ መረጃ የሚታይበት ፖፕአፕ (Modal) ስቴት
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
 
   const [walkInName, setWalkInName] = useState('');
@@ -52,12 +54,11 @@ export default function AdminPage() {
     }
   };
 
-  // ከዳታቤዝ ሁለቱንም (ኦንላይን እና በአካል የሚመጡትን) አንድ ላይ ማምጫ ሰንጠረዥ
   const fetchAllRecords = async () => {
     setFetchingRecords(true);
     try {
       const { data, error } = await supabase
-        .from('bookings') // ሁሉም መረጃዎች የሚቀመጡበት ሰንጠረዥ ስም
+        .from('bookings')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -73,7 +74,6 @@ export default function AdminPage() {
     }
   };
 
-  // በአካል (Walk-in) የሚመጡትን መረጃዎች በቀጥታ ወደ ዳታቤዙ (bookings) መላኪያ
   const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (registrationType === 'personal' && !walkInName) return;
@@ -81,9 +81,11 @@ export default function AdminPage() {
 
     setSubmittingWalkIn(true);
 
-    const newName = registrationType === 'personal' ? walkInName : corporateName;
-    const newType = registrationType === 'personal' ? 'Walk-in Personal' : 'Walk-in Corporate';
-    const newPhone = registrationType === 'personal' ? walkInPhone : corporateId; // ID ወይም Phone
+    const isCorp = registrationType === 'corporate';
+    const newName = isCorp ? corporateName : walkInName;
+    // የ category መስክን በ σαፈ ሁኔታ እንይዛለን ('personal' ወይም 'corporate')
+    const category = isCorp ? 'corporate' : 'personal';
+    const newPhoneOrId = isCorp ? corporateId : walkInPhone;
 
     try {
       const { error } = await supabase
@@ -91,8 +93,9 @@ export default function AdminPage() {
         .insert([
           {
             name: newName,
-            type: newType,
-            phone: newPhone,
+            category: category, // ግለሰብ መሆኑን ወይም ድርጅት መሆኑን በግልጽ ያስቀምጣል
+            type: isCorp ? 'Walk-in Corporate' : 'Walk-in Personal',
+            phone: newPhoneOrId,
             status: 'Walk-in Registered',
             created_at: new Date().toISOString()
           }
@@ -106,8 +109,9 @@ export default function AdminPage() {
         setWalkInPhone('');
         setCorporateName('');
         setCorporateId('');
-        fetchAllRecords(); // መረጃውን እንደገና ይጭናል
-        setActiveTab('register'); // ወደ Register ትር ይመልሰዋል
+        fetchAllRecords();
+        setActiveTab('register');
+        setSubRegisterTab(category); // ከተመዘገበ በኋላ በቀጥታ ወደዛው ትር ይወስደዋል
       }
     } catch (err) {
       console.error('Error:', err);
@@ -116,6 +120,17 @@ export default function AdminPage() {
       setSubmittingWalkIn(false);
     }
   };
+
+  // ዳታቤዝ ላይ ካሉት መረጃዎች የግለሰቦችን እና የድርጅቶችን ለብቻ ማጣራት
+  const personalRecords = allRecords.filter(item => 
+    item.category === 'personal' || item.type?.toLowerCase().includes('personal') || (!item.category && !item.type?.toLowerCase().includes('corporate'))
+  );
+
+  const corporateRecords = allRecords.filter(item => 
+    item.category === 'corporate' || item.type?.toLowerCase().includes('corporate')
+  );
+
+  const displayedRecords = subRegisterTab === 'personal' ? personalRecords : corporateRecords;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#020617', color: '#ffffff', padding: '24px', fontFamily: 'sans-serif' }}>
@@ -194,7 +209,7 @@ export default function AdminPage() {
                 border: '1px solid #1e293b'
               }}
             >
-              Register (View All Records)
+              Register (View Records)
             </button>
             <button
               onClick={() => setActiveTab('new-registration')}
@@ -214,10 +229,45 @@ export default function AdminPage() {
           </div>
 
           {activeTab === 'register' ? (
-            <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              
+              {/* የግለሰብ እና የድርጅት ንዑስ ትሮች */}
+              <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #334155', paddingBottom: '12px' }}>
+                <button
+                  onClick={() => setSubRegisterTab('personal')}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontWeight: 'semibold',
+                    cursor: 'pointer',
+                    backgroundColor: subRegisterTab === 'personal' ? '#334155' : 'transparent',
+                    color: subRegisterTab === 'personal' ? '#4ade80' : '#94a3b8',
+                    border: '1px solid',
+                    borderColor: subRegisterTab === 'personal' ? '#475569' : 'transparent'
+                  }}
+                >
+                  Personal Records ({personalRecords.length})
+                </button>
+                <button
+                  onClick={() => setSubRegisterTab('corporate')}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontWeight: 'semibold',
+                    cursor: 'pointer',
+                    backgroundColor: subRegisterTab === 'corporate' ? '#334155' : 'transparent',
+                    color: subRegisterTab === 'corporate' ? '#4ade80' : '#94a3b8',
+                    border: '1px solid',
+                    borderColor: subRegisterTab === 'corporate' ? '#475569' : 'transparent'
+                  }}
+                >
+                  Corporate Records ({corporateRecords.length})
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2 style={{ fontSize: '18px', fontWeight: 'semibold', color: '#e2e8f0', margin: 0 }}>
-                  All Registrations (Click any name for full details)
+                  {subRegisterTab === 'personal' ? 'Personal Registrations' : 'Corporate Registrations'} (Click any to view details)
                 </h2>
                 <button
                   onClick={fetchAllRecords}
@@ -230,13 +280,13 @@ export default function AdminPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {fetchingRecords ? (
                   <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>Loading records...</p>
-                ) : allRecords.length === 0 ? (
-                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No records found.</p>
+                ) : displayedRecords.length === 0 ? (
+                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No {subRegisterTab} records found.</p>
                 ) : (
-                  allRecords.map((item, index) => (
+                  displayedRecords.map((item, index) => (
                     <div 
                       key={item.id || index} 
-                      onClick={() => setSelectedRecord(item)} // ስሙን ሲነኩ ሙሉ መረጃ እንዲመጣ ያደርጋል
+                      onClick={() => setSelectedRecord(item)}
                       style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
                     >
                       <div>
@@ -244,7 +294,7 @@ export default function AdminPage() {
                           {item.name || item.full_name || 'No Name'}
                         </p>
                         <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>
-                          {item.type || item.service_type || 'General'}
+                          {item.type || (subRegisterTab === 'personal' ? 'Personal' : 'Corporate')}
                         </p>
                       </div>
                       <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>
@@ -340,7 +390,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* የተመረጠውን ሰው ሙሉ መረጃ የሚያሳይ ፖፕአፕ (Popup Modal) */}
+          {/* ዝርዝር መረጃ የሚያሳይ ፖፕአፕ */}
           {selectedRecord && (
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
               <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
@@ -356,13 +406,13 @@ export default function AdminPage() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#e2e8f0', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px' }}>
                   <p style={{ margin: 0 }}><strong>Name / Company:</strong> {selectedRecord.name || selectedRecord.full_name || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Registration Type:</strong> {selectedRecord.type || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Category:</strong> {selectedRecord.category || selectedRecord.type || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Status:</strong> {selectedRecord.status || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
-                  {/* ሌሎች ተጨማሪ የዳታቤዝ ረድፎች ካሉ እዚህ ማሳየት ይቻላል */}
+                  
                   {Object.entries(selectedRecord).map(([key, value]) => {
-                    if (['id', 'name', 'full_name', 'type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
+                    if (['id', 'name', 'full_name', 'type', 'category', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
                     return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
                   })}
                 </div>
