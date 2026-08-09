@@ -6,9 +6,12 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // የይለፍ ቃሉን ማሳያ/መደበቂያ ስቴት
+  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const [activeTab, setActiveTab] = useState<'online' | 'walkin'>('online');
+  const [registrationType, setRegistrationType] = useState<'personal' | 'corporate'>('personal');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,19 +45,31 @@ export default function AdminPage() {
 
   const [walkInName, setWalkInName] = useState('');
   const [walkInPhone, setWalkInPhone] = useState('');
+  const [corporateName, setCorporateName] = useState('');
+  const [corporateId, setCorporateId] = useState('');
 
   const handleWalkInSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!walkInName) return;
+    if (registrationType === 'personal' && !walkInName) return;
+    if (registrationType === 'corporate' && !corporateName) return;
+
+    const newName = registrationType === 'personal' ? walkInName : corporateName;
+    const newType = registrationType === 'personal' 
+      ? (walkInPhone ? `Walk-in Personal (${walkInPhone})` : 'Walk-in Personal')
+      : (corporateId ? `Walk-in Corporate (ID: ${corporateId})` : 'Walk-in Corporate');
+
     const newEntry = {
       id: records.length + 1,
-      name: walkInName,
-      type: walkInPhone ? `Walk-in (${walkInPhone})` : 'Walk-in',
+      name: newName,
+      type: newType,
       status: 'Registered'
     };
+
     setRecords([...records, newEntry]);
     setWalkInName('');
     setWalkInPhone('');
+    setCorporateName('');
+    setCorporateId('');
   };
 
   return (
@@ -83,7 +98,6 @@ export default function AdminPage() {
               <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
                 Password:
               </label>
-              {/* የይለፍ ቃል ኢንፑት ከነ 'አሳይ/ደብቅ' አዝራሩ */}
               <div style={{ position: 'relative' }}>
                 <input 
                   type={showPassword ? "text" : "password"} 
@@ -111,13 +125,11 @@ export default function AdminPage() {
                   title={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
-                    /* ክፍት የዓይን ቅርጽ (ሲታይ) */
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                       <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                   ) : (
-                    /* የተዘጋ/የተሰመረ የዓይን ቅርጽ (ሲደበቅ) */
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                       <line x1="1" y1="1" x2="23" y2="23"></line>
@@ -139,7 +151,7 @@ export default function AdminPage() {
           </form>
         </div>
       ) : (
-        <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0f172a', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b' }}>
             <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#4ade80' }}>
               Company Management Dashboard
@@ -152,53 +164,157 @@ export default function AdminPage() {
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-            <div style={{ backgroundColor: '#0f172a', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b' }}>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <button
+              onClick={() => setActiveTab('online')}
+              style={{
+                flex: 1,
+                padding: '14px',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                backgroundColor: activeTab === 'online' ? '#16a34a' : '#0f172a',
+                color: '#ffffff',
+                border: '1px solid #1e293b'
+              }}
+            >
+              Online Bookings View
+            </button>
+            <button
+              onClick={() => setActiveTab('walkin')}
+              style={{
+                flex: 1,
+                padding: '14px',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                backgroundColor: activeTab === 'walkin' ? '#16a34a' : '#0f172a',
+                color: '#ffffff',
+                border: '1px solid #1e293b'
+              }}
+            >
+              Walk-in New Registration
+            </button>
+          </div>
+
+          {activeTab === 'online' ? (
+            <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 'semibold', marginBottom: '16px', color: '#e2e8f0' }}>
-                Online Bookings
+                Online Booked Records
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {records.map((item) => (
-                  <div key={item.id} style={{ padding: '12px', backgroundColor: '#1e293b', borderRadius: '6px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div key={item.id} style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                      <p style={{ fontWeight: 'bold', margin: 0 }}>{item.name}</p>
-                      <p style={{ fontSize: '12px', color: '#94a3b8', margin: '4px 0 0 0' }}>{item.type}</p>
+                      <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px' }}>{item.name}</p>
+                      <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>{item.type}</p>
                     </div>
-                    <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '4px 8px', borderRadius: '4px' }}>{item.status}</span>
+                    <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>{item.status}</span>
                   </div>
                 ))}
               </div>
             </div>
-
-            <div style={{ backgroundColor: '#0f172a', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b' }}>
+          ) : (
+            <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 'semibold', marginBottom: '16px', color: '#e2e8f0' }}>
-                Walk-in Registration
+                Walk-in New Registration Form
               </h2>
+
+              <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+                <button
+                  type="button"
+                  onClick={() => setRegistrationType('personal')}
+                  style={{
+                    flex: 1,
+                    padding: '10px',
+                    borderRadius: '6px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    backgroundColor: registrationType === 'personal' ? '#334155' : '#1e293b',
+                    color: '#ffffff',
+                    border: '1px solid #475569'
+                  }}
+                >
+                  Personal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRegistrationType('corporate')}
+                  style={{
+                    flex: 1,
+                    padding: '10px',
+                    borderRadius: '6px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    backgroundColor: registrationType === 'corporate' ? '#334155' : '#1e293b',
+                    color: '#ffffff',
+                    border: '1px solid #475569'
+                  }}
+                >
+                  Corporate
+                </button>
+              </div>
+
               <form onSubmit={handleWalkInSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <input 
-                  type="text" 
-                  value={walkInName}
-                  onChange={(e) => setWalkInName(e.target.value)}
-                  placeholder="Name or Vehicle Number..."
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                  required
-                />
-                <input 
-                  type="text" 
-                  value={walkInPhone}
-                  onChange={(e) => setWalkInPhone(e.target.value)}
-                  placeholder="Phone Number..."
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                />
+                {registrationType === 'personal' ? (
+                  <>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Full Name or Vehicle Number:</label>
+                      <input 
+                        type="text" 
+                        value={walkInName}
+                        onChange={(e) => setWalkInName(e.target.value)}
+                        placeholder="Enter name or vehicle number..."
+                        style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Phone Number:</label>
+                      <input 
+                        type="text" 
+                        value={walkInPhone}
+                        onChange={(e) => setWalkInPhone(e.target.value)}
+                        placeholder="Enter phone number..."
+                        style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Company Name:</label>
+                      <input 
+                        type="text" 
+                        value={corporateName}
+                        onChange={(e) => setCorporateName(e.target.value)}
+                        placeholder="Enter company name..."
+                        style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Corporate ID / Tax Number:</label>
+                      <input 
+                        type="text" 
+                        value={corporateId}
+                        onChange={(e) => setCorporateId(e.target.value)}
+                        placeholder="Enter corporate ID..."
+                        style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                  </>
+                )}
+
                 <button 
                   type="submit"
-                  style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
+                  style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer', marginTop: '8px' }}
                 >
-                  Register
+                  Submit Registration
                 </button>
               </form>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
