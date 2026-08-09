@@ -11,12 +11,13 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'register' | 'new-registration'>('register');
-  const [subRegisterTab, setSubRegisterTab] = useState<'personal' | 'corporate'>('personal');
+  const [subRegisterTab, setSubRegisterTab] = useState<'personal' | 'corporate' | 'completed'>('personal');
   const [registrationType, setRegistrationType] = useState<'personal' | 'corporate'>('personal');
 
   const [allRecords, setAllRecords] = useState<any[]>([]);
   const [fetchingRecords, setFetchingRecords] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -64,6 +65,11 @@ export default function AdminPage() {
         console.error('Error fetching records:', error.message);
       } else if (data) {
         setAllRecords(data);
+        // ክፍት ሆኖ የሚታየው ሬኮርድ ካለ የሱን ዳታ እናድሳለን
+        if (selectedRecord) {
+          const updated = data.find((r: any) => r.id === selectedRecord.id || r.booking_id === selectedRecord.booking_id);
+          if (updated) setSelectedRecord(updated);
+        }
       }
     } catch (err) {
       console.error('Error:', err);
@@ -76,20 +82,49 @@ export default function AdminPage() {
     return item.booking_id || item.id || 'N/A';
   };
 
-  // የ vehicles ዎችን (Object ወይም Array ከሆነ) በትክክል ለማንበብ የሚረዳ ተግባር
   const renderVehicleDetails = (vehiclesData: any) => {
     if (!vehiclesData) return 'N/A';
     if (typeof vehiclesData === 'string') return vehiclesData;
     
-    // ጃቫስክሪፕት ኦብጀክት ወይም አሬይ ከሆነ በ JSON.stringify ወይም በንባብ መልክ እናወጣዋለን
     if (typeof vehiclesData === 'object') {
-      // የተለመዱ property-ዎች ካሉት እንይ (ለምሳሌ brand, model, name, type)
       if (Array.isArray(vehiclesData)) {
         return vehiclesData.map((v, i) => v.name || v.model || v.brand || JSON.stringify(v)).join(', ');
       }
       return vehiclesData.name || vehiclesData.model || vehiclesData.brand || vehiclesData.type || JSON.stringify(vehiclesData);
     }
     return String(vehiclesData);
+  };
+
+  // የስታተስ ለውጥ ማድረግ (ለምሳሌ Completed ወይም Pending ማድረግ)
+  const handleUpdateStatus = async (recordId: any, newStatus: string) => {
+    setUpdatingStatus(true);
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .update({ status: newStatus })
+        .eq('id', recordId);
+
+      if (error) {
+        // id ከሌለ booking_id እንጠቀም
+        const { error: err2 } = await supabase
+          .from('bookings')
+          .update({ status: newStatus })
+          .eq('booking_id', recordId);
+        
+        if (err2) {
+          alert('Error updating status: ' + err2.message);
+          return;
+        }
+      }
+
+      alert(`Status successfully updated to "${newStatus}"!`);
+      fetchAllRecords();
+    } catch (err) {
+      console.error('Error:', err);
+      alert('An error occurred while updating status.');
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   const handleWalkInSubmit = async (e: React.FormEvent) => {
@@ -138,17 +173,29 @@ export default function AdminPage() {
     }
   };
 
+  // ሬኮርዶችን በስታተስ እና በኩባንያ/ግለሰብ መክፈል
+  const completedRecords = allRecords.filter(item => {
+    const st = item.status?.toLowerCase() || '';
+    return st.includes('complet') || st.includes('ready') || st.includes('done');
+  });
+
   const corporateRecords = allRecords.filter(item => {
     const custType = item.customer_type?.toLowerCase() || '';
-    return custType === 'company';
+    const st = item.status?.toLowerCase() || '';
+    const isCompleted = st.includes('complet') || st.includes('ready') || st.includes('done');
+    return custType === 'company' && !isCompleted;
   });
 
   const personalRecords = allRecords.filter(item => {
     const custType = item.customer_type?.toLowerCase() || '';
-    return custType !== 'company';
+    const st = item.status?.toLowerCase() || '';
+    const isCompleted = st.includes('complet') || st.includes('ready') || st.includes('done');
+    return custType !== 'company' && !isCompleted;
   });
 
-  const currentTabRecords = subRegisterTab === 'personal' ? personalRecords : corporateRecords;
+  let currentTabRecords = personalRecords;
+  if (subRegisterTab === 'corporate') currentTabRecords = corporateRecords;
+  if (subRegisterTab === 'completed') currentTabRecords = completedRecords;
   
   const displayedRecords = currentTabRecords.filter(item => {
     if (!searchQuery.trim()) return true;
@@ -277,7 +324,7 @@ export default function AdminPage() {
           {activeTab === 'register' ? (
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               
-              <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #334155', paddingBottom: '12px' }}>
+              <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #334155', paddingBottom: '12px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => setSubRegisterTab('personal')}
                   style={{
@@ -291,7 +338,7 @@ export default function AdminPage() {
                     borderColor: subRegisterTab === 'personal' ? '#475569' : 'transparent'
                   }}
                 >
-                  Personal Records ({personalRecords.length})
+                  Personal ({personalRecords.length})
                 </button>
                 <button
                   onClick={() => setSubRegisterTab('corporate')}
@@ -306,7 +353,22 @@ export default function AdminPage() {
                     borderColor: subRegisterTab === 'corporate' ? '#475569' : 'transparent'
                   }}
                 >
-                  Corporate Records ({corporateRecords.length})
+                  Corporate ({corporateRecords.length})
+                </button>
+                <button
+                  onClick={() => setSubRegisterTab('completed')}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontWeight: 'semibold',
+                    cursor: 'pointer',
+                    backgroundColor: subRegisterTab === 'completed' ? '#065f46' : 'transparent',
+                    color: subRegisterTab === 'completed' ? '#34d399' : '#94a3b8',
+                    border: '1px solid',
+                    borderColor: subRegisterTab === 'completed' ? '#059669' : 'transparent'
+                  }}
+                >
+                  Completed ({completedRecords.length})
                 </button>
               </div>
 
@@ -338,32 +400,35 @@ export default function AdminPage() {
                 {fetchingRecords ? (
                   <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>Loading records...</p>
                 ) : displayedRecords.length === 0 ? (
-                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No records found matching your search.</p>
+                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No records found.</p>
                 ) : (
-                  displayedRecords.map((item, index) => (
-                    <div 
-                      key={item.id || index} 
-                      onClick={() => setSelectedRecord(item)}
-                      style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
-                    >
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '13px', backgroundColor: '#0284c7', color: '#ffffff', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-                            Booking ID: {getBookingIdDisplay(item)}
-                          </span>
-                          <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
-                            {getDisplayName(item)}
+                  displayedRecords.map((item, index) => {
+                    const isDone = (item.status || '').toLowerCase().includes('complet');
+                    return (
+                      <div 
+                        key={item.id || index} 
+                        onClick={() => setSelectedRecord(item)}
+                        style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
+                      >
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '13px', backgroundColor: '#0284c7', color: '#ffffff', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
+                              Booking ID: {getBookingIdDisplay(item)}
+                            </span>
+                            <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
+                              {getDisplayName(item)}
+                            </p>
+                          </div>
+                          <p style={{ fontSize: '13px', color: '#94a3b8', margin: '6px 0 0 0' }}>
+                            {item.phone ? `Phone: ${item.phone}` : (item.customer_type || 'Record')}
                           </p>
                         </div>
-                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '6px 0 0 0' }}>
-                          {item.phone ? `Phone: ${item.phone}` : (item.customer_type || 'Record')}
-                        </p>
+                        <span style={{ fontSize: '12px', backgroundColor: isDone ? '#065f46' : '#064e3b', color: isDone ? '#34d399' : '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>
+                          {item.status || 'Registered'}
+                        </span>
                       </div>
-                      <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>
-                        {item.status || 'Registered'}
-                      </span>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -470,19 +535,36 @@ export default function AdminPage() {
                   <p style={{ margin: 0 }}><strong>Name / Company:</strong> {getDisplayName(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Status:</strong> {selectedRecord.status || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Status:</strong> <span style={{ color: '#34d399', fontWeight: 'bold' }}>{selectedRecord.status || 'N/A'}</span></p>
                   <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
                   
                   {Object.entries(selectedRecord).map(([key, value]) => {
                     if (['id', 'booking_id', 'name', 'full_name', 'company_name', 'customer_type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
                     
-                    // vehicles የሚለውን አምድ በልዩ ሁኔታ ማስተካከል
                     if (key === 'vehicles') {
                       return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {renderVehicleDetails(value)}</p>;
                     }
 
                     return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
                   })}
+                </div>
+
+                {/* የስታተስ መቀየሪያ ቁልፎች */}
+                <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
+                  <button
+                    onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Completed')}
+                    style={{ flex: 1, backgroundColor: '#16a34a', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                    disabled={updatingStatus}
+                  >
+                    Mark as Completed
+                  </button>
+                  <button
+                    onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Pending')}
+                    style={{ backgroundColor: '#ca8a04', color: '#ffffff', border: 'none', padding: '10px 14px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                    disabled={updatingStatus}
+                  >
+                    Mark Pending
+                  </button>
                 </div>
               </div>
             </div>
