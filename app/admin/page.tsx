@@ -21,13 +21,25 @@ export default function AdminPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  // የተሟሉ የዎክ-ኢን ፎርም ፊልዶች (ደንበኛ ኦንላይን ሲሞላ የሚሞላቸው ዝርዝሮች)
+  // የዎክ-ኢን ፎርም መሠረታዊ መረጃዎች
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [plateNumber, setPlateNumber] = useState('');
-  const [vehicleDetails, setVehicleDetails] = useState('');
   const [tinNumber, setTinNumber] = useState('');
   const [address, setAddress] = useState('');
+  
+  // የደንበኛውን የመኪና ዓይነቶች እና ብዛት መያዣ (Object)
+  const [vehicles, setVehicles] = useState<{ [key: string]: number }>({
+    'የቤት መኪና': 0,
+    'ሜዳቮል': 0,
+    'ባስ / አውቶቡስ': 0,
+    'ፒካፕ': 0,
+    'የደረቅ ጭነት': 0,
+    'የደረቅ ጭነት ተሳቢ': 0,
+    'ቤንዚን ቦቴ': 0,
+    'ተሳቢ ቤንዚን ቦቴ': 0,
+  });
+
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -92,7 +104,11 @@ export default function AdminPage() {
       if (Array.isArray(vehiclesData)) {
         return vehiclesData.map((v, i) => v.name || v.model || v.brand || JSON.stringify(v)).join(', ');
       }
-      return vehiclesData.name || vehiclesData.model || vehiclesData.brand || vehiclesData.type || JSON.stringify(vehiclesData);
+      // የተመረጡትን መኪኖች እና ብዛታቸው በዝርዝር ማሳየት
+      return Object.entries(vehiclesData)
+        .filter(([_, count]) => Number(count) > 0)
+        .map(([name, count]) => `${name}: ${count}`)
+        .join(', ') || 'None selected';
     }
     return String(vehiclesData);
   };
@@ -127,6 +143,13 @@ export default function AdminPage() {
     }
   };
 
+  const handleVehicleChange = (vehicleName: string, count: number) => {
+    setVehicles(prev => ({
+      ...prev,
+      [vehicleName]: Math.max(0, count)
+    }));
+  };
+
   const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName) {
@@ -148,7 +171,7 @@ export default function AdminPage() {
             customer_type: isCorp ? 'company' : 'individual',
             phone: phone || null,
             plate_number: plateNumber || null,
-            vehicles: vehicleDetails ? { name: vehicleDetails } : null,
+            vehicles: vehicles,
             tin_number: tinNumber || null,
             address: address || null,
             status: 'Pending',
@@ -163,9 +186,18 @@ export default function AdminPage() {
         setFullName('');
         setPhone('');
         setPlateNumber('');
-        setVehicleDetails('');
         setTinNumber('');
         setAddress('');
+        setVehicles({
+          'የቤት መኪና': 0,
+          'ሜዳቮል': 0,
+          'ባስ / አውቶቡስ': 0,
+          'ፒካፕ': 0,
+          'የደረቅ ጭነት': 0,
+          'የደረቅ ጭነት ተሳቢ': 0,
+          'ቤንዚን ቦቴ': 0,
+          'ተሳቢ ቤንዚን ቦቴ': 0,
+        });
         fetchAllRecords();
         setActiveTab('register');
         setSubRegisterTab(isCorp ? 'corporate' : 'personal');
@@ -474,37 +506,48 @@ export default function AdminPage() {
                   />
                 </div>
 
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Phone Number:</label>
-                  <input 
-                    type="text" 
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Enter phone number..."
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                  />
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Phone Number:</label>
+                    <input 
+                      type="text" 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="0911..."
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Plate Number (ሰሌዳ ቁጥር):</label>
+                    <input 
+                      type="text" 
+                      value={plateNumber}
+                      onChange={(e) => setPlateNumber(e.target.value)}
+                      placeholder="3 - A12345"
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                    />
+                  </div>
                 </div>
 
+                {/* የመኪና ዓይነቶች እና ብዛት መምረጫ (Vehicle Types & Quantities) */}
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Plate Number (የሰሌዳ ቁጥር):</label>
-                  <input 
-                    type="text" 
-                    value={plateNumber}
-                    onChange={(e) => setPlateNumber(e.target.value)}
-                    placeholder="e.g. 2-AA10905"
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Vehicle Details / Type (የመኪና ዝርዝር/አይነት):</label>
-                  <input 
-                    type="text" 
-                    value={vehicleDetails}
-                    onChange={(e) => setVehicleDetails(e.target.value)}
-                    placeholder="e.g. Toyota Vitz"
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                  />
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#4ade80', fontWeight: 'bold' }}>
+                    የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈልጉትን ይምረጡ):
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
+                    {Object.keys(vehicles).map((vName) => (
+                      <div key={vName} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0f172a', padding: '8px 12px', borderRadius: '6px', border: '1px solid #334155' }}>
+                        <span style={{ fontSize: '13px', color: '#e2e8f0' }}>{vName}</span>
+                        <input 
+                          type="number" 
+                          min="0"
+                          value={vehicles[vName]}
+                          onChange={(e) => handleVehicleChange(vName, parseInt(e.target.value) || 0)}
+                          style={{ width: '60px', padding: '4px 8px', borderRadius: '4px', backgroundColor: '#1e293b', border: '1px solid #475569', color: '#ffffff', textAlign: 'center' }}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {registrationType === 'corporate' && (
