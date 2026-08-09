@@ -337,13 +337,7 @@ export default function Home() {
 
       {/* ጀማሪ (Hero) ክፍል */}
       <section className="flex flex-col items-center justify-center text-center px-4 pt-10 pb-6 max-w-5xl mx-auto">
-        <span className={`text-[11px] md:text-xs font-semibold px-3 py-1.5 rounded-full border mb-6 leading-relaxed ${
-          isDarkMode 
-            ? "bg-green-950/80 text-green-400 border-green-800/80" 
-            : "bg-green-100 text-green-800 border-green-300"
-        }`}>
-          {t.heroBadge}
-        </span>
+        
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
           {t.heroTitle1} <span className="text-green-500">{t.heroTitle2}</span> {t.heroTitle3}
         </h2>
