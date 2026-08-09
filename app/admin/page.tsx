@@ -28,22 +28,20 @@ export default function AdminPage() {
   const [tinNumber, setTinNumber] = useState('');
   const [address, setAddress] = useState('');
   
-  // ከኦንላይን ፎርሙ ጋር ακριβώς (exact) የተመሳሰሉ የመኪና ዓይነቶች ዝርዝር
+  // ትክክለኛው የመኪና ዓይነቶች ዝርዝር
   const vehicleOptions = [
     'የቤት መኪና',
-    'ሜዳቮል',
+    'ሚኒባስ',
     'ባስ / አውቶቡስ',
     'ፒካፕ',
     'የደረቅ ጭነት',
     'የደረቅ ጭነት ተሳቢ',
-    'ቤንዚን ቦቴ',
-    'ተሳቢ ቤንዚን ቦቴ',
-    'በቴ',
-    'ተሳቢ በቴ'
+    'ቦቲ',
+    'ተሳቢ ቦቲ'
   ];
 
-  // የተመረጡትን መኪኖች ለመያዝ (Checkbox ሎጂክ)
-  const [selectedVehicles, setSelectedVehicles] = useState<{ [key: string]: boolean }>({});
+  // የተመረጡትን መኪኖች እና ብዛታቸውን ለመያዝ (ဥပለአት: { 'የቤት መኪና': 2 })
+  const [selectedVehicles, setSelectedVehicles] = useState<{ [key: string]: number }>({});
 
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
 
@@ -109,10 +107,10 @@ export default function AdminPage() {
       if (Array.isArray(vehiclesData)) {
         return vehiclesData.map((v, i) => v.name || v.model || v.brand || JSON.stringify(v)).join(', ');
       }
-      // የተመረጡትን መኪኖች በዝርዝር ማሳየት
+      // የተመረጡትን መኪኖች እና ብዛታቸውን በዝርዝር ማሳየት
       return Object.entries(vehiclesData)
-        .filter(([_, isSelected]) => isSelected === true)
-        .map(([name]) => name)
+        .filter(([_, qty]) => Number(qty) > 0)
+        .map(([name, qty]) => `${name} (${qty})`)
         .join(', ') || 'None selected';
     }
     return String(vehiclesData);
@@ -148,17 +146,28 @@ export default function AdminPage() {
     }
   };
 
-  const handleCheckboxChange = (vehicleName: string) => {
-    setSelectedVehicles(prev => ({
-      ...prev,
-      [vehicleName]: !prev[vehicleName]
-    }));
+  // የቼክቦክስ እና የብዛት (Quantity) ለውጥ ማስተካከያ
+  const handleQuantityChange = (vehicleName: string, quantity: number) => {
+    setSelectedVehicles(prev => {
+      const updated = { ...prev };
+      if (quantity <= 0) {
+        delete updated[vehicleName];
+      } else {
+        updated[vehicleName] = quantity;
+      }
+      return updated;
+    });
   };
 
   const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName) {
       alert('Please enter Name / Company name.');
+      return;
+    }
+
+    if (Object.keys(selectedVehicles).length === 0) {
+      alert('Please select at least one vehicle and quantity.');
       return;
     }
 
@@ -362,7 +371,7 @@ export default function AdminPage() {
                   style={{
                     padding: '8px 16px',
                     borderRadius: '6px',
-                    fontWeight: 'semibold',
+                    fontWeight: '600',
                     cursor: 'pointer',
                     backgroundColor: subRegisterTab === 'personal' ? '#334155' : 'transparent',
                     color: subRegisterTab === 'personal' ? '#4ade80' : '#94a3b8',
@@ -377,7 +386,7 @@ export default function AdminPage() {
                   style={{
                     padding: '8px 16px',
                     borderRadius: '6px',
-                    fontWeight: 'semibold',
+                    fontWeight: '600',
                     cursor: 'pointer',
                     backgroundColor: subRegisterTab === 'corporate' ? '#334155' : 'transparent',
                     color: subRegisterTab === 'corporate' ? '#4ade80' : '#94a3b8',
@@ -392,7 +401,7 @@ export default function AdminPage() {
                   style={{
                     padding: '8px 16px',
                     borderRadius: '6px',
-                    fontWeight: 'semibold',
+                    fontWeight: '600',
                     cursor: 'pointer',
                     backgroundColor: subRegisterTab === 'completed' ? '#065f46' : 'transparent',
                     color: subRegisterTab === 'completed' ? '#34d399' : '#94a3b8',
@@ -466,7 +475,7 @@ export default function AdminPage() {
             </div>
           ) : (
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: 'semibold', marginBottom: '16px', color: '#e2e8f0' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#e2e8f0' }}>
                 New Walk-in Registration Form
               </h2>
 
@@ -525,37 +534,48 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* የመኪና ዓይነቶች Checkbox መምረጫ */}
+                {/* የመኪና ዓይነቶች እና ብዛት ማስገቢያ (Quantity Inputs) */}
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#4ade80', fontWeight: 'bold' }}>
-                    የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈልጉትን ይምረጡ):
+                    የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈልጉትን ይምረጡና ብዛት ያስገቡ):
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
                     {vehicleOptions.map((vName) => {
-                      const isChecked = !!selectedVehicles[vName];
+                      const qty = selectedVehicles[vName] || 0;
+                      const isSelected = qty > 0;
                       return (
                         <div 
                           key={vName} 
-                          onClick={() => handleCheckboxChange(vName)}
                           style={{ 
                             display: 'flex', 
+                            justifyContent: 'space-between',
                             alignItems: 'center', 
                             gap: '10px', 
                             backgroundColor: '#0f172a', 
                             padding: '10px 12px', 
                             borderRadius: '6px', 
-                            border: `1px solid ${isChecked ? '#4ade80' : '#334155'}`, 
-                            cursor: 'pointer',
+                            border: `1px solid ${isSelected ? '#4ade80' : '#334155'}`, 
                             transition: 'all 0.2s'
                           }}
                         >
+                          <span style={{ fontSize: '13px', color: '#e2e8f0', userSelect: 'none', flex: 1 }}>{vName}</span>
                           <input 
-                            type="checkbox" 
-                            checked={isChecked}
-                            onChange={() => {}} // በ div onClick ስለሚሸፈን
-                            style={{ width: '16px', height: '16px', accentColor: '#16a34a', cursor: 'pointer' }}
+                            type="number" 
+                            min="0"
+                            value={qty === 0 ? '' : qty}
+                            onChange={(e) => handleQuantityChange(vName, parseInt(e.target.value) || 0)}
+                            placeholder="ብዛት"
+                            style={{ 
+                              width: '65px', 
+                              padding: '6px', 
+                              borderRadius: '4px', 
+                              backgroundColor: '#1e293b', 
+                              border: '1px solid #475569', 
+                              color: '#ffffff', 
+                              textAlign: 'center',
+                              fontSize: '13px'
+                            }}
                           />
-                          <span style={{ fontSize: '13px', color: '#e2e8f0', userSelect: 'none' }}>{vName}</span>
                         </div>
                       );
                     })}
