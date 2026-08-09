@@ -72,9 +72,24 @@ export default function AdminPage() {
     }
   };
 
-  // ከዳታቤዝ የሚመጣውን ትክክለኛ booking_id (ወይም ከሌለ id) የሚያሳይ ተግባር
   const getBookingIdDisplay = (item: any) => {
     return item.booking_id || item.id || 'N/A';
+  };
+
+  // የ vehicles ዎችን (Object ወይም Array ከሆነ) በትክክል ለማንበብ የሚረዳ ተግባር
+  const renderVehicleDetails = (vehiclesData: any) => {
+    if (!vehiclesData) return 'N/A';
+    if (typeof vehiclesData === 'string') return vehiclesData;
+    
+    // ጃቫስክሪፕት ኦብጀክት ወይም አሬይ ከሆነ በ JSON.stringify ወይም በንባብ መልክ እናወጣዋለን
+    if (typeof vehiclesData === 'object') {
+      // የተለመዱ property-ዎች ካሉት እንይ (ለምሳሌ brand, model, name, type)
+      if (Array.isArray(vehiclesData)) {
+        return vehiclesData.map((v, i) => v.name || v.model || v.brand || JSON.stringify(v)).join(', ');
+      }
+      return vehiclesData.name || vehiclesData.model || vehiclesData.brand || vehiclesData.type || JSON.stringify(vehiclesData);
+    }
+    return String(vehiclesData);
   };
 
   const handleWalkInSubmit = async (e: React.FormEvent) => {
@@ -87,8 +102,6 @@ export default function AdminPage() {
     const isCorp = registrationType === 'corporate';
     const newName = isCorp ? corporateName : walkInName;
     const newPhoneOrId = isCorp ? corporateId : walkInPhone;
-
-    // አዲስ ዎክ-ኢን ሲመዘገብ ራሱ በ GS- እንዲጀምር ማድረግ ይቻላል (አስፈላጊ ከሆነ)
     const randomBookingId = `GS-${Math.floor(10000 + Math.random() * 90000)}`;
 
     try {
@@ -441,7 +454,7 @@ export default function AdminPage() {
 
           {selectedRecord && (
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
-              <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
+              <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)', maxHeight: '90vh', overflowY: 'auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#4ade80', margin: 0 }}>Booking Details</h3>
                   <button 
@@ -462,6 +475,12 @@ export default function AdminPage() {
                   
                   {Object.entries(selectedRecord).map(([key, value]) => {
                     if (['id', 'booking_id', 'name', 'full_name', 'company_name', 'customer_type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
+                    
+                    // vehicles የሚለውን አምድ በልዩ ሁኔታ ማስተካከል
+                    if (key === 'vehicles') {
+                      return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {renderVehicleDetails(value)}</p>;
+                    }
+
                     return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
                   })}
                 </div>
