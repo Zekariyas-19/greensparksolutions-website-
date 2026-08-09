@@ -18,7 +18,6 @@ export default function AdminPage() {
   const [fetchingRecords, setFetchingRecords] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
 
-  // የሰርች ማድረጊያ ሁኔታ (Search State)
   const [searchQuery, setSearchQuery] = useState('');
 
   const [walkInName, setWalkInName] = useState('');
@@ -117,7 +116,6 @@ export default function AdminPage() {
     }
   };
 
-  // የድርጅት እና የግለሰብ መረጃዎችን መለየት
   const corporateRecords = allRecords.filter(item => {
     const custType = item.customer_type?.toLowerCase() || '';
     return custType === 'company';
@@ -128,7 +126,6 @@ export default function AdminPage() {
     return custType !== 'company';
   });
 
-  // የመረጡትን ታብ እና በ Booking ID (ወይም በስም/ስልክ) መፈለጊያውን (Search) ማጣጣም
   const currentTabRecords = subRegisterTab === 'personal' ? personalRecords : corporateRecords;
   
   const displayedRecords = currentTabRecords.filter(item => {
@@ -138,11 +135,9 @@ export default function AdminPage() {
     const nameStr = (item.full_name || item.name || '').toLowerCase();
     const phoneStr = (item.phone || '').toLowerCase();
 
-    // በ Booking ID፣ በስም፣ ወይም በቀርከ ቁጥር መፈለግ ማስቻል
     return bookingIdStr.includes(q) || nameStr.includes(q) || phoneStr.includes(q);
   });
 
-  // ስም ማውጫ
   const getDisplayName = (item: any) => {
     if (item.full_name) return item.full_name;
     if (item.name) return item.name;
@@ -292,7 +287,6 @@ export default function AdminPage() {
                 </button>
               </div>
 
-              {/* Booking ID Search Bar */}
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                 <input 
                   type="text"
@@ -452,7 +446,7 @@ export default function AdminPage() {
                   <p style={{ margin: 0, color: '#38bdf8', fontWeight: 'bold' }}><strong>Booking ID:</strong> #{selectedRecord.id}</p>
                   <p style={{ margin: 0 }}><strong>Name / Company:</strong> {getDisplayName(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selected.phone || selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Status:</strong> {selectedRecord.status || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
                   
