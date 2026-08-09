@@ -114,7 +114,7 @@ export default function AdminPage() {
     }
   };
 
-  // የድርጅት እና የግለሰብ መረጃዎችን በትክክል መለየት
+  // የድርጅት እና የግለሰብ መረጃዎችን መለየት
   const corporateRecords = allRecords.filter(item => {
     const custType = item.customer_type?.toLowerCase() || '';
     return custType === 'company';
@@ -127,13 +127,12 @@ export default function AdminPage() {
 
   const displayedRecords = subRegisterTab === 'personal' ? personalRecords : corporateRecords;
 
-  // ከየትኛውም አምድ ስም ማውጣት የሚያስችል ተግባር (full_name, name, company_name ወዘተ ካለ)
+  // ስም ማውጫ
   const getDisplayName = (item: any) => {
     if (item.full_name) return item.full_name;
     if (item.name) return item.name;
     if (item.company_name) return item.company_name;
     
-    // ሌላ ማንኛውም 텍ስት አምድ ካለ ለማየት (ከ id እና customer_type ውጪ)
     for (const key of Object.keys(item)) {
       if (
         typeof item[key] === 'string' &&
@@ -144,6 +143,11 @@ export default function AdminPage() {
       }
     }
     return 'Unnamed Record';
+  };
+
+  // መለያ ID ወይም ስልክ ቁጥር ማውጫ
+  const getIdentifier = (item: any) => {
+    return item.phone || item.phone_number || item.corporate_id || item.id ? `ID: #${item.id}` : 'No ID';
   };
 
   return (
@@ -303,11 +307,16 @@ export default function AdminPage() {
                       style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
                     >
                       <div>
-                        <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
-                          {getDisplayName(item)}
-                        </p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '12px', backgroundColor: '#334155', color: '#38bdf8', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                            #{item.id}
+                          </span>
+                          <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
+                            {getDisplayName(item)}
+                          </p>
+                        </div>
                         <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>
-                          {item.customer_type || (subRegisterTab === 'personal' ? 'Personal' : 'Corporate')}
+                          {item.phone ? `Phone: ${item.phone}` : (item.customer_type || 'Record')}
                         </p>
                       </div>
                       <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>
@@ -407,7 +416,7 @@ export default function AdminPage() {
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
               <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#4ade80', margin: 0 }}>Full Details</h3>
+                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#4ade80', margin: 0 }}>Full Details (ID: #{selectedRecord.id})</h3>
                   <button 
                     onClick={() => setSelectedRecord(null)}
                     style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer' }}
@@ -417,6 +426,7 @@ export default function AdminPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#e2e8f0', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px' }}>
+                  <p style={{ margin: 0 }}><strong>Record ID:</strong> #{selectedRecord.id}</p>
                   <p style={{ margin: 0 }}><strong>Name / Company:</strong> {getDisplayName(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
