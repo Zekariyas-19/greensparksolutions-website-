@@ -224,9 +224,9 @@ export default function Home() {
     <main className={`min-h-screen transition-colors duration-300 ${
       isDarkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"
     }`}>
-      {/* ፖንሴን እና ዴስክቶፕ የሚሆን የተስተካከለ ናቪጌሽን */}
+      {/* ናቪጌሽን ባር */}
       <nav className={`flex justify-between items-center px-4 md:px-8 py-4 border-b sticky top-0 z-40 transition-colors ${
-        isDarkMode ? "border-slate-800 bg-slate-950/90 backdrop-blur-md" : "border-slate-200 bg-white/90 backdrop-blur-md"
+        isDarkMode ? "border-slate-800 bg-slate-950/95 backdrop-blur-md" : "border-slate-200 bg-white/95 backdrop-blur-md"
       }`}>
         <div className="flex items-center gap-2">
           <img 
@@ -240,7 +240,7 @@ export default function Home() {
           </div>
         </div>
         
-        {/* የዴስክቶፕ ሜኑ (ከMedium ስክሪን በላይ ይታያል) */}
+        {/* የዴስክቶፕ ሜኑ */}
         <div className="hidden md:flex items-center space-x-5 text-sm font-medium">
           <a href="#benefits" className="hover:text-green-500 transition">{t.navServices}</a>
           <a href="#calculator" className="hover:text-green-500 transition">{t.navCalc}</a>
@@ -273,7 +273,7 @@ export default function Home() {
           </select>
         </div>
 
-        {/* የስልክ መቆጣጠሪያዎች (Theme, Language እና Hamburger Button) */}
+        {/* የስልክ መቆጣጠሪያዎች */}
         <div className="flex md:hidden items-center space-x-2">
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
@@ -306,7 +306,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* የሞባይል ድሮፕዳው ሜኑ (ስልክ ላይ ሜኑ ሲጫን የሚከፈት) */}
+      {/* የሞባይል ድሮፕዳው ሜኑ */}
       {mobileMenuOpen && (
         <div className={`md:hidden flex flex-col space-y-3 px-6 py-5 border-b shadow-lg transition-all ${
           isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-900"
@@ -335,7 +335,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* ዋናው የጀማሪ (Hero) ክፍል */}
+      {/* ጀማሪ (Hero) ክፍል */}
       <section className="flex flex-col items-center justify-center text-center px-4 pt-10 pb-6 max-w-5xl mx-auto">
         <span className={`text-[11px] md:text-xs font-semibold px-3 py-1.5 rounded-full border mb-6 leading-relaxed ${
           isDarkMode 
@@ -375,7 +375,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* የሂሳብ ማስያ (Calculator) ክፍል */}
+      {/* የሂሳብ ማስያ (Calculator) */}
       <section id="calculator" className="max-w-4xl mx-auto px-4 py-10">
         <div className={`p-6 md:p-8 rounded-2xl border shadow-lg ${
           isDarkMode ? "bg-slate-900/80 border-slate-800" : "bg-white border-slate-200"
@@ -686,9 +686,10 @@ export default function Home() {
         </div>
       </footer>
 
+      {/* የተሳካ መሆኑን እና መለያ ቁጥር (Booking ID) የሚያሳይ ፖፕ-አፕ (Modal) */}
       {showSuccessModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className={`max-w-md w-full p-6 rounded-2xl border shadow-2xl text-center transform transition-all animate-in fade-in zoom-in ${
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+          <div className={`max-w-md w-full p-6 rounded-2xl border shadow-2xl text-center transform transition-all ${
             isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-900"
           }`}>
             <div className="w-16 h-16 bg-green-500/20 border border-green-500 text-green-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
@@ -696,11 +697,11 @@ export default function Home() {
             </div>
             <h3 className="text-2xl font-bold mb-2 text-green-500">{t.modalTitle}</h3>
             
-            <div className={`my-4 p-3 rounded-xl border text-center ${
+            <div className={`my-4 p-4 rounded-xl border text-center ${
               isDarkMode ? "bg-slate-950 border-green-500/40" : "bg-green-50 border-green-300"
             }`}>
-              <span className="text-xs text-slate-400 block mb-1">{t.modalIdLabel} / Tracking ID</span>
-              <span className="text-xl font-mono font-bold text-green-400 tracking-wider">
+              <span className="text-xs text-slate-400 block mb-1">{t.modalIdLabel}</span>
+              <span className="text-2xl font-mono font-extrabold text-green-400 tracking-wider">
                 {generatedBookingId}
               </span>
             </div>
@@ -710,7 +711,7 @@ export default function Home() {
             </p>
             <button
               onClick={() => setShowSuccessModal(false)}
-              className="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-green-600/30"
+              className="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-green-600/30 text-base"
             >
               {t.modalBtn}
             </button>
