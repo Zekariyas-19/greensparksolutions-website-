@@ -40,8 +40,8 @@ export default function AdminPage() {
     'ተሳቢ ቦቲ'
   ];
 
-  // በፎቶው ላይ እንዳለው ቼክቦክስ በመጠቀም ከአንድ በላይ መኪና ለመምረጥ
-  const [selectedVehicles, setSelectedVehicles] = useState<string[]>([]);
+  // የተመረጡ መኪኖች እና ብዛታቸው (ለምሳሌ: { 'የቤት መኪና': 2 })
+  const [selectedVehicles, setSelectedVehicles] = useState<{ [key: string]: number }>({});
 
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
 
@@ -146,48 +146,58 @@ export default function AdminPage() {
     }
   };
 
-  // ቼክቦክሱን ሲጫኑ መኪናውን መምረጥ ወይም ማጥፋት
+  // ቼክቦክሱን ሲጫኑ ወይም ሲያጠፉ
   const handleCheckboxChange = (vName: string) => {
     setSelectedVehicles(prev => {
-      if (prev.includes(vName)) {
-        return prev.filter(item => item !== vName);
+      const updated = { ...prev };
+      if (updated[vName] !== undefined) {
+        delete updated[vName];
       } else {
-        return [...prev, vName];
+        updated[vName] = 1; // ነባሪ ብዛት 1
       }
+      return updated;
     });
+  };
+
+  // የብዛት ለውጥ (Quantity change)
+  const handleQuantityChange = (vName: string, qty: number) => {
+    if (qty < 1) return;
+    setSelectedVehicles(prev => ({
+      ...prev,
+      [vName]: qty
+    }));
   };
 
   const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // ባዶ ቦታ እንዳይኖር ማረጋገጫዎች (Validations)
     if (!fullName.trim()) {
-      alert('እባክዎ ሙሉ ስም ወይም የድርጅት ስም ያስገቡ። (Please enter Name / Company name)');
+      alert('እባክዎ ሙሉ ስም ወይም የድርጅት ስም ያስገቡ።');
       return;
     }
 
     if (!phone.trim()) {
-      alert('እባክዎ የስልክ ቁጥር ያስገቡ። (Please enter Phone Number)');
+      alert('እባክዎ የስልክ ቁጥር ያስገቡ።');
       return;
     }
 
     if (!plateNumber.trim()) {
-      alert('እባክዎ የሰሌዳ ቁጥር ያስገቡ። (Please enter Plate Number)');
+      alert('እባክዎ የሰሌዳ ቁጥር ያስገቡ።');
       return;
     }
 
-    if (selectedVehicles.length === 0) {
-      alert('እባክዎ ቢያንስ አንድ የተሽከርካሪ ዓይነት ይምረጡ። (Please select at least one vehicle)');
+    if (Object.keys(selectedVehicles).length === 0) {
+      alert('እባክዎ ቢያንስ አንድ የተሽከርካሪ ዓይነት ይምረጡ።');
       return;
     }
 
     if (registrationType === 'corporate' && !tinNumber.trim()) {
-      alert('እባክዎ የድርጅቱን የቲን ቁጥር ያስገቡ። (Please enter TIN Number for corporate registration)');
+      alert('እባክዎ የድርጅቱን የቲን ቁጥር ያስገቡ።');
       return;
     }
 
     if (!address.trim()) {
-      alert('እባክዎ አድራሻ ያስገቡ። (Please enter Address)');
+      alert('እባክዎ አድራሻ ያስገቡ።');
       return;
     }
 
@@ -216,13 +226,13 @@ export default function AdminPage() {
       if (error) {
         alert('Error saving record: ' + error.message);
       } else {
-        alert('ምዝገባው በተሳካ ሁኔታ ተጠናቋል! (Walk-in registration successful!)');
+        alert('ምዝገባው በተሳካ ሁኔታ ተጠናቋል!');
         setFullName('');
         setPhone('');
         setPlateNumber('');
         setTinNumber('');
         setAddress('');
-        setSelectedVehicles([]);
+        setSelectedVehicles({});
         fetchAllRecords();
         setActiveTab('register');
         setSubRegisterTab(isCorp ? 'corporate' : 'personal');
@@ -553,37 +563,56 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* በግራ በኩል ቼክቦክስ ያላቸው የመኪና ምርጫዎች */}
+                {/* የተሽከርካሪ ዓይነቶች እና ብዛት ማስገቢያ */}
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#4ade80', fontWeight: 'bold' }}>
-                    የተሽከርካሪ ዓይነቶች (የሚፈለጉትን ይምረጡ) *:
+                    የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈለጉትን ይምረጡና ብዛት ያስገቡ) *:
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
                     {vehicleOptions.map((vName) => {
-                      const isChecked = selectedVehicles.includes(vName);
+                      const isSelected = selectedVehicles[vName] !== undefined;
+                      const quantity = selectedVehicles[vName] || 1;
                       return (
                         <div 
                           key={vName} 
-                          onClick={() => handleCheckboxChange(vName)}
                           style={{ 
                             display: 'flex', 
-                            alignItems: 'center', 
-                            gap: '12px', 
+                            flexDirection: 'column',
+                            gap: '8px', 
                             backgroundColor: '#0f172a', 
                             padding: '12px', 
                             borderRadius: '6px', 
-                            border: `1px solid ${isChecked ? '#4ade80' : '#334155'}`, 
-                            cursor: 'pointer',
+                            border: `1px solid ${isSelected ? '#4ade80' : '#334155'}`,
                             transition: 'all 0.2s'
                           }}
                         >
-                          <input 
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={() => {}} 
-                            style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#16a34a' }}
-                          />
-                          <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: '500', userSelect: 'none' }}>{vName}</span>
+                          <div 
+                            onClick={() => handleCheckboxChange(vName)}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+                          >
+                            <input 
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => {}} 
+                              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#16a34a' }}
+                            />
+                            <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: '500', userSelect: 'none' }}>{vName}</span>
+                          </div>
+
+                          {/* ተመርጦ ከሆነ የብዛት (Quantity) ማስገቢያ ሳጥን ይታያል */}
+                          {isSelected && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', paddingLeft: '28px' }}>
+                              <span style={{ fontSize: '12px', color: '#94a3b8' }}>ብዛት:</span>
+                              <input 
+                                type="number" 
+                                min="1" 
+                                value={quantity}
+                                onChange={(e) => handleQuantityChange(vName, parseInt(e.target.value) || 1)}
+                                onClick={(e) => e.stopPropagation()}
+                                style={{ width: '70px', padding: '4px 8px', borderRadius: '4px', backgroundColor: '#1e293b', border: '1px solid #475569', color: '#ffffff', fontSize: '14px' }}
+                              />
+                            </div>
+                          )}
                         </div>
                       );
                     })}
