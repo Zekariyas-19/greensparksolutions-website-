@@ -40,7 +40,7 @@ export default function AdminPage() {
     'ተሳቢ ቦቲ'
   ];
 
-  // የተመረጡትን መኪኖች እና ብዛታቸውን ለመያዝ (ဥပለአት: { 'የቤት መኪና': 2 })
+  // የተመረጡትን መኪኖች እና ብዛታቸውን ለመያዝ (በርካታ መኪኖች በአንድ ላይ ይመረጣሉ)
   const [selectedVehicles, setSelectedVehicles] = useState<{ [key: string]: number }>({});
 
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
@@ -107,7 +107,6 @@ export default function AdminPage() {
       if (Array.isArray(vehiclesData)) {
         return vehiclesData.map((v, i) => v.name || v.model || v.brand || JSON.stringify(v)).join(', ');
       }
-      // የተመረጡትን መኪኖች እና ብዛታቸውን በዝርዝር ማሳየት
       return Object.entries(vehiclesData)
         .filter(([_, qty]) => Number(qty) > 0)
         .map(([name, qty]) => `${name} (${qty})`)
@@ -138,6 +137,7 @@ export default function AdminPage() {
 
       alert(`Status successfully updated to "${newStatus}"!`);
       fetchAllRecords();
+      setSelectedRecord((prev: any) => prev ? { ...prev, status: newStatus } : null);
     } catch (err) {
       console.error('Error:', err);
       alert('An error occurred while updating status.');
@@ -146,7 +146,7 @@ export default function AdminPage() {
     }
   };
 
-  // የቼክቦክስ እና የብዛት (Quantity) ለውጥ ማስተካከያ
+  // ከአንድ በላይ መኪና እና ብዛታቸውን ለመቆጣጠር የሚያስችል ተግባር
   const handleQuantityChange = (vehicleName: string, quantity: number) => {
     setSelectedVehicles(prev => {
       const updated = { ...prev };
@@ -185,7 +185,7 @@ export default function AdminPage() {
             customer_type: isCorp ? 'company' : 'individual',
             phone: phone || null,
             plate_number: plateNumber || null,
-            vehicles: selectedVehicles,
+            vehicles: selectedVehicles, // የተመረጡትን በርካታ መኪኖች እና ብዛታቸውን Object አድርጎ ያስቀምጣል
             tin_number: tinNumber || null,
             address: address || null,
             status: 'Pending',
@@ -534,10 +534,10 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* የመኪና ዓይነቶች እና ብዛት ማስገቢያ (Quantity Inputs) */}
+                {/* በርካታ መኪኖች በአንድ ላይ የሚመረጡበት እና ብዛት የሚሞሉበት ግሪድ (Grid) */}
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#4ade80', fontWeight: 'bold' }}>
-                    የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈልጉትን ይምረጡና ብዛት ያስገቡ):
+                    የተሽከርካሪ ዓይነቶች እና ብዛት (ከአንድ በላይ መምረጥ እና ብዛት ማስገባት ይቻላል):
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
                     {vehicleOptions.map((vName) => {
@@ -617,6 +617,7 @@ export default function AdminPage() {
             </div>
           )}
 
+          {/* የተመረጠውን ሪከርድ ዝርዝር የሚያሳይ ፖፕ-አፕ (Modal) ከማርክ ማድረጊያ ቁልፎች ጋር */}
           {selectedRecord && (
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
               <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)', maxHeight: '90vh', overflowY: 'auto' }}>
@@ -649,20 +650,21 @@ export default function AdminPage() {
                   })}
                 </div>
 
+                {/* የማርክ ማድረጊያ አዝራሮች (Mark as Completed & Mark Pending) */}
                 <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Completed')}
                     style={{ flex: 1, backgroundColor: '#16a34a', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                     disabled={updatingStatus}
                   >
-                    Mark as Completed
+                    {updatingStatus ? 'Updating...' : 'Mark as Completed'}
                   </button>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Pending')}
                     style={{ backgroundColor: '#ca8a04', color: '#ffffff', border: 'none', padding: '10px 14px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                     disabled={updatingStatus}
                   >
-                    Mark Pending
+                    {updatingStatus ? 'Updating...' : 'Mark Pending'}
                   </button>
                 </div>
               </div>
