@@ -79,7 +79,6 @@ export default function AdminPage() {
 
     const isCorp = registrationType === 'corporate';
     const newName = isCorp ? corporateName : walkInName;
-    const category = isCorp ? 'corporate' : 'personal';
     const newPhoneOrId = isCorp ? corporateId : walkInPhone;
 
     try {
@@ -87,9 +86,8 @@ export default function AdminPage() {
         .from('bookings')
         .insert([
           {
-            name: newName,
-            category: category,
-            type: isCorp ? 'Corporate' : 'Personal',
+            full_name: newName,
+            customer_type: isCorp ? 'company' : 'individual',
             phone: newPhoneOrId,
             status: 'Walk-in Registered',
             created_at: new Date().toISOString()
@@ -106,7 +104,7 @@ export default function AdminPage() {
         setCorporateId('');
         fetchAllRecords();
         setActiveTab('register');
-        setSubRegisterTab(category);
+        setSubRegisterTab(isCorp ? 'corporate' : 'personal');
       }
     } catch (err) {
       console.error('Error:', err);
@@ -116,16 +114,17 @@ export default function AdminPage() {
     }
   };
 
+  // የድርጅት እና የግለሰብ መረጃዎችን በ customer_type መሰረት መለየት
   const corporateRecords = allRecords.filter(item => {
-    const cat = item.category?.toLowerCase() || '';
-    const type = item.type?.toLowerCase() || '';
-    const name = item.name?.toLowerCase() || '';
-    return cat.includes('corporate') || type.includes('corporate') || name.includes('company') || name.includes('plc') || name.includes('s.c');
+    const custType = item.customer_type?.toLowerCase() || '';
+    const name = item.name?.toLowerCase() || item.full_name?.toLowerCase() || '';
+    return custType === 'company' || name.includes('company') || name.includes('plc') || name.includes('s.c');
   });
 
   const personalRecords = allRecords.filter(item => {
+    const custType = item.customer_type?.toLowerCase() || '';
     const isCorp = corporateRecords.some(corp => corp.id === item.id);
-    return !isCorp;
+    return custType === 'individual' || (!isCorp && custType !== 'company');
   });
 
   const displayedRecords = subRegisterTab === 'personal' ? personalRecords : corporateRecords;
@@ -288,10 +287,10 @@ export default function AdminPage() {
                     >
                       <div>
                         <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
-                          {item.name || item.full_name || 'No Name'}
+                          {item.full_name || item.name || 'No Name'}
                         </p>
                         <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>
-                          {item.type || (subRegisterTab === 'personal' ? 'Personal' : 'Corporate')}
+                          {item.customer_type || (subRegisterTab === 'personal' ? 'Personal' : 'Corporate')}
                         </p>
                       </div>
                       <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>
@@ -401,14 +400,14 @@ export default function AdminPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#e2e8f0', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px' }}>
-                  <p style={{ margin: 0 }}><strong>Name / Company:</strong> {selectedRecord.name || selectedRecord.full_name || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Category:</strong> {selectedRecord.category || selectedRecord.type || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Name / Company:</strong> {selectedRecord.full_name || selectedRecord.name || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Status:</strong> {selectedRecord.status || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
                   
                   {Object.entries(selectedRecord).map(([key, value]) => {
-                    if (['id', 'name', 'full_name', 'type', 'category', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
+                    if (['id', 'name', 'full_name', 'customer_type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
                     return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
                   })}
                 </div>
