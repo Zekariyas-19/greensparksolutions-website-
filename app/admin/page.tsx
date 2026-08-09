@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 export default function AdminPage() {
@@ -40,8 +40,8 @@ export default function AdminPage() {
     'ተሳቢ ቦቲ'
   ];
 
-  // የተመረጡትን መኪኖች እና ብዛታቸውን ለመያዝ (በርካታ መኪኖች በአንድ ላይ ይመረጣሉ)
-  const [selectedVehicles, setSelectedVehicles] = useState<{ [key: string]: number }>({});
+  // በፎቶው ላይ እንዳለው ቼክቦክስ በመጠቀም ከአንድ በላይ መኪና ለመምረጥ
+  const [selectedVehicles, setSelectedVehicles] = useState<string[]>([]);
 
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
 
@@ -103,14 +103,14 @@ export default function AdminPage() {
     if (!vehiclesData) return 'N/A';
     if (typeof vehiclesData === 'string') return vehiclesData;
     
+    if (Array.isArray(vehiclesData)) {
+      return vehiclesData.join(', ');
+    }
+    
     if (typeof vehiclesData === 'object') {
-      if (Array.isArray(vehiclesData)) {
-        return vehiclesData.map((v, i) => v.name || v.model || v.brand || JSON.stringify(v)).join(', ');
-      }
       return Object.entries(vehiclesData)
-        .filter(([_, qty]) => Number(qty) > 0)
         .map(([name, qty]) => `${name} (${qty})`)
-        .join(', ') || 'None selected';
+        .join(', ');
     }
     return String(vehiclesData);
   };
@@ -146,16 +146,14 @@ export default function AdminPage() {
     }
   };
 
-  // ከአንድ በላይ መኪና እና ብዛታቸውን ለመቆጣጠር የሚያስችል ተግባር
-  const handleQuantityChange = (vehicleName: string, quantity: number) => {
+  // ቼክቦክሱን ሲጫኑ መኪናውን መምረጥ ወይም ማጥፋት
+  const handleCheckboxChange = (vName: string) => {
     setSelectedVehicles(prev => {
-      const updated = { ...prev };
-      if (quantity <= 0) {
-        delete updated[vehicleName];
+      if (prev.includes(vName)) {
+        return prev.filter(item => item !== vName);
       } else {
-        updated[vehicleName] = quantity;
+        return [...prev, vName];
       }
-      return updated;
     });
   };
 
@@ -166,8 +164,8 @@ export default function AdminPage() {
       return;
     }
 
-    if (Object.keys(selectedVehicles).length === 0) {
-      alert('Please select at least one vehicle and quantity.');
+    if (selectedVehicles.length === 0) {
+      alert('Please select at least one vehicle.');
       return;
     }
 
@@ -185,7 +183,7 @@ export default function AdminPage() {
             customer_type: isCorp ? 'company' : 'individual',
             phone: phone || null,
             plate_number: plateNumber || null,
-            vehicles: selectedVehicles, // የተመረጡትን በርካታ መኪኖች እና ብዛታቸውን Object አድርጎ ያስቀምጣል
+            vehicles: selectedVehicles, // የተመረጡትን መኪኖች Array አድርጎ ያስቀምጣል
             tin_number: tinNumber || null,
             address: address || null,
             status: 'Pending',
@@ -202,7 +200,7 @@ export default function AdminPage() {
         setPlateNumber('');
         setTinNumber('');
         setAddress('');
-        setSelectedVehicles({});
+        setSelectedVehicles([]);
         fetchAllRecords();
         setActiveTab('register');
         setSubRegisterTab(isCorp ? 'corporate' : 'personal');
@@ -534,48 +532,37 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* በርካታ መኪኖች በአንድ ላይ የሚመረጡበት እና ብዛት የሚሞሉበት ግሪድ (Grid) */}
+                {/* በግራ በኩል ቼክቦክስ ያላቸው የመኪና ምርጫዎች */}
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#4ade80', fontWeight: 'bold' }}>
-                    የተሽከርካሪ ዓይነቶች እና ብዛት (ከአንድ በላይ መምረጥ እና ብዛት ማስገባት ይቻላል):
+                    የተሽከርካሪ ዓይነቶች (የሚፈለጉትን ይምረጡ):
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
                     {vehicleOptions.map((vName) => {
-                      const qty = selectedVehicles[vName] || 0;
-                      const isSelected = qty > 0;
+                      const isChecked = selectedVehicles.includes(vName);
                       return (
                         <div 
                           key={vName} 
+                          onClick={() => handleCheckboxChange(vName)}
                           style={{ 
                             display: 'flex', 
-                            justifyContent: 'space-between',
                             alignItems: 'center', 
-                            gap: '10px', 
+                            gap: '12px', 
                             backgroundColor: '#0f172a', 
-                            padding: '10px 12px', 
+                            padding: '12px', 
                             borderRadius: '6px', 
-                            border: `1px solid ${isSelected ? '#4ade80' : '#334155'}`, 
+                            border: `1px solid ${isChecked ? '#4ade80' : '#334155'}`, 
+                            cursor: 'pointer',
                             transition: 'all 0.2s'
                           }}
                         >
-                          <span style={{ fontSize: '13px', color: '#e2e8f0', userSelect: 'none', flex: 1 }}>{vName}</span>
                           <input 
-                            type="number" 
-                            min="0"
-                            value={qty === 0 ? '' : qty}
-                            onChange={(e) => handleQuantityChange(vName, parseInt(e.target.value) || 0)}
-                            placeholder="ብዛት"
-                            style={{ 
-                              width: '65px', 
-                              padding: '6px', 
-                              borderRadius: '4px', 
-                              backgroundColor: '#1e293b', 
-                              border: '1px solid #475569', 
-                              color: '#ffffff', 
-                              textAlign: 'center',
-                              fontSize: '13px'
-                            }}
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => {}} // በ div  onClick በኩል ይስተናገዳል
+                            style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#16a34a' }}
                           />
+                          <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: '500', userSelect: 'none' }}>{vName}</span>
                         </div>
                       );
                     })}
