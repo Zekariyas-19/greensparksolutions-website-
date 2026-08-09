@@ -18,6 +18,9 @@ export default function AdminPage() {
   const [fetchingRecords, setFetchingRecords] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
 
+  // የሰርች ማድረጊያ ሁኔታ (Search State)
+  const [searchQuery, setSearchQuery] = useState('');
+
   const [walkInName, setWalkInName] = useState('');
   const [walkInPhone, setWalkInPhone] = useState('');
   const [corporateName, setCorporateName] = useState('');
@@ -125,7 +128,19 @@ export default function AdminPage() {
     return custType !== 'company';
   });
 
-  const displayedRecords = subRegisterTab === 'personal' ? personalRecords : corporateRecords;
+  // የመረጡትን ታብ እና በ Booking ID (ወይም በስም/ስልክ) መፈለጊያውን (Search) ማጣጣም
+  const currentTabRecords = subRegisterTab === 'personal' ? personalRecords : corporateRecords;
+  
+  const displayedRecords = currentTabRecords.filter(item => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase().trim();
+    const bookingIdStr = String(item.id || '').toLowerCase();
+    const nameStr = (item.full_name || item.name || '').toLowerCase();
+    const phoneStr = (item.phone || '').toLowerCase();
+
+    // በ Booking ID፣ በስም፣ ወይም በቀርከ ቁጥር መፈለግ ማስቻል
+    return bookingIdStr.includes(q) || nameStr.includes(q) || phoneStr.includes(q);
+  });
 
   // ስም ማውጫ
   const getDisplayName = (item: any) => {
@@ -143,11 +158,6 @@ export default function AdminPage() {
       }
     }
     return 'Unnamed Record';
-  };
-
-  // መለያ ID ወይም ስልክ ቁጥር ማውጫ
-  const getIdentifier = (item: any) => {
-    return item.phone || item.phone_number || item.corporate_id || item.id ? `ID: #${item.id}` : 'No ID';
   };
 
   return (
@@ -282,15 +292,28 @@ export default function AdminPage() {
                 </button>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: 'semibold', color: '#e2e8f0', margin: 0 }}>
-                  {subRegisterTab === 'personal' ? 'Personal Registrations' : 'Corporate Registrations'} (Click any to view details)
-                </h2>
+              {/* Booking ID Search Bar */}
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <input 
+                  type="text"
+                  placeholder="Search by Booking ID (e.g. 11), Name, or Phone..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{ flex: 1, padding: '10px 14px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', fontSize: '14px', boxSizing: 'border-box' }}
+                />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', padding: '10px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
+                  >
+                    Clear
+                  </button>
+                )}
                 <button
                   onClick={fetchAllRecords}
-                  style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+                  style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', padding: '10px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
                 >
-                  {fetchingRecords ? 'Refreshing...' : 'Refresh Data'}
+                  {fetchingRecords ? 'Refreshing...' : 'Refresh'}
                 </button>
               </div>
 
@@ -298,7 +321,7 @@ export default function AdminPage() {
                 {fetchingRecords ? (
                   <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>Loading records...</p>
                 ) : displayedRecords.length === 0 ? (
-                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No {subRegisterTab} records found.</p>
+                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No records found matching your search.</p>
                 ) : (
                   displayedRecords.map((item, index) => (
                     <div 
@@ -308,14 +331,14 @@ export default function AdminPage() {
                     >
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '12px', backgroundColor: '#334155', color: '#38bdf8', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
-                            #{item.id}
+                          <span style={{ fontSize: '13px', backgroundColor: '#0284c7', color: '#ffffff', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
+                            Booking ID: #{item.id}
                           </span>
                           <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
                             {getDisplayName(item)}
                           </p>
                         </div>
-                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>
+                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '6px 0 0 0' }}>
                           {item.phone ? `Phone: ${item.phone}` : (item.customer_type || 'Record')}
                         </p>
                       </div>
@@ -416,7 +439,7 @@ export default function AdminPage() {
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
               <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#4ade80', margin: 0 }}>Full Details (ID: #{selectedRecord.id})</h3>
+                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#4ade80', margin: 0 }}>Booking Details</h3>
                   <button 
                     onClick={() => setSelectedRecord(null)}
                     style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer' }}
@@ -426,10 +449,10 @@ export default function AdminPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#e2e8f0', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px' }}>
-                  <p style={{ margin: 0 }}><strong>Record ID:</strong> #{selectedRecord.id}</p>
+                  <p style={{ margin: 0, color: '#38bdf8', fontWeight: 'bold' }}><strong>Booking ID:</strong> #{selectedRecord.id}</p>
                   <p style={{ margin: 0 }}><strong>Name / Company:</strong> {getDisplayName(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selected.phone || selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Status:</strong> {selectedRecord.status || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
                   
