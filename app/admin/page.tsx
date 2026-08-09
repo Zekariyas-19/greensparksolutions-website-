@@ -114,20 +114,37 @@ export default function AdminPage() {
     }
   };
 
-  // የድርጅት እና የግለሰብ መረጃዎችን በ customer_type መሰረት መለየት
+  // የድርጅት እና የግለሰብ መረጃዎችን በትክክል መለየት
   const corporateRecords = allRecords.filter(item => {
     const custType = item.customer_type?.toLowerCase() || '';
-    const name = item.name?.toLowerCase() || item.full_name?.toLowerCase() || '';
-    return custType === 'company' || name.includes('company') || name.includes('plc') || name.includes('s.c');
+    return custType === 'company';
   });
 
   const personalRecords = allRecords.filter(item => {
     const custType = item.customer_type?.toLowerCase() || '';
-    const isCorp = corporateRecords.some(corp => corp.id === item.id);
-    return custType === 'individual' || (!isCorp && custType !== 'company');
+    return custType !== 'company';
   });
 
   const displayedRecords = subRegisterTab === 'personal' ? personalRecords : corporateRecords;
+
+  // ከየትኛውም አምድ ስም ማውጣት የሚያስችል ተግባር (full_name, name, company_name ወዘተ ካለ)
+  const getDisplayName = (item: any) => {
+    if (item.full_name) return item.full_name;
+    if (item.name) return item.name;
+    if (item.company_name) return item.company_name;
+    
+    // ሌላ ማንኛውም 텍ስት አምድ ካለ ለማየት (ከ id እና customer_type ውጪ)
+    for (const key of Object.keys(item)) {
+      if (
+        typeof item[key] === 'string' &&
+        item[key].trim() !== '' &&
+        !['id', 'customer_type', 'status', 'created_at', 'phone'].includes(key)
+      ) {
+        return item[key];
+      }
+    }
+    return 'Unnamed Record';
+  };
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#020617', color: '#ffffff', padding: '24px', fontFamily: 'sans-serif' }}>
@@ -287,7 +304,7 @@ export default function AdminPage() {
                     >
                       <div>
                         <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
-                          {item.full_name || item.name || 'No Name'}
+                          {getDisplayName(item)}
                         </p>
                         <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>
                           {item.customer_type || (subRegisterTab === 'personal' ? 'Personal' : 'Corporate')}
@@ -400,14 +417,14 @@ export default function AdminPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#e2e8f0', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px' }}>
-                  <p style={{ margin: 0 }}><strong>Name / Company:</strong> {selectedRecord.full_name || selectedRecord.name || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Name / Company:</strong> {getDisplayName(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Status:</strong> {selectedRecord.status || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
                   
                   {Object.entries(selectedRecord).map(([key, value]) => {
-                    if (['id', 'name', 'full_name', 'customer_type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
+                    if (['id', 'name', 'full_name', 'company_name', 'customer_type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
                     return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
                   })}
                 </div>
