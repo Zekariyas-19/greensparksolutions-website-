@@ -113,7 +113,7 @@ export default function Home() {
       feat2Desc: "የአየር ብክለትን በመቀነስ የአካባቢ ጥበቃ ደንቦችን ያሟላል",
       feat3Title: "5 ዓመት ዋስትና",
       feat3Desc: "እስከ 10 ዓመት ያለምንም ተጨማሪ ወጪና ጥገና የሚያገለግል",
-      calcTitle: "የነዳጅ ወጪ ቁጠባ ማስያ (ROI Calculator)",
+      calcTitle: "ይህንን መሳሪያ በመግጠሞ ምን ያክል ብር ያተርፋሉ (ROI Calculator)",
       calcSub: "ተሽከርካሪዎችዎ በቀን የሚያደርጉትን ጉዞ እና ብዛት በማስገባት የሚቆጥቡትን የብር መጠን ይመልከቱ",
       calcVehiclesLabel: "የተሽከርካሪዎች ብዛት፦",
       calcKmLabel: "በቀን የሚያደርጉት አማካይ ጉዞ (ኪ.ሜ)፦",
@@ -149,7 +149,7 @@ export default function Home() {
       subIsuzu: "የደረቅ ጭነት",
       subTrailer: "የደረቅ ጭነት ተሳቢ",
       subBotti: "ቦቲ",
-      subTrailerBotti: "ተሳቢ ቦቲ (Model E)"
+      subTrailerBotti: "ተሳቢ ቦቲ"
     },
     en: {
       navServices: "Benefits",
@@ -195,15 +195,14 @@ export default function Home() {
       modalIdLabel: "Your Unique Tracking ID:",
       modalDesc: "Your request has been received. Our team will contact you shortly. Please save this reference ID.",
       modalBtn: "Close",
-      catPersonal: "Personal Vehicle (Model AA/A)",
-      subMinibus: "Minibus (Model B)",
-      subBus: "Bus (Model D)",
-      subPickup: "Pickup (Model C)",
-      subIsuzu: "Isuzu (Model C/D)",
-      subSino: "Sino Truck (Model E)",
-      subBotti: "Tanker Botti (Model D/E)",
-      subTrailer: "Dry Cargo Trailer (Model E)",
-      subTrailerBotti: "Trailer Tanker (Model E)"
+      catPersonal: "Personal Vehicle",
+      subMinibus: "Minibus",
+      subBus: "Bus",
+      subPickup: "Pickup",
+      subIsuzu: "Isuzu",
+      subBotti: "Tanker Botti",
+      subTrailer: "Dry Cargo Trailer",
+      subTrailerBotti: "Trailer Tanker"
     }
   };
 
@@ -215,9 +214,8 @@ export default function Home() {
     { key: "bus", label: t.subBus },
     { key: "pickup", label: t.subPickup },
     { key: "isuzu", label: t.subIsuzu },
-    { key: "sino", label: t.subSino },
-    { key: "botti", label: t.subBotti },
     { key: "trailer", label: t.subTrailer },
+    { key: "botti", label: t.subBotti },
     { key: "trailerBotti", label: t.subTrailerBotti },
   ];
 
@@ -566,6 +564,64 @@ export default function Home() {
           </form>
         </div>
       </section>
+
+      {/* ከሎጎ ጎን የድርጅቱ ስም እንዲኖር የተደረገበት የግርጌ ክፍል (Footer) */}
+      <footer className="bg-[#43A047] text-white py-12 px-6 md:px-16">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+          
+          {/* 1. ሎጎ፣ የድርጅቱ ስም እና መግለጫ */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 bg-white p-2 rounded-lg inline-flex">
+              <img src="/logo.png" alt="GreenSpark Logo" className="h-10 object-contain" />
+              <span className="text-slate-900 font-extrabold text-lg tracking-tight">GreenSpark</span>
+            </div>
+            <p className="text-sm leading-relaxed">
+              GreenSpark Solutions PLC is dedicated to advancing sustainable technologies in the East African market. Based in Addis Ababa, we specialize in distributing SUPERTECH devices that reduce emissions and enhance fuel efficiency.
+            </p>
+          </div>
+
+          {/* 2. አድራሻ (Contact) */}
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold tracking-wide">Contact</h3>
+            <p className="text-sm leading-relaxed">
+              Gerji, Giorgis Business Shops, Building 5, Office New/248,<br />
+              Bole Sub city, Woreda 13
+            </p>
+            <div className="text-sm space-y-1">
+              <p><span className="font-semibold">Phone:</span></p>
+              <p className="pl-4">Mobile: +251-983-470000</p>
+              <p className="pl-4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+251-911-209255</p>
+              <p><span className="font-semibold">Email:</span> info@greensparksolutions.et</p>
+              <p><span className="font-semibold">Web:</span> www.greensparksolutions.et</p>
+            </div>
+          </div>
+
+          {/* 3. አሰሳ (Navigation) */}
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold tracking-wide">Navigation</h3>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#" className="hover:underline">Home</a></li>
+              <li><a href="#" className="hover:underline">About Us</a></li>
+              <li><a href="#" className="hover:underline">Values</a></li>
+              <li><a href="#benefits" className="hover:underline">Services</a></li>
+              <li><a href="#calculator" className="hover:underline">Get Started</a></li>
+              <li><a href="#" className="hover:underline">Legal Notice</a></li>
+              <li><a href="#" className="hover:underline">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          {/* 4. ሶሻል ሚዲያ (Social Media) */}
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold tracking-wide">Social media</h3>
+            <div className="flex flex-col space-y-2 text-sm">
+              <a href="#" className="hover:underline flex items-center gap-2">📘 Facebook</a>
+              <a href="#" className="hover:underline flex items-center gap-2">𝕏 X</a>
+              <a href="#" className="hover:underline flex items-center gap-2">📷 Instagram</a>
+            </div>
+          </div>
+
+        </div>
+      </footer>
 
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
