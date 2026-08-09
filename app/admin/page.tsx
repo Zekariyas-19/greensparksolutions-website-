@@ -21,10 +21,13 @@ export default function AdminPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [walkInName, setWalkInName] = useState('');
-  const [walkInPhone, setWalkInPhone] = useState('');
-  const [corporateName, setCorporateName] = useState('');
-  const [corporateId, setCorporateId] = useState('');
+  // የተሟሉ የዎክ-ኢን ፎርም ፊልዶች (ደንበኛ ኦንላይን ሲሞላ የሚሞላቸው ዝርዝሮች)
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [plateNumber, setPlateNumber] = useState('');
+  const [vehicleDetails, setVehicleDetails] = useState('');
+  const [tinNumber, setTinNumber] = useState('');
+  const [address, setAddress] = useState('');
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -65,7 +68,6 @@ export default function AdminPage() {
         console.error('Error fetching records:', error.message);
       } else if (data) {
         setAllRecords(data);
-        // ክፍት ሆኖ የሚታየው ሬኮርድ ካለ የሱን ዳታ እናድሳለን
         if (selectedRecord) {
           const updated = data.find((r: any) => r.id === selectedRecord.id || r.booking_id === selectedRecord.booking_id);
           if (updated) setSelectedRecord(updated);
@@ -95,7 +97,6 @@ export default function AdminPage() {
     return String(vehiclesData);
   };
 
-  // የስታተስ ለውጥ ማድረግ (ለምሳሌ Completed ወይም Pending ማድረግ)
   const handleUpdateStatus = async (recordId: any, newStatus: string) => {
     setUpdatingStatus(true);
     try {
@@ -105,7 +106,6 @@ export default function AdminPage() {
         .eq('id', recordId);
 
       if (error) {
-        // id ከሌለ booking_id እንጠቀም
         const { error: err2 } = await supabase
           .from('bookings')
           .update({ status: newStatus })
@@ -129,14 +129,13 @@ export default function AdminPage() {
 
   const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (registrationType === 'personal' && !walkInName) return;
-    if (registrationType === 'corporate' && !corporateName) return;
+    if (!fullName) {
+      alert('Please enter Name / Company name.');
+      return;
+    }
 
     setSubmittingWalkIn(true);
-
     const isCorp = registrationType === 'corporate';
-    const newName = isCorp ? corporateName : walkInName;
-    const newPhoneOrId = isCorp ? corporateId : walkInPhone;
     const randomBookingId = `GS-${Math.floor(10000 + Math.random() * 90000)}`;
 
     try {
@@ -145,10 +144,14 @@ export default function AdminPage() {
         .insert([
           {
             booking_id: randomBookingId,
-            full_name: newName,
+            full_name: fullName,
             customer_type: isCorp ? 'company' : 'individual',
-            phone: newPhoneOrId,
-            status: 'Walk-in Registered',
+            phone: phone || null,
+            plate_number: plateNumber || null,
+            vehicles: vehicleDetails ? { name: vehicleDetails } : null,
+            tin_number: tinNumber || null,
+            address: address || null,
+            status: 'Pending',
             created_at: new Date().toISOString()
           }
         ]);
@@ -157,10 +160,12 @@ export default function AdminPage() {
         alert('Error saving record: ' + error.message);
       } else {
         alert('Walk-in registration successful!');
-        setWalkInName('');
-        setWalkInPhone('');
-        setCorporateName('');
-        setCorporateId('');
+        setFullName('');
+        setPhone('');
+        setPlateNumber('');
+        setVehicleDetails('');
+        setTinNumber('');
+        setAddress('');
         fetchAllRecords();
         setActiveTab('register');
         setSubRegisterTab(isCorp ? 'corporate' : 'personal');
@@ -173,7 +178,6 @@ export default function AdminPage() {
     }
   };
 
-  // ሬኮርዶችን በስታተስ እና በኩባንያ/ግለሰብ መክፈል
   const completedRecords = allRecords.filter(item => {
     const st = item.status?.toLowerCase() || '';
     return st.includes('complet') || st.includes('ready') || st.includes('done');
@@ -456,55 +460,76 @@ export default function AdminPage() {
               </div>
 
               <form onSubmit={handleWalkInSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {registrationType === 'personal' ? (
-                  <>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Full Name or Vehicle Number:</label>
-                      <input 
-                        type="text" 
-                        value={walkInName}
-                        onChange={(e) => setWalkInName(e.target.value)}
-                        placeholder="Enter name or vehicle number..."
-                        style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Phone Number:</label>
-                      <input 
-                        type="text" 
-                        value={walkInPhone}
-                        onChange={(e) => setWalkInPhone(e.target.value)}
-                        placeholder="Enter phone number..."
-                        style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Company Name:</label>
-                      <input 
-                        type="text" 
-                        value={corporateName}
-                        onChange={(e) => setCorporateName(e.target.value)}
-                        placeholder="Enter company name..."
-                        style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Corporate ID / Tax Number:</label>
-                      <input 
-                        type="text" 
-                        value={corporateId}
-                        onChange={(e) => setCorporateId(e.target.value)}
-                        placeholder="Enter corporate ID..."
-                        style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                      />
-                    </div>
-                  </>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
+                    {registrationType === 'personal' ? 'Full Name:' : 'Company Name:'}
+                  </label>
+                  <input 
+                    type="text" 
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={registrationType === 'personal' ? 'Enter full name...' : 'Enter company name...'}
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Phone Number:</label>
+                  <input 
+                    type="text" 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Enter phone number..."
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Plate Number (የሰሌዳ ቁጥር):</label>
+                  <input 
+                    type="text" 
+                    value={plateNumber}
+                    onChange={(e) => setPlateNumber(e.target.value)}
+                    placeholder="e.g. 2-AA10905"
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Vehicle Details / Type (የመኪና ዝርዝር/አይነት):</label>
+                  <input 
+                    type="text" 
+                    value={vehicleDetails}
+                    onChange={(e) => setVehicleDetails(e.target.value)}
+                    placeholder="e.g. Toyota Vitz"
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                {registrationType === 'corporate' && (
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>TIN Number (የቲን ቁጥር):</label>
+                    <input 
+                      type="text" 
+                      value={tinNumber}
+                      onChange={(e) => setTinNumber(e.target.value)}
+                      placeholder="Enter TIN number..."
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                    />
+                  </div>
                 )}
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Address (አድራሻ):</label>
+                  <input 
+                    type="text" 
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Enter address..."
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                  />
+                </div>
 
                 <button 
                   type="submit"
@@ -534,7 +559,7 @@ export default function AdminPage() {
                   <p style={{ margin: 0, color: '#38bdf8', fontWeight: 'bold' }}><strong>Booking ID:</strong> {getBookingIdDisplay(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Name / Company:</strong> {getDisplayName(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Phone:</strong> {selectedRecord.phone || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Status:</strong> <span style={{ color: '#34d399', fontWeight: 'bold' }}>{selectedRecord.status || 'N/A'}</span></p>
                   <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
                   
@@ -542,14 +567,13 @@ export default function AdminPage() {
                     if (['id', 'booking_id', 'name', 'full_name', 'company_name', 'customer_type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
                     
                     if (key === 'vehicles') {
-                      return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {renderVehicleDetails(value)}</p>;
+                      return <p key={key} style={{ margin: 0 }}><strong>vehicles:</strong> {renderVehicleDetails(value)}</p>;
                     }
 
                     return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
                   })}
                 </div>
 
-                {/* የስታተስ መቀየሪያ ቁልፎች */}
                 <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Completed')}
