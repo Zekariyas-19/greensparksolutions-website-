@@ -72,6 +72,11 @@ export default function AdminPage() {
     }
   };
 
+  // ከዳታቤዝ የሚመጣውን ትክክለኛ booking_id (ወይም ከሌለ id) የሚያሳይ ተግባር
+  const getBookingIdDisplay = (item: any) => {
+    return item.booking_id || item.id || 'N/A';
+  };
+
   const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (registrationType === 'personal' && !walkInName) return;
@@ -83,11 +88,15 @@ export default function AdminPage() {
     const newName = isCorp ? corporateName : walkInName;
     const newPhoneOrId = isCorp ? corporateId : walkInPhone;
 
+    // አዲስ ዎክ-ኢን ሲመዘገብ ራሱ በ GS- እንዲጀምር ማድረግ ይቻላል (አስፈላጊ ከሆነ)
+    const randomBookingId = `GS-${Math.floor(10000 + Math.random() * 90000)}`;
+
     try {
       const { error } = await supabase
         .from('bookings')
         .insert([
           {
+            booking_id: randomBookingId,
             full_name: newName,
             customer_type: isCorp ? 'company' : 'individual',
             phone: newPhoneOrId,
@@ -131,11 +140,12 @@ export default function AdminPage() {
   const displayedRecords = currentTabRecords.filter(item => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase().trim();
-    const bookingIdStr = String(item.id || '').toLowerCase();
+    const bId = String(item.booking_id || '').toLowerCase();
+    const rawIdStr = String(item.id || '').toLowerCase();
     const nameStr = (item.full_name || item.name || '').toLowerCase();
     const phoneStr = (item.phone || '').toLowerCase();
 
-    return bookingIdStr.includes(q) || nameStr.includes(q) || phoneStr.includes(q);
+    return bId.includes(q) || rawIdStr.includes(q) || nameStr.includes(q) || phoneStr.includes(q);
   });
 
   const getDisplayName = (item: any) => {
@@ -147,7 +157,7 @@ export default function AdminPage() {
       if (
         typeof item[key] === 'string' &&
         item[key].trim() !== '' &&
-        !['id', 'customer_type', 'status', 'created_at', 'phone'].includes(key)
+        !['id', 'booking_id', 'customer_type', 'status', 'created_at', 'phone'].includes(key)
       ) {
         return item[key];
       }
@@ -290,7 +300,7 @@ export default function AdminPage() {
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                 <input 
                   type="text"
-                  placeholder="Search by Booking ID (e.g. 11), Name, or Phone..."
+                  placeholder="Search by Booking ID (e.g. GS-22542), Name, or Phone..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{ flex: 1, padding: '10px 14px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', fontSize: '14px', boxSizing: 'border-box' }}
@@ -326,7 +336,7 @@ export default function AdminPage() {
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <span style={{ fontSize: '13px', backgroundColor: '#0284c7', color: '#ffffff', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-                            Booking ID: #{item.id}
+                            Booking ID: {getBookingIdDisplay(item)}
                           </span>
                           <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
                             {getDisplayName(item)}
@@ -443,7 +453,7 @@ export default function AdminPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#e2e8f0', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, color: '#38bdf8', fontWeight: 'bold' }}><strong>Booking ID:</strong> #{selectedRecord.id}</p>
+                  <p style={{ margin: 0, color: '#38bdf8', fontWeight: 'bold' }}><strong>Booking ID:</strong> {getBookingIdDisplay(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Name / Company:</strong> {getDisplayName(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
@@ -451,7 +461,7 @@ export default function AdminPage() {
                   <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
                   
                   {Object.entries(selectedRecord).map(([key, value]) => {
-                    if (['id', 'name', 'full_name', 'company_name', 'customer_type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
+                    if (['id', 'booking_id', 'name', 'full_name', 'company_name', 'customer_type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
                     return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
                   })}
                 </div>
