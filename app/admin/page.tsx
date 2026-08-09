@@ -159,13 +159,35 @@ export default function AdminPage() {
 
   const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName) {
-      alert('Please enter Name / Company name.');
+    
+    // ባዶ ቦታ እንዳይኖር ማረጋገጫዎች (Validations)
+    if (!fullName.trim()) {
+      alert('እባክዎ ሙሉ ስም ወይም የድርጅት ስም ያስገቡ። (Please enter Name / Company name)');
+      return;
+    }
+
+    if (!phone.trim()) {
+      alert('እባክዎ የስልክ ቁጥር ያስገቡ። (Please enter Phone Number)');
+      return;
+    }
+
+    if (!plateNumber.trim()) {
+      alert('እባክዎ የሰሌዳ ቁጥር ያስገቡ። (Please enter Plate Number)');
       return;
     }
 
     if (selectedVehicles.length === 0) {
-      alert('Please select at least one vehicle.');
+      alert('እባክዎ ቢያንስ አንድ የተሽከርካሪ ዓይነት ይምረጡ። (Please select at least one vehicle)');
+      return;
+    }
+
+    if (registrationType === 'corporate' && !tinNumber.trim()) {
+      alert('እባክዎ የድርጅቱን የቲን ቁጥር ያስገቡ። (Please enter TIN Number for corporate registration)');
+      return;
+    }
+
+    if (!address.trim()) {
+      alert('እባክዎ አድራሻ ያስገቡ። (Please enter Address)');
       return;
     }
 
@@ -179,13 +201,13 @@ export default function AdminPage() {
         .insert([
           {
             booking_id: randomBookingId,
-            full_name: fullName,
+            full_name: fullName.trim(),
             customer_type: isCorp ? 'company' : 'individual',
-            phone: phone || null,
-            plate_number: plateNumber || null,
-            vehicles: selectedVehicles, // የተመረጡትን መኪኖች Array አድርጎ ያስቀምጣል
-            tin_number: tinNumber || null,
-            address: address || null,
+            phone: phone.trim(),
+            plate_number: plateNumber.trim(),
+            vehicles: selectedVehicles, 
+            tin_number: isCorp ? tinNumber.trim() : null,
+            address: address.trim(),
             status: 'Pending',
             created_at: new Date().toISOString()
           }
@@ -194,7 +216,7 @@ export default function AdminPage() {
       if (error) {
         alert('Error saving record: ' + error.message);
       } else {
-        alert('Walk-in registration successful!');
+        alert('ምዝገባው በተሳካ ሁኔታ ተጠናቋል! (Walk-in registration successful!)');
         setFullName('');
         setPhone('');
         setPlateNumber('');
@@ -474,7 +496,7 @@ export default function AdminPage() {
           ) : (
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
               <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#e2e8f0' }}>
-                New Walk-in Registration Form
+                New Walk-in Registration Form <span style={{ fontSize: '13px', color: '#ef4444' }}>(ሁሉም መስኮች መሞላት አለባቸው)</span>
               </h2>
 
               <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
@@ -497,7 +519,7 @@ export default function AdminPage() {
               <form onSubmit={handleWalkInSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
-                    {registrationType === 'personal' ? 'Full Name:' : 'Company Name:'}
+                    {registrationType === 'personal' ? 'Full Name *:' : 'Company Name *:'}
                   </label>
                   <input 
                     type="text" 
@@ -505,13 +527,12 @@ export default function AdminPage() {
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder={registrationType === 'personal' ? 'Enter full name...' : 'Enter company name...'}
                     style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
-                    required
                   />
                 </div>
 
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Phone Number:</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Phone Number *:</label>
                     <input 
                       type="text" 
                       value={phone}
@@ -521,7 +542,7 @@ export default function AdminPage() {
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Plate Number (ሰሌዳ ቁጥር):</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Plate Number (ሰሌዳ ቁጥር) *:</label>
                     <input 
                       type="text" 
                       value={plateNumber}
@@ -535,7 +556,7 @@ export default function AdminPage() {
                 {/* በግራ በኩል ቼክቦክስ ያላቸው የመኪና ምርጫዎች */}
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#4ade80', fontWeight: 'bold' }}>
-                    የተሽከርካሪ ዓይነቶች (የሚፈለጉትን ይምረጡ):
+                    የተሽከርካሪ ዓይነቶች (የሚፈለጉትን ይምረጡ) *:
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
                     {vehicleOptions.map((vName) => {
@@ -559,7 +580,7 @@ export default function AdminPage() {
                           <input 
                             type="checkbox"
                             checked={isChecked}
-                            onChange={() => {}} // በ div  onClick በኩል ይስተናገዳል
+                            onChange={() => {}} 
                             style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#16a34a' }}
                           />
                           <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: '500', userSelect: 'none' }}>{vName}</span>
@@ -571,7 +592,7 @@ export default function AdminPage() {
 
                 {registrationType === 'corporate' && (
                   <div>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>TIN Number (የቲን ቁጥር):</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>TIN Number (የቲን ቁጥር) *:</label>
                     <input 
                       type="text" 
                       value={tinNumber}
@@ -583,7 +604,7 @@ export default function AdminPage() {
                 )}
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Address (አድራሻ):</label>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Address (አድራሻ) *:</label>
                   <input 
                     type="text" 
                     value={address}
@@ -598,7 +619,7 @@ export default function AdminPage() {
                   style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer', marginTop: '8px' }}
                   disabled={submittingWalkIn}
                 >
-                  {submittingWalkIn ? 'Saving...' : 'Submit Registration'}
+                  {submittingWatchText => submittingWalkIn ? 'Saving...' : 'Submit Registration'}
                 </button>
               </form>
             </div>
