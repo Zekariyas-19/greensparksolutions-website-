@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 export default function Home() {
   const [lang, setLang] = useState<"am" | "en">("am");
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   
   const [customerType, setCustomerType] = useState<"individual" | "company">("individual");
   
@@ -113,7 +114,7 @@ export default function Home() {
       feat2Desc: "የአየር ብክለትን በመቀነስ የአካባቢ ጥበቃ ደንቦችን ያሟላል",
       feat3Title: "5 ዓመት ዋስትና",
       feat3Desc: "እስከ 10 ዓመት ያለምንም ተጨማሪ ወጪና ጥገና የሚያገለግል",
-      calcTitle: "ይህንን መሳሪያ በመግጠሞ ምን ያክል ብር ያተርፋሉ (ROI Calculator)",
+      calcTitle: "የነዳጅ ወጪ ቁጠባ ማስያ (ROI Calculator)",
       calcSub: "ተሽከርካሪዎችዎ በቀን የሚያደርጉትን ጉዞ እና ብዛት በማስገባት የሚቆጥቡትን የብር መጠን ይመልከቱ",
       calcVehiclesLabel: "የተሽከርካሪዎች ብዛት፦",
       calcKmLabel: "በቀን የሚያደርጉት አማካይ ጉዞ (ኪ.ሜ)፦",
@@ -223,22 +224,24 @@ export default function Home() {
     <main className={`min-h-screen transition-colors duration-300 ${
       isDarkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"
     }`}>
-      <nav className={`flex justify-between items-center px-8 py-5 border-b transition-colors ${
-        isDarkMode ? "border-slate-800 bg-slate-950" : "border-slate-200 bg-white"
+      {/* ፖንሴን እና ዴስክቶፕ የሚሆን የተስተካከለ ናቪጌሽን */}
+      <nav className={`flex justify-between items-center px-4 md:px-8 py-4 border-b sticky top-0 z-40 transition-colors ${
+        isDarkMode ? "border-slate-800 bg-slate-950/90 backdrop-blur-md" : "border-slate-200 bg-white/90 backdrop-blur-md"
       }`}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <img 
             src="/logo.png" 
             alt="GreenSpark Logo" 
-            className="w-12 h-12 object-contain" 
+            className="w-10 h-10 md:w-12 md:h-12 object-contain" 
           />
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-green-500 leading-none">GreenSpark</h1>
-            <span className="text-[10px] text-slate-400 tracking-widest uppercase">Solutions PLC</span>
+          <div className="flex flex-col">
+            <span className="text-lg md:text-2xl font-bold tracking-tight text-green-500 leading-none">GreenSpark</span>
+            <span className="text-[9px] md:text-[10px] text-slate-400 tracking-widest uppercase">Solutions PLC</span>
           </div>
         </div>
         
-        <div className="flex items-center space-x-5 text-sm font-medium">
+        {/* የዴስክቶፕ ሜኑ (ከMedium ስክሪን በላይ ይታያል) */}
+        <div className="hidden md:flex items-center space-x-5 text-sm font-medium">
           <a href="#benefits" className="hover:text-green-500 transition">{t.navServices}</a>
           <a href="#calculator" className="hover:text-green-500 transition">{t.navCalc}</a>
           <a href="#booking" className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg transition shadow-md shadow-green-600/20">
@@ -269,20 +272,82 @@ export default function Home() {
             <option value="en">English</option>
           </select>
         </div>
+
+        {/* የስልክ መቆጣጠሪያዎች (Theme, Language እና Hamburger Button) */}
+        <div className="flex md:hidden items-center space-x-2">
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className={`p-2 rounded-lg border text-sm transition ${
+              isDarkMode ? "bg-slate-900 border-slate-700 text-yellow-400" : "bg-slate-100 border-slate-300 text-slate-700"
+            }`}
+          >
+            {isDarkMode ? "☀️" : "🌙"}
+          </button>
+
+          <select 
+            value={lang} 
+            onChange={(e) => setLang(e.target.value as "am" | "en")}
+            className={`font-semibold px-2 py-1.5 rounded-lg focus:outline-none border text-xs ${
+              isDarkMode ? "bg-slate-900 border-slate-700 text-green-400" : "bg-slate-100 border-slate-300 text-green-700"
+            }`}
+          >
+            <option value="am">አማ</option>
+            <option value="en">EN</option>
+          </select>
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`p-2 rounded-lg border text-base ${
+              isDarkMode ? "bg-slate-900 border-slate-700 text-white" : "bg-slate-100 border-slate-300 text-slate-900"
+            }`}
+          >
+            {mobileMenuOpen ? "✕" : "☰"}
+          </button>
+        </div>
       </nav>
 
-      <section className="flex flex-col items-center justify-center text-center px-4 pt-12 pb-6 max-w-5xl mx-auto">
-        <span className={`text-xs font-semibold px-3.5 py-1.5 rounded-full border mb-6 ${
+      {/* የሞባይል ድሮፕዳው ሜኑ (ስልክ ላይ ሜኑ ሲጫን የሚከፈት) */}
+      {mobileMenuOpen && (
+        <div className={`md:hidden flex flex-col space-y-3 px-6 py-5 border-b shadow-lg transition-all ${
+          isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-900"
+        }`}>
+          <a 
+            href="#benefits" 
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-base font-medium py-1.5 hover:text-green-500"
+          >
+            {t.navServices}
+          </a>
+          <a 
+            href="#calculator" 
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-base font-medium py-1.5 hover:text-green-500"
+          >
+            {t.navCalc}
+          </a>
+          <a 
+            href="#booking" 
+            onClick={() => setMobileMenuOpen(false)}
+            className="bg-green-600 text-center hover:bg-green-500 text-white px-4 py-2.5 rounded-lg font-medium transition shadow-md"
+          >
+            {t.navBook}
+          </a>
+        </div>
+      )}
+
+      {/* ዋናው የጀማሪ (Hero) ክፍል */}
+      <section className="flex flex-col items-center justify-center text-center px-4 pt-10 pb-6 max-w-5xl mx-auto">
+        <span className={`text-[11px] md:text-xs font-semibold px-3 py-1.5 rounded-full border mb-6 leading-relaxed ${
           isDarkMode 
             ? "bg-green-950/80 text-green-400 border-green-800/80" 
             : "bg-green-100 text-green-800 border-green-300"
         }`}>
           {t.heroBadge}
         </span>
-        <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
           {t.heroTitle1} <span className="text-green-500">{t.heroTitle2}</span> {t.heroTitle3}
         </h2>
-        <p className={`text-lg mb-8 max-w-2xl ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
+        <p className={`text-base md:text-lg mb-8 max-w-2xl leading-relaxed ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
           {t.heroDesc}
         </p>
 
@@ -310,11 +375,12 @@ export default function Home() {
         </div>
       </section>
 
+      {/* የሂሳብ ማስያ (Calculator) ክፍል */}
       <section id="calculator" className="max-w-4xl mx-auto px-4 py-10">
-        <div className={`p-8 rounded-2xl border shadow-lg ${
+        <div className={`p-6 md:p-8 rounded-2xl border shadow-lg ${
           isDarkMode ? "bg-slate-900/80 border-slate-800" : "bg-white border-slate-200"
         }`}>
-          <h3 className="text-2xl font-bold text-center mb-2">{t.calcTitle}</h3>
+          <h3 className="text-xl md:text-2xl font-bold text-center mb-2">{t.calcTitle}</h3>
           <p className={`text-xs text-center mb-8 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>{t.calcSub}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -374,13 +440,14 @@ export default function Home() {
         </div>
       </section>
 
+      {/* የቦታ ማስያዣ ቅጽ (Booking Form) */}
       <section id="booking" className="max-w-2xl mx-auto px-4 pb-20">
-        <div className={`p-8 rounded-2xl shadow-xl border transition ${
+        <div className={`p-6 md:p-8 rounded-2xl shadow-xl border transition ${
           isDarkMode 
             ? "bg-slate-900 border-slate-800" 
             : "bg-white border-slate-200 shadow-slate-200"
         }`}>
-          <h3 className="text-2xl font-bold text-center mb-2">{t.formTitle}</h3>
+          <h3 className="text-xl md:text-2xl font-bold text-center mb-2">{t.formTitle}</h3>
           <p className={`text-xs text-center mb-6 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>{t.formSub}</p>
 
           <div className="flex bg-slate-950 p-1.5 rounded-xl border border-slate-800 mb-6">
@@ -565,11 +632,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ከሎጎ ጎን የድርጅቱ ስም እንዲኖር የተደረገበት የግርጌ ክፍል (Footer) */}
+      {/* የግርጌ ክፍል (Footer) */}
       <footer className="bg-[#43A047] text-white py-12 px-6 md:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           
-          {/* 1. ሎጎ፣ የድርጅቱ ስም እና መግለጫ */}
           <div className="space-y-4">
             <div className="flex items-center gap-3 bg-white p-2 rounded-lg inline-flex">
               <img src="/logo.png" alt="GreenSpark Logo" className="h-10 object-contain" />
@@ -580,7 +646,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* 2. አድራሻ (Contact) */}
           <div className="space-y-3">
             <h3 className="text-xl font-bold tracking-wide">Contact</h3>
             <p className="text-sm leading-relaxed">
@@ -596,7 +661,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 3. አሰሳ (Navigation) */}
           <div className="space-y-3">
             <h3 className="text-xl font-bold tracking-wide">Navigation</h3>
             <ul className="space-y-2 text-sm">
@@ -610,7 +674,6 @@ export default function Home() {
             </ul>
           </div>
 
-          {/* 4. ሶሻል ሚዲያ (Social Media) */}
           <div className="space-y-3">
             <h3 className="text-xl font-bold tracking-wide">Social media</h3>
             <div className="flex flex-col space-y-2 text-sm">
@@ -636,7 +699,7 @@ export default function Home() {
             <div className={`my-4 p-3 rounded-xl border text-center ${
               isDarkMode ? "bg-slate-950 border-green-500/40" : "bg-green-50 border-green-300"
             }`}>
-              <span className="text-xs text-slate-400 block mb-1">{t.modalIdLabel}</span>
+              <span className="text-xs text-slate-400 block mb-1">{t.modalIdLabel} / Tracking ID</span>
               <span className="text-xl font-mono font-bold text-green-400 tracking-wider">
                 {generatedBookingId}
               </span>
