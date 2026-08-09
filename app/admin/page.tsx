@@ -28,17 +28,22 @@ export default function AdminPage() {
   const [tinNumber, setTinNumber] = useState('');
   const [address, setAddress] = useState('');
   
-  // የደንበኛውን የመኪና ዓይነቶች እና ብዛት መያዣ (Object)
-  const [vehicles, setVehicles] = useState<{ [key: string]: number }>({
-    'የቤት መኪና': 0,
-    'ሜዳቮል': 0,
-    'ባስ / አውቶቡስ': 0,
-    'ፒካፕ': 0,
-    'የደረቅ ጭነት': 0,
-    'የደረቅ ጭነት ተሳቢ': 0,
-    'ቤንዚን ቦቴ': 0,
-    'ተሳቢ ቤንዚን ቦቴ': 0,
-  });
+  // ከኦንላይን ፎርሙ ጋር ακριβώς (exact) የተመሳሰሉ የመኪና ዓይነቶች ዝርዝር
+  const vehicleOptions = [
+    'የቤት መኪና',
+    'ሜዳቮል',
+    'ባስ / አውቶቡስ',
+    'ፒካፕ',
+    'የደረቅ ጭነት',
+    'የደረቅ ጭነት ተሳቢ',
+    'ቤንዚን ቦቴ',
+    'ተሳቢ ቤንዚን ቦቴ',
+    'በቴ',
+    'ተሳቢ በቴ'
+  ];
+
+  // የተመረጡትን መኪኖች ለመያዝ (Checkbox ሎጂክ)
+  const [selectedVehicles, setSelectedVehicles] = useState<{ [key: string]: boolean }>({});
 
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
 
@@ -104,10 +109,10 @@ export default function AdminPage() {
       if (Array.isArray(vehiclesData)) {
         return vehiclesData.map((v, i) => v.name || v.model || v.brand || JSON.stringify(v)).join(', ');
       }
-      // የተመረጡትን መኪኖች እና ብዛታቸው በዝርዝር ማሳየት
+      // የተመረጡትን መኪኖች በዝርዝር ማሳየት
       return Object.entries(vehiclesData)
-        .filter(([_, count]) => Number(count) > 0)
-        .map(([name, count]) => `${name}: ${count}`)
+        .filter(([_, isSelected]) => isSelected === true)
+        .map(([name]) => name)
         .join(', ') || 'None selected';
     }
     return String(vehiclesData);
@@ -143,10 +148,10 @@ export default function AdminPage() {
     }
   };
 
-  const handleVehicleChange = (vehicleName: string, count: number) => {
-    setVehicles(prev => ({
+  const handleCheckboxChange = (vehicleName: string) => {
+    setSelectedVehicles(prev => ({
       ...prev,
-      [vehicleName]: Math.max(0, count)
+      [vehicleName]: !prev[vehicleName]
     }));
   };
 
@@ -171,7 +176,7 @@ export default function AdminPage() {
             customer_type: isCorp ? 'company' : 'individual',
             phone: phone || null,
             plate_number: plateNumber || null,
-            vehicles: vehicles,
+            vehicles: selectedVehicles,
             tin_number: tinNumber || null,
             address: address || null,
             status: 'Pending',
@@ -188,16 +193,7 @@ export default function AdminPage() {
         setPlateNumber('');
         setTinNumber('');
         setAddress('');
-        setVehicles({
-          'የቤት መኪና': 0,
-          'ሜዳቮል': 0,
-          'ባስ / አውቶቡስ': 0,
-          'ፒካፕ': 0,
-          'የደረቅ ጭነት': 0,
-          'የደረቅ ጭነት ተሳቢ': 0,
-          'ቤንዚን ቦቴ': 0,
-          'ተሳቢ ቤንዚን ቦቴ': 0,
-        });
+        setSelectedVehicles({});
         fetchAllRecords();
         setActiveTab('register');
         setSubRegisterTab(isCorp ? 'corporate' : 'personal');
@@ -529,24 +525,40 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* የመኪና ዓይነቶች እና ብዛት መምረጫ (Vehicle Types & Quantities) */}
+                {/* የመኪና ዓይነቶች Checkbox መምረጫ */}
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#4ade80', fontWeight: 'bold' }}>
                     የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈልጉትን ይምረጡ):
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
-                    {Object.keys(vehicles).map((vName) => (
-                      <div key={vName} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0f172a', padding: '8px 12px', borderRadius: '6px', border: '1px solid #334155' }}>
-                        <span style={{ fontSize: '13px', color: '#e2e8f0' }}>{vName}</span>
-                        <input 
-                          type="number" 
-                          min="0"
-                          value={vehicles[vName]}
-                          onChange={(e) => handleVehicleChange(vName, parseInt(e.target.value) || 0)}
-                          style={{ width: '60px', padding: '4px 8px', borderRadius: '4px', backgroundColor: '#1e293b', border: '1px solid #475569', color: '#ffffff', textAlign: 'center' }}
-                        />
-                      </div>
-                    ))}
+                    {vehicleOptions.map((vName) => {
+                      const isChecked = !!selectedVehicles[vName];
+                      return (
+                        <div 
+                          key={vName} 
+                          onClick={() => handleCheckboxChange(vName)}
+                          style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '10px', 
+                            backgroundColor: '#0f172a', 
+                            padding: '10px 12px', 
+                            borderRadius: '6px', 
+                            border: `1px solid ${isChecked ? '#4ade80' : '#334155'}`, 
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          <input 
+                            type="checkbox" 
+                            checked={isChecked}
+                            onChange={() => {}} // በ div onClick ስለሚሸፈን
+                            style={{ width: '16px', height: '16px', accentColor: '#16a34a', cursor: 'pointer' }}
+                          />
+                          <span style={{ fontSize: '13px', color: '#e2e8f0', userSelect: 'none' }}>{vName}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
