@@ -10,16 +10,12 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ዋና ትሮች: 'register' እና 'new-registration'
   const [activeTab, setActiveTab] = useState<'register' | 'new-registration'>('register');
-  // 'register' ውስጥ የሚገኙ ንዑስ ትሮች: ግለሰብ ወይስ ድርጅት
   const [subRegisterTab, setSubRegisterTab] = useState<'personal' | 'corporate'>('personal');
-
   const [registrationType, setRegistrationType] = useState<'personal' | 'corporate'>('personal');
 
   const [allRecords, setAllRecords] = useState<any[]>([]);
   const [fetchingRecords, setFetchingRecords] = useState(false);
-
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
 
   const [walkInName, setWalkInName] = useState('');
@@ -83,7 +79,6 @@ export default function AdminPage() {
 
     const isCorp = registrationType === 'corporate';
     const newName = isCorp ? corporateName : walkInName;
-    // የ category መስክን በ σαፈ ሁኔታ እንይዛለን ('personal' ወይም 'corporate')
     const category = isCorp ? 'corporate' : 'personal';
     const newPhoneOrId = isCorp ? corporateId : walkInPhone;
 
@@ -93,8 +88,8 @@ export default function AdminPage() {
         .insert([
           {
             name: newName,
-            category: category, // ግለሰብ መሆኑን ወይም ድርጅት መሆኑን በግልጽ ያስቀምጣል
-            type: isCorp ? 'Walk-in Corporate' : 'Walk-in Personal',
+            category: category,
+            type: isCorp ? 'Corporate' : 'Personal',
             phone: newPhoneOrId,
             status: 'Walk-in Registered',
             created_at: new Date().toISOString()
@@ -111,7 +106,7 @@ export default function AdminPage() {
         setCorporateId('');
         fetchAllRecords();
         setActiveTab('register');
-        setSubRegisterTab(category); // ከተመዘገበ በኋላ በቀጥታ ወደዛው ትር ይወስደዋል
+        setSubRegisterTab(category);
       }
     } catch (err) {
       console.error('Error:', err);
@@ -121,14 +116,17 @@ export default function AdminPage() {
     }
   };
 
-  // ዳታቤዝ ላይ ካሉት መረጃዎች የግለሰቦችን እና የድርጅቶችን ለብቻ ማጣራት
-  const personalRecords = allRecords.filter(item => 
-    item.category === 'personal' || item.type?.toLowerCase().includes('personal') || (!item.category && !item.type?.toLowerCase().includes('corporate'))
-  );
+  const corporateRecords = allRecords.filter(item => {
+    const cat = item.category?.toLowerCase() || '';
+    const type = item.type?.toLowerCase() || '';
+    const name = item.name?.toLowerCase() || '';
+    return cat.includes('corporate') || type.includes('corporate') || name.includes('company') || name.includes('plc') || name.includes('s.c');
+  });
 
-  const corporateRecords = allRecords.filter(item => 
-    item.category === 'corporate' || item.type?.toLowerCase().includes('corporate')
-  );
+  const personalRecords = allRecords.filter(item => {
+    const isCorp = corporateRecords.some(corp => corp.id === item.id);
+    return !isCorp;
+  });
 
   const displayedRecords = subRegisterTab === 'personal' ? personalRecords : corporateRecords;
 
@@ -231,7 +229,6 @@ export default function AdminPage() {
           {activeTab === 'register' ? (
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               
-              {/* የግለሰብ እና የድርጅት ንዑስ ትሮች */}
               <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #334155', paddingBottom: '12px' }}>
                 <button
                   onClick={() => setSubRegisterTab('personal')}
@@ -390,7 +387,6 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* ዝርዝር መረጃ የሚያሳይ ፖፕአፕ */}
           {selectedRecord && (
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
               <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
