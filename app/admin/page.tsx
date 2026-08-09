@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 
 export default function AdminPage() {
@@ -12,6 +12,10 @@ export default function AdminPage() {
 
   const [activeTab, setActiveTab] = useState<'online' | 'walkin'>('online');
   const [registrationType, setRegistrationType] = useState<'personal' | 'corporate'>('personal');
+
+  // ዳታቤዝ የሚመጡትን ኦንላይን ቡኪንጎች ለመያዝ
+  const [onlineBookings, setOnlineBookings] = useState<any[]>([]);
+  const [fetchingBookings, setFetchingBookings] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,11 +34,32 @@ export default function AdminPage() {
         setLoginError('Invalid username or password!');
       } else {
         setIsLoggedIn(true);
+        fetchOnlineBookings(); // ሲገባ ኦንላይን መረጃዎችን ከዳታቤዝ ይጭናል
       }
     } catch (err) {
       setLoginError('An error occurred during login.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ከዳታቤዝ ኦንላይን የተመዘገቡትን መረጃዎች ማምጫ (እባክዎ ከታች 'bookings' የሚለውን የሠንጠረዥ ስም ከእርስዎ ዳታቤዝ ጋር ያመሳክሩት)
+  const fetchOnlineBookings = async () => {
+    setFetchingBookings(true);
+    try {
+      const { data, error } = await supabase
+        .from('bookings') // ትኩረት፡ የሠንጠረዥዎ ስም 'bookings' ካልሆነ ትክክለኛውን ስም እዚህ ይጻፉ
+        .select('*');
+
+      if (error) {
+        console.error('Error fetching bookings:', error.message);
+      } else if (data) {
+        setOnlineBookings(data);
+      }
+    } catch (err) {
+      console.error('Error:', err);
+    } finally {
+      setFetchingBookings(false);
     }
   };
 
@@ -199,19 +224,35 @@ export default function AdminPage() {
 
           {activeTab === 'online' ? (
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: 'semibold', marginBottom: '16px', color: '#e2e8f0' }}>
-                Online Booked Records
-              </h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: 'semibold', color: '#e2e8f0', margin: 0 }}>
+                  Online Booked Records
+                </h2>
+                <button
+                  onClick={fetchOnlineBookings}
+                  style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+                >
+                  {fetchingBookings ? 'Refreshing...' : 'Refresh Data'}
+                </button>
+              </div>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {records.map((item) => (
-                  <div key={item.id} style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px' }}>{item.name}</p>
-                      <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>{item.type}</p>
+                {fetchingBookings ? (
+                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>Loading data from database...</p>
+                ) : onlineBookings.length === 0 ? (
+                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No online bookings found in database.</p>
+                ) : (
+                  onlineBookings.map((item, index) => (
+                    <div key={item.id || index} style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        {/* ትኩረት፡ በዳታቤዝዎ ውስጥ ያሉት የረድፎች ስሞች (ለምሳሌ name, car_number, phone) ከዚህ በታች ካሉት ጋር አንድ መሆናቸውን ያረጋግጡ */}
+                        <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px' }}>{item.name || item.full_name || 'No Name'}</p>
+                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>{item.type || item.service_type || item.phone || ''}</p>
+                      </div>
+                      <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>{item.status || 'Online Booked'}</span>
                     </div>
-                    <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>{item.status}</span>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           ) : (
