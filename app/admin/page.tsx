@@ -10,11 +10,21 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'online' | 'walkin'>('online');
+  // የትር ስሞች: 'register' (ዝርዝር ማየት እና መረጃ መመልከቻ) እና 'new-registration' (አዲስ መመዝገቢያ)
+  const [activeTab, setActiveTab] = useState<'register' | 'new-registration'>('register');
   const [registrationType, setRegistrationType] = useState<'personal' | 'corporate'>('personal');
 
-  const [onlineBookings, setOnlineBookings] = useState<any[]>([]);
-  const [fetchingBookings, setFetchingBookings] = useState(false);
+  const [allRecords, setAllRecords] = useState<any[]>([]);
+  const [fetchingRecords, setFetchingRecords] = useState(false);
+
+  // የተመረጠው ሰው ሙሉ መረጃ የሚታይበት ፖፕአፕ (Modal) ስቴት
+  const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
+
+  const [walkInName, setWalkInName] = useState('');
+  const [walkInPhone, setWalkInPhone] = useState('');
+  const [corporateName, setCorporateName] = useState('');
+  const [corporateId, setCorporateId] = useState('');
+  const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +43,7 @@ export default function AdminPage() {
         setLoginError('Invalid username or password!');
       } else {
         setIsLoggedIn(true);
-        fetchOnlineBookings();
+        fetchAllRecords();
       }
     } catch (err) {
       setLoginError('An error occurred during login.');
@@ -42,57 +52,69 @@ export default function AdminPage() {
     }
   };
 
-  const fetchOnlineBookings = async () => {
-    setFetchingBookings(true);
+  // ከዳታቤዝ ሁለቱንም (ኦንላይን እና በአካል የሚመጡትን) አንድ ላይ ማምጫ ሰንጠረዥ
+  const fetchAllRecords = async () => {
+    setFetchingRecords(true);
     try {
       const { data, error } = await supabase
-        .from('bookings') // የሠንጠረዥዎ ስም የተለየ ከሆነ እዚህ ያስተካክሉት
-        .select('*');
+        .from('bookings') // ሁሉም መረጃዎች የሚቀመጡበት ሰንጠረዥ ስም
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching bookings:', error.message);
+        console.error('Error fetching records:', error.message);
       } else if (data) {
-        setOnlineBookings(data);
+        setAllRecords(data);
       }
     } catch (err) {
       console.error('Error:', err);
     } finally {
-      setFetchingBookings(false);
+      setFetchingRecords(false);
     }
   };
 
-  const [records, setRecords] = useState([
-    { id: 1, name: 'Kebede Mekonnen', type: 'Car - A12345', status: 'Online Booked' },
-    { id: 2, name: 'Abebe Balcha', type: 'Walk-in', status: 'Online Booked' }
-  ]);
-
-  const [walkInName, setWalkInName] = useState('');
-  const [walkInPhone, setWalkInPhone] = useState('');
-  const [corporateName, setCorporateName] = useState('');
-  const [corporateId, setCorporateId] = useState('');
-
-  const handleWalkInSubmit = (e: React.FormEvent) => {
+  // በአካል (Walk-in) የሚመጡትን መረጃዎች በቀጥታ ወደ ዳታቤዙ (bookings) መላኪያ
+  const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (registrationType === 'personal' && !walkInName) return;
     if (registrationType === 'corporate' && !corporateName) return;
 
+    setSubmittingWalkIn(true);
+
     const newName = registrationType === 'personal' ? walkInName : corporateName;
-    const newType = registrationType === 'personal' 
-      ? (walkInPhone ? `Walk-in Personal (${walkInPhone})` : 'Walk-in Personal')
-      : (corporateId ? `Walk-in Corporate (ID: ${corporateId})` : 'Walk-in Corporate');
+    const newType = registrationType === 'personal' ? 'Walk-in Personal' : 'Walk-in Corporate';
+    const newPhone = registrationType === 'personal' ? walkInPhone : corporateId; // ID ወይም Phone
 
-    const newEntry = {
-      id: records.length + 1,
-      name: newName,
-      type: newType,
-      status: 'Registered'
-    };
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .insert([
+          {
+            name: newName,
+            type: newType,
+            phone: newPhone,
+            status: 'Walk-in Registered',
+            created_at: new Date().toISOString()
+          }
+        ]);
 
-    setRecords([...records, newEntry]);
-    setWalkInName('');
-    setWalkInPhone('');
-    setCorporateName('');
-    setCorporateId('');
+      if (error) {
+        alert('Error saving record: ' + error.message);
+      } else {
+        alert('Walk-in registration successful!');
+        setWalkInName('');
+        setWalkInPhone('');
+        setCorporateName('');
+        setCorporateId('');
+        fetchAllRecords(); // መረጃውን እንደገና ይጭናል
+        setActiveTab('register'); // ወደ Register ትር ይመልሰዋል
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      alert('An error occurred during registration.');
+    } finally {
+      setSubmittingWalkIn(false);
+    }
   };
 
   return (
@@ -105,9 +127,7 @@ export default function AdminPage() {
           
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
-                Username:
-              </label>
+              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Username:</label>
               <input 
                 type="text" 
                 value={username} 
@@ -118,9 +138,7 @@ export default function AdminPage() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
-                Password:
-              </label>
+              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Password:</label>
               <div style={{ position: 'relative' }}>
                 <input 
                   type={showPassword ? "text" : "password"} 
@@ -132,32 +150,9 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: 'absolute',
-                    right: '10px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'none',
-                    border: 'none',
-                    color: '#94a3b8',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                  title={showPassword ? "Hide password" : "Show password"}
+                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
                 >
-                  {showPassword ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                      <line x1="1" y1="1" x2="23" y2="23"></line>
-                    </svg>
-                  )}
+                  {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
             </div>
@@ -176,9 +171,7 @@ export default function AdminPage() {
       ) : (
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0f172a', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b' }}>
-            <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#4ade80' }}>
-              Company Management Dashboard
-            </h1>
+            <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#4ade80' }}>Company Management Dashboard</h1>
             <button 
               onClick={() => setIsLoggedIn(false)}
               style={{ backgroundColor: '#dc2626', color: '#ffffff', padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
@@ -189,75 +182,74 @@ export default function AdminPage() {
 
           <div style={{ display: 'flex', gap: '16px' }}>
             <button
-              onClick={() => setActiveTab('online')}
+              onClick={() => setActiveTab('register')}
               style={{
                 flex: 1,
                 padding: '14px',
                 borderRadius: '8px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
-                backgroundColor: activeTab === 'online' ? '#16a34a' : '#0f172a',
+                backgroundColor: activeTab === 'register' ? '#16a34a' : '#0f172a',
                 color: '#ffffff',
                 border: '1px solid #1e293b'
               }}
             >
-              Online Bookings View
+              Register (View All Records)
             </button>
             <button
-              onClick={() => setActiveTab('walkin')}
+              onClick={() => setActiveTab('new-registration')}
               style={{
                 flex: 1,
                 padding: '14px',
                 borderRadius: '8px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
-                backgroundColor: activeTab === 'walkin' ? '#16a34a' : '#0f172a',
+                backgroundColor: activeTab === 'new-registration' ? '#16a34a' : '#0f172a',
                 color: '#ffffff',
                 border: '1px solid #1e293b'
               }}
             >
-              Walk-in New Registration
+              New Registration (Walk-in)
             </button>
           </div>
 
-          {activeTab === 'online' ? (
+          {activeTab === 'register' ? (
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h2 style={{ fontSize: '18px', fontWeight: 'semibold', color: '#e2e8f0', margin: 0 }}>
-                  Online Booked Records (Full Details)
+                  All Registrations (Click any name for full details)
                 </h2>
                 <button
-                  onClick={fetchOnlineBookings}
+                  onClick={fetchAllRecords}
                   style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
                 >
-                  {fetchingBookings ? 'Refreshing...' : 'Refresh Data'}
+                  {fetchingRecords ? 'Refreshing...' : 'Refresh Data'}
                 </button>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {fetchingBookings ? (
-                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>Loading data from database...</p>
-                ) : onlineBookings.length === 0 ? (
-                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No online bookings found in database.</p>
+                {fetchingRecords ? (
+                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>Loading records...</p>
+                ) : allRecords.length === 0 ? (
+                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No records found.</p>
                 ) : (
-                  onlineBookings.map((item, index) => (
-                    <div key={item.id || index} style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#4ade80' }}>
-                          {item.name || item.full_name || item.customer_name || 'Customer Name Not Specified'}
-                        </span>
-                        <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '4px 10px', borderRadius: '6px' }}>
-                          {item.status || 'Online Booked'}
-                        </span>
+                  allRecords.map((item, index) => (
+                    <div 
+                      key={item.id || index} 
+                      onClick={() => setSelectedRecord(item)} // ስሙን ሲነኩ ሙሉ መረጃ እንዲመጣ ያደርጋል
+                      style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
+                    >
+                      <div>
+                        <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
+                          {item.name || item.full_name || 'No Name'}
+                        </p>
+                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>
+                          {item.type || item.service_type || 'General'}
+                        </p>
                       </div>
-
-                      {/* የደንበኛውን ሌሎች ተጨማሪ መረጃዎች እዚህ በዝርዝር እናሳያለን */}
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px', fontSize: '13px', color: '#cbd5e1', marginTop: '4px', borderTop: '1px solid #334155', paddingTop: '8px' }}>
-                        <div><strong>Phone:</strong> {item.phone || item.phone_number || 'N/A'}</div>
-                        <div><strong>Vehicle / Type:</strong> {item.type || item.vehicle || item.car_number || 'N/A'}</div>
-                        <div><strong>Service:</strong> {item.service || item.service_type || 'N/A'}</div>
-                        <div><strong>Date / Time:</strong> {item.date || item.created_at ? new Date(item.date || item.created_at).toLocaleString() : 'N/A'}</div>
-                      </div>
+                      <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>
+                        {item.status || 'Registered'}
+                      </span>
                     </div>
                   ))
                 )}
@@ -266,39 +258,21 @@ export default function AdminPage() {
           ) : (
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 'semibold', marginBottom: '16px', color: '#e2e8f0' }}>
-                Walk-in New Registration Form
+                New Walk-in Registration Form
               </h2>
 
               <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
                 <button
                   type="button"
                   onClick={() => setRegistrationType('personal')}
-                  style={{
-                    flex: 1,
-                    padding: '10px',
-                    borderRadius: '6px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    backgroundColor: registrationType === 'personal' ? '#334155' : '#1e293b',
-                    color: '#ffffff',
-                    border: '1px solid #475569'
-                  }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'personal' ? '#334155' : '#1e293b', color: '#ffffff', border: '1px solid #475569' }}
                 >
                   Personal
                 </button>
                 <button
                   type="button"
                   onClick={() => setRegistrationType('corporate')}
-                  style={{
-                    flex: 1,
-                    padding: '10px',
-                    borderRadius: '6px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    backgroundColor: registrationType === 'corporate' ? '#334155' : '#1e293b',
-                    color: '#ffffff',
-                    border: '1px solid #475569'
-                  }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'corporate' ? '#334155' : '#1e293b', color: '#ffffff', border: '1px solid #475569' }}
                 >
                   Corporate
                 </button>
@@ -358,10 +332,41 @@ export default function AdminPage() {
                 <button 
                   type="submit"
                   style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer', marginTop: '8px' }}
+                  disabled={submittingWalkIn}
                 >
-                  Submit Registration
+                  {submittingWalkIn ? 'Saving...' : 'Submit Registration'}
                 </button>
               </form>
+            </div>
+          )}
+
+          {/* የተመረጠውን ሰው ሙሉ መረጃ የሚያሳይ ፖፕአፕ (Popup Modal) */}
+          {selectedRecord && (
+            <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
+              <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#4ade80', margin: 0 }}>Full Details</h3>
+                  <button 
+                    onClick={() => setSelectedRecord(null)}
+                    style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer' }}
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#e2e8f0', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px' }}>
+                  <p style={{ margin: 0 }}><strong>Name / Company:</strong> {selectedRecord.name || selectedRecord.full_name || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Registration Type:</strong> {selectedRecord.type || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Phone / ID:</strong> {selectedRecord.phone || selectedRecord.phone_number || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Status:</strong> {selectedRecord.status || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
+                  {/* ሌሎች ተጨማሪ የዳታቤዝ ረድፎች ካሉ እዚህ ማሳየት ይቻላል */}
+                  {Object.entries(selectedRecord).map(([key, value]) => {
+                    if (['id', 'name', 'full_name', 'type', 'phone', 'phone_number', 'status', 'created_at'].includes(key)) return null;
+                    return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
+                  })}
+                </div>
+              </div>
             </div>
           )}
         </div>
