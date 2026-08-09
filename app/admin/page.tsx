@@ -13,7 +13,6 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<'online' | 'walkin'>('online');
   const [registrationType, setRegistrationType] = useState<'personal' | 'corporate'>('personal');
 
-  // ዳታቤዝ የሚመጡትን ኦንላይን ቡኪንጎች ለመያዝ
   const [onlineBookings, setOnlineBookings] = useState<any[]>([]);
   const [fetchingBookings, setFetchingBookings] = useState(false);
 
@@ -34,7 +33,7 @@ export default function AdminPage() {
         setLoginError('Invalid username or password!');
       } else {
         setIsLoggedIn(true);
-        fetchOnlineBookings(); // ሲገባ ኦንላይን መረጃዎችን ከዳታቤዝ ይጭናል
+        fetchOnlineBookings();
       }
     } catch (err) {
       setLoginError('An error occurred during login.');
@@ -43,12 +42,11 @@ export default function AdminPage() {
     }
   };
 
-  // ከዳታቤዝ ኦንላይን የተመዘገቡትን መረጃዎች ማምጫ (እባክዎ ከታች 'bookings' የሚለውን የሠንጠረዥ ስም ከእርስዎ ዳታቤዝ ጋር ያመሳክሩት)
   const fetchOnlineBookings = async () => {
     setFetchingBookings(true);
     try {
       const { data, error } = await supabase
-        .from('bookings') // ትኩረት፡ የሠንጠረዥዎ ስም 'bookings' ካልሆነ ትክክለኛውን ስም እዚህ ይጻፉ
+        .from('bookings') // የሠንጠረዥዎ ስም የተለየ ከሆነ እዚህ ያስተካክሉት
         .select('*');
 
       if (error) {
@@ -226,7 +224,7 @@ export default function AdminPage() {
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h2 style={{ fontSize: '18px', fontWeight: 'semibold', color: '#e2e8f0', margin: 0 }}>
-                  Online Booked Records
+                  Online Booked Records (Full Details)
                 </h2>
                 <button
                   onClick={fetchOnlineBookings}
@@ -243,13 +241,23 @@ export default function AdminPage() {
                   <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No online bookings found in database.</p>
                 ) : (
                   onlineBookings.map((item, index) => (
-                    <div key={item.id || index} style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        {/* ትኩረት፡ በዳታቤዝዎ ውስጥ ያሉት የረድፎች ስሞች (ለምሳሌ name, car_number, phone) ከዚህ በታች ካሉት ጋር አንድ መሆናቸውን ያረጋግጡ */}
-                        <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px' }}>{item.name || item.full_name || 'No Name'}</p>
-                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0' }}>{item.type || item.service_type || item.phone || ''}</p>
+                    <div key={item.id || index} style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#4ade80' }}>
+                          {item.name || item.full_name || item.customer_name || 'Customer Name Not Specified'}
+                        </span>
+                        <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '4px 10px', borderRadius: '6px' }}>
+                          {item.status || 'Online Booked'}
+                        </span>
                       </div>
-                      <span style={{ fontSize: '12px', backgroundColor: '#064e3b', color: '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>{item.status || 'Online Booked'}</span>
+
+                      {/* የደንበኛውን ሌሎች ተጨማሪ መረጃዎች እዚህ በዝርዝር እናሳያለን */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px', fontSize: '13px', color: '#cbd5e1', marginTop: '4px', borderTop: '1px solid #334155', paddingTop: '8px' }}>
+                        <div><strong>Phone:</strong> {item.phone || item.phone_number || 'N/A'}</div>
+                        <div><strong>Vehicle / Type:</strong> {item.type || item.vehicle || item.car_number || 'N/A'}</div>
+                        <div><strong>Service:</strong> {item.service || item.service_type || 'N/A'}</div>
+                        <div><strong>Date / Time:</strong> {item.date || item.created_at ? new Date(item.date || item.created_at).toLocaleString() : 'N/A'}</div>
+                      </div>
                     </div>
                   ))
                 )}
