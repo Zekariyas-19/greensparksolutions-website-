@@ -619,7 +619,7 @@ export default function AdminPage() {
                   style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer', marginTop: '8px' }}
                   disabled={submittingWalkIn}
                 >
-                  {submittingWatchText => submittingWalkIn ? 'Saving...' : 'Submit Registration'}
+                  {submittingWalkIn ? 'Saving...' : 'Submit Registration'}
                 </button>
               </form>
             </div>
