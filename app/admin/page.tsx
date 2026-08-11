@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 export default function AdminPage() {
-  // Login state variables
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -11,12 +10,10 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Navigation and tab management states
   const [activeTab, setActiveTab] = useState<'register' | 'new-registration'>('register');
   const [subRegisterTab, setSubRegisterTab] = useState<'personal' | 'corporate' | 'completed'>('personal');
   const [registrationType, setRegistrationType] = useState<'personal' | 'corporate'>('personal');
 
-  // Database records and selection states
   const [allRecords, setAllRecords] = useState<any[]>([]);
   const [fetchingRecords, setFetchingRecords] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
@@ -24,14 +21,12 @@ export default function AdminPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Walk-in form input states
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [plateNumber, setPlateNumber] = useState('');
   const [tinNumber, setTinNumber] = useState('');
   const [address, setAddress] = useState('');
   
-  // Available vehicle options list
   const vehicleOptions = [
     'የቤት መኪና',
     'ሚኒባስ',
@@ -43,11 +38,9 @@ export default function AdminPage() {
     'ተሳቢ ቦቲ'
   ];
 
-  // Selected vehicles and their respective quantities
   const [selectedVehicles, setSelectedVehicles] = useState<{ [key: string]: number }>({});
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
 
-  // Handle staff login submission
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -74,7 +67,6 @@ export default function AdminPage() {
     }
   };
 
-  // Fetch all bookings from Supabase
   const fetchAllRecords = async () => {
     setFetchingRecords(true);
     try {
@@ -119,7 +111,6 @@ export default function AdminPage() {
     return String(vehiclesData);
   };
 
-  // Update status of a booking record (e.g., Completed or Pending)
   const handleUpdateStatus = async (recordId: any, newStatus: string) => {
     setUpdatingStatus(true);
     try {
@@ -151,7 +142,6 @@ export default function AdminPage() {
     }
   };
 
-  // Handle vehicle checkbox toggling
   const handleCheckboxChange = (vName: string) => {
     setSelectedVehicles(prev => {
       const updated = { ...prev };
@@ -164,7 +154,6 @@ export default function AdminPage() {
     });
   };
 
-  // Handle vehicle quantity change
   const handleQuantityChange = (vName: string, qty: number) => {
     if (qty < 1) return;
     setSelectedVehicles(prev => ({
@@ -173,7 +162,6 @@ export default function AdminPage() {
     }));
   };
 
-  // Handle walk-in registration form submission
   const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -251,7 +239,6 @@ export default function AdminPage() {
     }
   };
 
-  // Filter records by status and customer type
   const completedRecords = allRecords.filter(item => {
     const st = item.status?.toLowerCase() || '';
     return st.includes('complet') || st.includes('ready') || st.includes('done');
@@ -304,8 +291,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F8FAFC', color: '#0F172A', padding: '24px', fontFamily: 'sans-serif' }}>
-      {/* Conditional rendering for login screen */}
+    <div style={{ minHeight: '100vh', backgroundColor: '#FFFFFF', color: '#0F172A', padding: '24px', fontFamily: 'sans-serif' }}>
       {!isLoggedIn ? (
         <div style={{ maxWidth: '400px', margin: '80px auto', backgroundColor: '#FFFFFF', padding: '32px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', color: '#15803D', textAlign: 'center' }}>
@@ -319,7 +305,7 @@ export default function AdminPage() {
                 type="text" 
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                 required
               />
             </div>
@@ -331,7 +317,7 @@ export default function AdminPage() {
                   type={showPassword ? "text" : "password"} 
                   value={password} 
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{ width: '100%', padding: '10px', paddingRight: '45px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '10px', paddingRight: '45px', borderRadius: '6px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                   required
                 />
                 <button
@@ -356,7 +342,6 @@ export default function AdminPage() {
           </form>
         </div>
       ) : (
-        /* Main dashboard layout after successful login */
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
             <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#15803D' }}>GreenSpark Management Dashboard</h1>
@@ -460,7 +445,7 @@ export default function AdminPage() {
                   placeholder="Search by Booking ID (e.g. GS-22542), Name, or Phone..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{ flex: 1, padding: '10px 14px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: '14px', boxSizing: 'border-box' }}
+                  style={{ flex: 1, padding: '10px 14px', borderRadius: '6px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: '14px', boxSizing: 'border-box' }}
                 />
                 {searchQuery && (
                   <button 
@@ -490,7 +475,7 @@ export default function AdminPage() {
                       <div 
                         key={item.id || index} 
                         onClick={() => setSelectedRecord(item)}
-                        style={{ padding: '16px', backgroundColor: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
+                        style={{ padding: '16px', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
                       >
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -515,7 +500,6 @@ export default function AdminPage() {
               </div>
             </div>
           ) : (
-            /* Walk-in registration form view */
             <div style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
               <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#0F172A' }}>
                 New Walk-in Registration Form <span style={{ fontSize: '13px', color: '#DC2626' }}>(ሁሉም መስኮች መሞላት አለባቸው)</span>
@@ -525,14 +509,14 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setRegistrationType('personal')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'personal' ? '#15803D' : '#F8FAFC', color: registrationType === 'personal' ? '#FFFFFF' : '#334155', border: '1px solid #CBD5E1' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'personal' ? '#15803D' : '#FFFFFF', color: registrationType === 'personal' ? '#FFFFFF' : '#334155', border: '1px solid #CBD5E1' }}
                 >
                   Personal
                 </button>
                 <button
                   type="button"
                   onClick={() => setRegistrationType('corporate')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'corporate' ? '#15803D' : '#F8FAFC', color: registrationType === 'corporate' ? '#FFFFFF' : '#334155', border: '1px solid #CBD5E1' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'corporate' ? '#15803D' : '#FFFFFF', color: registrationType === 'corporate' ? '#FFFFFF' : '#334155', border: '1px solid #CBD5E1' }}
                 >
                   Corporate
                 </button>
@@ -548,7 +532,7 @@ export default function AdminPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder={registrationType === 'personal' ? 'Enter full name...' : 'Enter company name...'}
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                   />
                 </div>
 
@@ -560,7 +544,7 @@ export default function AdminPage() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="0911..."
-                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                     />
                   </div>
                   <div style={{ flex: 1 }}>
@@ -570,7 +554,7 @@ export default function AdminPage() {
                       value={plateNumber}
                       onChange={(e) => setPlateNumber(e.target.value)}
                       placeholder="3 - A12345"
-                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                     />
                   </div>
                 </div>
@@ -619,7 +603,7 @@ export default function AdminPage() {
                                 value={quantity}
                                 onChange={(e) => handleQuantityChange(vName, parseInt(e.target.value) || 1)}
                                 onClick={(e) => e.stopPropagation()}
-                                style={{ width: '70px', padding: '4px 8px', borderRadius: '4px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: '14px' }}
+                                style={{ width: '70px', padding: '4px 8px', borderRadius: '4px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: '14px' }}
                               />
                             </div>
                           )}
@@ -637,7 +621,7 @@ export default function AdminPage() {
                       value={tinNumber}
                       onChange={(e) => setTinNumber(e.target.value)}
                       placeholder="Enter TIN number..."
-                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                     />
                   </div>
                 )}
@@ -649,7 +633,7 @@ export default function AdminPage() {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Enter address..."
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                   />
                 </div>
 
@@ -664,7 +648,6 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* Modal popup displaying selected record details */}
           {selectedRecord && (
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
               <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)', maxHeight: '90vh', overflowY: 'auto' }}>
@@ -697,7 +680,6 @@ export default function AdminPage() {
                   })}
                 </div>
 
-                {/* Status action buttons */}
                 <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Completed')}
