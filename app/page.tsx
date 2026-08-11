@@ -337,7 +337,6 @@ export default function Home() {
 
       {/* ጀማሪ (Hero) ክፍል */}
       <section className="flex flex-col items-center justify-center text-center px-4 pt-10 pb-6 max-w-5xl mx-auto">
-        
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
           {t.heroTitle1} <span className="text-green-500">{t.heroTitle2}</span> {t.heroTitle3}
         </h2>
