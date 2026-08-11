@@ -4,12 +4,14 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function Home() {
+  // State management for language, theme, mobile navigation, and customer details
   const [lang, setLang] = useState<"am" | "en">("am");
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   
   const [customerType, setCustomerType] = useState<"individual" | "company">("individual");
   
+  // Form inputs for individual and corporate entities
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [plate, setPlate] = useState("");
@@ -17,20 +19,23 @@ export default function Home() {
   const [tin, setTin] = useState("");
   const [address, setAddress] = useState("");
 
+  // Loading state, notification statuses, and success modal states
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [generatedBookingId, setGeneratedBookingId] = useState("");
 
+  // Fleet management states for selected vehicles and calculation metrics
   const [vehicleCounts, setVehicleCounts] = useState<{ [key: string]: number }>({});
-
   const [dailyKm, setDailyKm] = useState<number>(300);
   const [totalVehicles, setTotalVehicles] = useState<number>(5);
 
+  // ROI estimation calculations based on vehicle quantity, mileage, and efficiency metrics
   const estimatedDailySavings = Math.round(totalVehicles * (dailyKm / 3) * 0.12 * 180.46);
   const estimatedYearlySavings = Math.round(estimatedDailySavings * 180);
 
+  // Toggle vehicle selection or remove it if already selected
   const handleVehicleToggle = (key: string) => {
     setVehicleCounts((prev) => {
       const copy = { ...prev };
@@ -43,6 +48,7 @@ export default function Home() {
     });
   };
 
+  // Update specific vehicle count ensuring it never goes below 1
   const handleCountChange = (key: string, count: number) => {
     setVehicleCounts((prev) => ({
       ...prev,
@@ -50,6 +56,7 @@ export default function Home() {
     }));
   };
 
+  // Handle form submission, generate tracking ID, and save payload to Supabase database
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -80,6 +87,7 @@ export default function Home() {
       setGeneratedBookingId(uniqueId);
       setShowSuccessModal(true);
 
+      // Reset form fields after successful deployment/submission
       setFullName("");
       setPhone("");
       setPlate("");
@@ -98,6 +106,7 @@ export default function Home() {
     }
   };
 
+  // Multi-language content dictionary (Amharic and English translations)
   const content = {
     am: {
       navServices: "ጥቅሞች",
@@ -107,13 +116,13 @@ export default function Home() {
       heroTitle1: "የነዳጅ ወጪዎን",
       heroTitle2: "ከ10% - 30%",
       heroTitle3: "ይቀንሱ",
-      heroDesc: "የSUPERTECH መሣሪያን በነዳጅ ታንከር ውስጥ በመግጠም የበካይ ጋዝ ልቀትን እስከ 80% ይቀንሱ፤ የመኪናዎን ሞተር እድሜን ያራዝሙ። ምንም አይነት የሞተር ማሻሻያ የማይፈልግ።",
+      heroDesc: "Powering Efficiency, Protecting the Planet. የSUPERTECH መሣሪያን በመጠቀም የነዳጅ ወጪዎን ይቀንሱ፣ ሞተርዎን ይጠብቁ።",
       feat1Title: "10-30% የነዳጅ ቁጠባ",
       feat1Desc: "በየቀኑ በሚያደርጉት እንቅስቃሴ ከፍተኛ የነዳጅ ወጪን በከፍተኛ ሁኔታ ይቀንሳል",
-      feat2Title: "እስከ 80% ከመኪናዎ የሚወጣውን በካይ ጋዝ ይቀንሳል",
+      feat2Title: "እስከ 80% በካይ ጋዝ ቅነሳ",
       feat2Desc: "የአየር ብክለትን በመቀነስ የአካባቢ ጥበቃ ደንቦችን ያሟላል",
-      feat3Title: "5 ዓመት ዋስትና",
-      feat3Desc: "እስከ 10 ዓመት ያለምንም ተጨማሪ ወጪና ጥገና የሚያገለግል",
+      feat3Title: "ዘላቂ አገልግሎት",
+      feat3Desc: "ለረጅም ዓመታት ያለምንም ተጨማሪ ጥገና የሚያገለግል",
       calcTitle: "የነዳጅ ወጪ ቁጠባ ማስያ (ROI Calculator)",
       calcSub: "ተሽከርካሪዎችዎ በቀን የሚያደርጉትን ጉዞ እና ብዛት በማስገባት የሚቆጥቡትን የብር መጠን ይመልከቱ",
       calcVehiclesLabel: "የተሽከርካሪዎች ብዛት፦",
@@ -160,13 +169,13 @@ export default function Home() {
       heroTitle1: "Reduce Fuel Costs",
       heroTitle2: "By 10% - 30%",
       heroTitle3: "Guaranteed",
-      heroDesc: "Optimize combustion, lower toxic gas emissions by up to 80%, and extend engine life with zero engine modifications required.",
+      heroDesc: "Powering Efficiency, Protecting the Planet. Optimize combustion and lower emissions with SUPERTECH.",
       feat1Title: "10-30% Fuel Savings",
       feat1Desc: "Significant daily operational cost reduction for your vehicles",
       feat2Title: "80% Less Emissions",
-      feat2Desc: "Dramatically reduces CO2, NOx and particulate air pollution",
-      feat3Title: "5-Year Warranty",
-      feat3Desc: "10 years lifespan with zero maintenance required",
+      feat2Desc: "Dramatically reduces environmental air pollution",
+      feat3Title: "Long-lasting Reliability",
+      feat3Desc: "Built for extended durability with zero maintenance required",
       calcTitle: "Fuel Savings Calculator (ROI)",
       calcSub: "Estimate your financial savings based on daily mileage and fleet size",
       calcVehiclesLabel: "Number of Vehicles:",
@@ -209,6 +218,7 @@ export default function Home() {
 
   const t = content[lang];
 
+  // List of configurable vehicles mapped to translation dictionary
   const vehicleList = [
     { key: "personal", label: t.catPersonal },
     { key: "minibus", label: t.subMinibus },
@@ -222,37 +232,37 @@ export default function Home() {
 
   return (
     <main className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"
+      isDarkMode ? "bg-[#0B132B] text-white" : "bg-slate-50 text-slate-900"
     }`}>
-      {/* ናቪጌሽን ባር */}
+      {/* Navigation bar incorporating official brand color codes (#0B132B, #1C2541, #43A047, #1E88E5) */}
       <nav className={`flex justify-between items-center px-4 md:px-8 py-4 border-b sticky top-0 z-40 transition-colors ${
-        isDarkMode ? "border-slate-800 bg-slate-950/95 backdrop-blur-md" : "border-slate-200 bg-white/95 backdrop-blur-md"
+        isDarkMode ? "border-[#1C2541] bg-[#0B132B]/95 backdrop-blur-md" : "border-slate-200 bg-white/95 backdrop-blur-md"
       }`}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <img 
             src="/logo.png" 
             alt="GreenSpark Logo" 
-            className="w-10 h-10 md:w-12 md:h-12 object-contain" 
+            className="w-12 h-12 md:w-14 md:h-14 object-contain" 
           />
           <div className="flex flex-col">
-            <span className="text-lg md:text-2xl font-bold tracking-tight text-green-500 leading-none">GreenSpark</span>
-            <span className="text-[9px] md:text-[10px] text-slate-400 tracking-widest uppercase">Solutions PLC</span>
+            <span className="text-lg md:text-2xl font-extrabold tracking-tight text-[#43A047] leading-none">GreenSpark</span>
+            <span className="text-[9px] md:text-[10px] text-[#1E88E5] tracking-widest uppercase font-semibold">SOLUTIONS PLC</span>
           </div>
         </div>
         
-        {/* የዴስክቶፕ ሜኑ */}
-        <div className="hidden md:flex items-center space-x-5 text-sm font-medium">
-          <a href="#benefits" className="hover:text-green-500 transition">{t.navServices}</a>
-          <a href="#calculator" className="hover:text-green-500 transition">{t.navCalc}</a>
-          <a href="#booking" className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg transition shadow-md shadow-green-600/20">
+        {/* Desktop Menu layout */}
+        <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
+          <a href="#benefits" className="hover:text-[#43A047] transition">{t.navServices}</a>
+          <a href="#calculator" className="hover:text-[#43A047] transition">{t.navCalc}</a>
+          <a href="#booking" className="bg-[#43A047] hover:bg-[#388E3C] text-white px-5 py-2.5 rounded-xl transition shadow-md shadow-[#43A047]/20 font-semibold">
             {t.navBook}
           </a>
 
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className={`p-2.5 rounded-lg border text-lg leading-none transition ${
+            className={`p-2.5 rounded-xl border text-lg leading-none transition ${
               isDarkMode 
-                ? "bg-slate-900 border-slate-700 text-yellow-400 hover:bg-slate-800" 
+                ? "bg-[#1C2541] border-[#3A506B] text-yellow-400 hover:bg-[#2A3B5F]" 
                 : "bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200"
             }`}
           >
@@ -262,9 +272,9 @@ export default function Home() {
           <select 
             value={lang} 
             onChange={(e) => setLang(e.target.value as "am" | "en")}
-            className={`font-semibold px-3 py-2 rounded-lg focus:outline-none cursor-pointer border text-xs transition ${
+            className={`font-semibold px-3 py-2 rounded-xl focus:outline-none cursor-pointer border text-xs transition ${
               isDarkMode 
-                ? "bg-slate-900 border-slate-700 text-green-400" 
+                ? "bg-[#1C2541] border-[#3A506B] text-[#43A047]" 
                 : "bg-slate-100 border-slate-300 text-green-700"
             }`}
           >
@@ -273,12 +283,12 @@ export default function Home() {
           </select>
         </div>
 
-        {/* የስልክ መቆጣጠሪያዎች */}
+        {/* Mobile controls */}
         <div className="flex md:hidden items-center space-x-2">
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
             className={`p-2 rounded-lg border text-sm transition ${
-              isDarkMode ? "bg-slate-900 border-slate-700 text-yellow-400" : "bg-slate-100 border-slate-300 text-slate-700"
+              isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-yellow-400" : "bg-slate-100 border-slate-300 text-slate-700"
             }`}
           >
             {isDarkMode ? "☀️" : "🌙"}
@@ -288,7 +298,7 @@ export default function Home() {
             value={lang} 
             onChange={(e) => setLang(e.target.value as "am" | "en")}
             className={`font-semibold px-2 py-1.5 rounded-lg focus:outline-none border text-xs ${
-              isDarkMode ? "bg-slate-900 border-slate-700 text-green-400" : "bg-slate-100 border-slate-300 text-green-700"
+              isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-[#43A047]" : "bg-slate-100 border-slate-300 text-green-700"
             }`}
           >
             <option value="am">አማ</option>
@@ -298,7 +308,7 @@ export default function Home() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`p-2 rounded-lg border text-base ${
-              isDarkMode ? "bg-slate-900 border-slate-700 text-white" : "bg-slate-100 border-slate-300 text-slate-900"
+              isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-white" : "bg-slate-100 border-slate-300 text-slate-900"
             }`}
           >
             {mobileMenuOpen ? "✕" : "☰"}
@@ -306,82 +316,87 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* የሞባይል ድሮፕዳው ሜኑ */}
+      {/* Mobile dropdown menu view */}
       {mobileMenuOpen && (
         <div className={`md:hidden flex flex-col space-y-3 px-6 py-5 border-b shadow-lg transition-all ${
-          isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-900"
+          isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-white" : "bg-white border-slate-200 text-slate-900"
         }`}>
           <a 
             href="#benefits" 
             onClick={() => setMobileMenuOpen(false)}
-            className="text-base font-medium py-1.5 hover:text-green-500"
+            className="text-base font-medium py-1.5 hover:text-[#43A047]"
           >
             {t.navServices}
           </a>
           <a 
             href="#calculator" 
             onClick={() => setMobileMenuOpen(false)}
-            className="text-base font-medium py-1.5 hover:text-green-500"
+            className="text-base font-medium py-1.5 hover:text-[#43A047]"
           >
             {t.navCalc}
           </a>
           <a 
             href="#booking" 
             onClick={() => setMobileMenuOpen(false)}
-            className="bg-green-600 text-center hover:bg-green-500 text-white px-4 py-2.5 rounded-lg font-medium transition shadow-md"
+            className="bg-[#43A047] text-center hover:bg-[#388E3C] text-white px-4 py-2.5 rounded-xl font-medium transition shadow-md"
           >
             {t.navBook}
           </a>
         </div>
       )}
 
-      {/* ጀማሪ (Hero) ክፍል */}
-      <section className="flex flex-col items-center justify-center text-center px-4 pt-10 pb-6 max-w-5xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
-          {t.heroTitle1} <span className="text-green-500">{t.heroTitle2}</span> {t.heroTitle3}
+      {/* Hero section highlighting corporate brand identity and messaging */}
+      <section className="flex flex-col items-center justify-center text-center px-4 pt-12 pb-8 max-w-5xl mx-auto">
+        <span className={`px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border tracking-wide uppercase ${
+          isDarkMode ? "bg-[#1E88E5]/10 border-[#1E88E5]/30 text-[#1E88E5]" : "bg-blue-50 border-blue-200 text-blue-700"
+        }`}>
+          Powering Efficiency, Protecting the Planet
+        </span>
+        <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+          {t.heroTitle1} <span className="text-[#43A047]">{t.heroTitle2}</span> {t.heroTitle3}
         </h2>
-        <p className={`text-base md:text-lg mb-8 max-w-2xl leading-relaxed ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
+        <p className={`text-base md:text-xl mb-10 max-w-2xl leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>
           {t.heroDesc}
         </p>
 
         <div id="benefits" className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-4 text-left">
-          <div className={`p-6 rounded-2xl border transition hover:border-green-500/50 ${
-            isDarkMode ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
+          <div className={`p-6 rounded-2xl border transition hover:border-[#43A047] ${
+            isDarkMode ? "bg-[#1C2541]/70 border-[#3A506B]" : "bg-white border-slate-200 shadow-sm"
           }`}>
-            <h4 className="text-green-500 font-bold text-lg mb-2">{t.feat1Title}</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">{t.feat1Desc}</p>
+            <h4 className="text-[#43A047] font-bold text-lg mb-2">{t.feat1Title}</h4>
+            <p className={`text-xs leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>{t.feat1Desc}</p>
           </div>
 
-          <div className={`p-6 rounded-2xl border transition hover:border-green-500/50 ${
-            isDarkMode ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
+          <div className={`p-6 rounded-2xl border transition hover:border-[#43A047] ${
+            isDarkMode ? "bg-[#1C2541]/70 border-[#3A506B]" : "bg-white border-slate-200 shadow-sm"
           }`}>
-            <h4 className="text-green-500 font-bold text-lg mb-2">{t.feat2Title}</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">{t.feat2Desc}</p>
+            <h4 className="text-[#1E88E5] font-bold text-lg mb-2">{t.feat2Title}</h4>
+            <p className={`text-xs leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>{t.feat2Desc}</p>
           </div>
 
-          <div className={`p-6 rounded-2xl border transition hover:border-green-500/50 ${
-            isDarkMode ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
+          <div className={`p-6 rounded-2xl border transition hover:border-[#43A047] ${
+            isDarkMode ? "bg-[#1C2541]/70 border-[#3A506B]" : "bg-white border-slate-200 shadow-sm"
           }`}>
-            <h4 className="text-green-500 font-bold text-lg mb-2">{t.feat3Title}</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">{t.feat3Desc}</p>
+            <h4 className="text-[#43A047] font-bold text-lg mb-2">{t.feat3Title}</h4>
+            <p className={`text-xs leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>{t.feat3Desc}</p>
           </div>
         </div>
       </section>
 
-      {/* የሂሳብ ማስያ (Calculator) */}
+      {/* ROI Calculator Section */}
       <section id="calculator" className="max-w-4xl mx-auto px-4 py-10">
-        <div className={`p-6 md:p-8 rounded-2xl border shadow-lg ${
-          isDarkMode ? "bg-slate-900/80 border-slate-800" : "bg-white border-slate-200"
+        <div className={`p-6 md:p-10 rounded-3xl border shadow-xl ${
+          isDarkMode ? "bg-[#1C2541]/90 border-[#3A506B]" : "bg-white border-slate-200"
         }`}>
           <h3 className="text-xl md:text-2xl font-bold text-center mb-2">{t.calcTitle}</h3>
-          <p className={`text-xs text-center mb-8 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>{t.calcSub}</p>
+          <p className={`text-xs text-center mb-8 ${isDarkMode ? "text-slate-300" : "text-slate-500"}`}>{t.calcSub}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="space-y-6">
               <div>
                 <div className="flex justify-between text-sm font-semibold mb-2">
                   <span>{t.calcVehiclesLabel}</span>
-                  <span className="text-green-500">{totalVehicles}</span>
+                  <span className="text-[#43A047]">{totalVehicles}</span>
                 </div>
                 <input 
                   type="range" 
@@ -389,14 +404,14 @@ export default function Home() {
                   max="50" 
                   value={totalVehicles} 
                   onChange={(e) => setTotalVehicles(parseInt(e.target.value))}
-                  className="w-full accent-green-500 cursor-pointer"
+                  className="w-full accent-[#43A047] cursor-pointer"
                 />
               </div>
 
               <div>
                 <div className="flex justify-between text-sm font-semibold mb-2">
                   <span>{t.calcKmLabel}</span>
-                  <span className="text-green-500">{dailyKm} KM</span>
+                  <span className="text-[#43A047]">{dailyKm} KM</span>
                 </div>
                 <input 
                   type="range" 
@@ -405,26 +420,26 @@ export default function Home() {
                   step="10"
                   value={dailyKm} 
                   onChange={(e) => setDailyKm(parseInt(e.target.value))}
-                  className="w-full accent-green-500 cursor-pointer"
+                  className="w-full accent-[#43A047] cursor-pointer"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-              <div className={`p-4 rounded-xl border text-center ${
-                isDarkMode ? "bg-slate-950 border-slate-800" : "bg-slate-50 border-slate-200"
+              <div className={`p-4 rounded-2xl border text-center ${
+                isDarkMode ? "bg-[#0B132B] border-[#3A506B]" : "bg-slate-50 border-slate-200"
               }`}>
                 <span className="text-xs text-slate-400 block mb-1">{t.calcDailyEst}</span>
-                <span className="text-2xl font-extrabold text-green-500">
+                <span className="text-2xl font-extrabold text-[#43A047]">
                   {estimatedDailySavings.toLocaleString()} {t.currency}
                 </span>
               </div>
 
-              <div className={`p-4 rounded-xl border text-center ${
+              <div className={`p-4 rounded-2xl border text-center ${
                 isDarkMode ? "bg-green-950/30 border-green-800/50" : "bg-green-50 border-green-200"
               }`}>
                 <span className="text-xs text-green-400 block mb-1 font-medium">{t.calcYearlyEst}</span>
-                <span className="text-3xl font-extrabold text-green-500">
+                <span className="text-3xl font-extrabold text-[#43A047]">
                   {estimatedYearlySavings.toLocaleString()} {t.currency}
                 </span>
               </div>
@@ -433,24 +448,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* የቦታ ማስያዣ ቅጽ (Booking Form) */}
+      {/* Booking Form Section for Individual and Company options */}
       <section id="booking" className="max-w-2xl mx-auto px-4 pb-20">
-        <div className={`p-6 md:p-8 rounded-2xl shadow-xl border transition ${
+        <div className={`p-6 md:p-10 rounded-3xl shadow-2xl border transition ${
           isDarkMode 
-            ? "bg-slate-900 border-slate-800" 
+            ? "bg-[#1C2541] border-[#3A506B]" 
             : "bg-white border-slate-200 shadow-slate-200"
         }`}>
           <h3 className="text-xl md:text-2xl font-bold text-center mb-2">{t.formTitle}</h3>
-          <p className={`text-xs text-center mb-6 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>{t.formSub}</p>
+          <p className={`text-xs text-center mb-6 ${isDarkMode ? "text-slate-300" : "text-slate-500"}`}>{t.formSub}</p>
 
-          <div className="flex bg-slate-950 p-1.5 rounded-xl border border-slate-800 mb-6">
+          <div className="flex bg-[#0B132B] p-1.5 rounded-xl border border-[#3A506B] mb-6">
             <button
               type="button"
               onClick={() => setCustomerType("individual")}
               className={`flex-1 py-2.5 text-xs md:text-sm font-semibold rounded-lg transition ${
                 customerType === "individual"
-                  ? "bg-green-600 text-white shadow-md"
-                  : isDarkMode ? "text-slate-400 hover:text-white" : "text-slate-600 hover:text-slate-900"
+                  ? "bg-[#43A047] text-white shadow-md"
+                  : isDarkMode ? "text-slate-300 hover:text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               {t.tabIndividual}
@@ -460,8 +475,8 @@ export default function Home() {
               onClick={() => setCustomerType("company")}
               className={`flex-1 py-2.5 text-xs md:text-sm font-semibold rounded-lg transition ${
                 customerType === "company"
-                  ? "bg-green-600 text-white shadow-md"
-                  : isDarkMode ? "text-slate-400 hover:text-white" : "text-slate-600 hover:text-slate-900"
+                  ? "bg-[#43A047] text-white shadow-md"
+                  : isDarkMode ? "text-slate-300 hover:text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               {t.tabCompany}
@@ -485,8 +500,8 @@ export default function Home() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder={t.phFullName} 
-                    className={`w-full rounded-lg px-4 py-2.5 border focus:outline-none focus:border-green-500 transition ${
-                      isDarkMode ? "bg-slate-950 border-slate-800 text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                    className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
+                      isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                     }`}
                   />
                 </div>
@@ -499,8 +514,8 @@ export default function Home() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder={t.phPhone} 
-                      className={`w-full rounded-lg px-4 py-2.5 border focus:outline-none focus:border-green-500 transition ${
-                        isDarkMode ? "bg-slate-950 border-slate-800 text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
+                        isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                       }`}
                     />
                   </div>
@@ -512,8 +527,8 @@ export default function Home() {
                       value={plate}
                       onChange={(e) => setPlate(e.target.value)}
                       placeholder={t.phPlate} 
-                      className={`w-full rounded-lg px-4 py-2.5 border focus:outline-none focus:border-green-500 transition ${
-                        isDarkMode ? "bg-slate-950 border-slate-800 text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
+                        isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                       }`}
                     />
                   </div>
@@ -531,8 +546,8 @@ export default function Home() {
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     placeholder={t.phCompanyName} 
-                    className={`w-full rounded-lg px-4 py-2.5 border focus:outline-none focus:border-green-500 transition ${
-                      isDarkMode ? "bg-slate-950 border-slate-800 text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                    className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
+                      isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                     }`}
                   />
                 </div>
@@ -545,8 +560,8 @@ export default function Home() {
                       value={tin}
                       onChange={(e) => setTin(e.target.value)}
                       placeholder={t.phTin} 
-                      className={`w-full rounded-lg px-4 py-2.5 border focus:outline-none focus:border-green-500 transition ${
-                        isDarkMode ? "bg-slate-950 border-slate-800 text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
+                        isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                       }`}
                     />
                   </div>
@@ -558,8 +573,8 @@ export default function Home() {
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder={t.phAddress} 
-                      className={`w-full rounded-lg px-4 py-2.5 border focus:outline-none focus:border-green-500 transition ${
-                        isDarkMode ? "bg-slate-950 border-slate-800 text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
+                        isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                       }`}
                     />
                   </div>
@@ -568,20 +583,20 @@ export default function Home() {
             )}
 
             <div className="pt-4">
-              <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? "text-green-400" : "text-green-700"}`}>
+              <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? "text-[#43A047]" : "text-green-700"}`}>
                 {t.labelVehicleSelection}
               </label>
 
-              <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
                 {vehicleList.map((item) => {
                   const isSelected = vehicleCounts[item.key] !== undefined;
                   return (
                     <div 
                       key={item.key} 
-                      className={`flex items-center justify-between p-3 rounded-xl border transition ${
+                      className={`flex items-center justify-between p-3.5 rounded-xl border transition ${
                         isSelected 
-                          ? "border-green-500 bg-green-500/10" 
-                          : isDarkMode ? "border-slate-800 bg-slate-950/50" : "border-slate-200 bg-slate-50"
+                          ? "border-[#43A047] bg-[#43A047]/10" 
+                          : isDarkMode ? "border-[#3A506B] bg-[#0B132B]/50" : "border-slate-200 bg-slate-50"
                       }`}
                     >
                       <label className="flex items-center space-x-3 cursor-pointer flex-1">
@@ -589,7 +604,7 @@ export default function Home() {
                           type="checkbox" 
                           checked={isSelected}
                           onChange={() => handleVehicleToggle(item.key)}
-                          className="w-4 h-4 accent-green-500 rounded cursor-pointer"
+                          className="w-4 h-4 accent-[#43A047] rounded cursor-pointer"
                         />
                         <span className="text-sm font-medium">{item.label}</span>
                       </label>
@@ -602,8 +617,8 @@ export default function Home() {
                             min="1"
                             value={vehicleCounts[item.key]}
                             onChange={(e) => handleCountChange(item.key, parseInt(e.target.value) || 1)}
-                            className={`w-16 rounded-md px-2 py-1 text-center text-sm border focus:outline-none focus:border-green-500 ${
-                              isDarkMode ? "bg-slate-900 border-slate-700 text-white" : "bg-white border-slate-300 text-slate-900"
+                            className={`w-16 rounded-lg px-2.5 py-1.5 text-center text-sm border focus:outline-none focus:border-[#43A047] ${
+                              isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-white border-slate-300 text-slate-900"
                             }`}
                           />
                         </div>
@@ -617,7 +632,7 @@ export default function Home() {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-lg transition mt-6 shadow-lg shadow-green-600/20 text-base disabled:opacity-50"
+              className="w-full bg-[#43A047] hover:bg-[#388E3C] text-white font-semibold py-3.5 rounded-xl transition mt-6 shadow-lg shadow-[#43A047]/20 text-base disabled:opacity-50"
             >
               {loading ? (lang === "am" ? "በመላክ ላይ..." : "Submitting...") : t.btnSubmit}
             </button>
@@ -625,76 +640,76 @@ export default function Home() {
         </div>
       </section>
 
-      {/* የግርጌ ክፍል (Footer) */}
-      <footer className="bg-[#43A047] text-white py-12 px-6 md:px-16">
+      {/* Footer section maintaining official corporate colors and details */}
+      <footer className="bg-[#0B132B] text-slate-300 border-t border-[#1C2541] py-12 px-6 md:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           
           <div className="space-y-4">
-            <div className="flex items-center gap-3 bg-white p-2 rounded-lg inline-flex">
+            <div className="flex items-center gap-3 bg-white p-2 rounded-xl inline-flex shadow-md">
               <img src="/logo.png" alt="GreenSpark Logo" className="h-10 object-contain" />
               <span className="text-slate-900 font-extrabold text-lg tracking-tight">GreenSpark</span>
             </div>
-            <p className="text-sm leading-relaxed">
+            <p className="text-xs leading-relaxed text-slate-400">
               GreenSpark Solutions PLC is dedicated to advancing sustainable technologies in the East African market. Based in Addis Ababa, we specialize in distributing SUPERTECH devices that reduce emissions and enhance fuel efficiency.
             </p>
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xl font-bold tracking-wide">Contact</h3>
-            <p className="text-sm leading-relaxed">
+            <h3 className="text-lg font-bold tracking-wide text-white">Contact</h3>
+            <p className="text-xs leading-relaxed text-slate-400">
               Gerji, Giorgis Business Shops, Building 5, Office New/248,<br />
               Bole Sub city, Woreda 13
             </p>
-            <div className="text-sm space-y-1">
-              <p><span className="font-semibold">Phone:</span></p>
+            <div className="text-xs space-y-1 text-slate-400">
+              <p><span className="font-semibold text-white">Phone:</span></p>
               <p className="pl-4">Mobile: +251-983-470000</p>
               <p className="pl-4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+251-911-209255</p>
-              <p><span className="font-semibold">Email:</span> info@greensparksolutions.et</p>
-              <p><span className="font-semibold">Web:</span> www.greensparksolutions.et</p>
+              <p><span className="font-semibold text-white">Email:</span> info@greensparksolutions.et</p>
+              <p><span className="font-semibold text-white">Web:</span> www.greensparksolutions.et</p>
             </div>
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xl font-bold tracking-wide">Navigation</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:underline">Home</a></li>
-              <li><a href="#" className="hover:underline">About Us</a></li>
-              <li><a href="#" className="hover:underline">Values</a></li>
-              <li><a href="#benefits" className="hover:underline">Services</a></li>
-              <li><a href="#calculator" className="hover:underline">Get Started</a></li>
-              <li><a href="#" className="hover:underline">Legal Notice</a></li>
-              <li><a href="#" className="hover:underline">Privacy Policy</a></li>
+            <h3 className="text-lg font-bold tracking-wide text-white">Navigation</h3>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li><a href="#" className="hover:text-[#43A047] transition">Home</a></li>
+              <li><a href="#" className="hover:text-[#43A047] transition">About Us</a></li>
+              <li><a href="#" className="hover:text-[#43A047] transition">Values</a></li>
+              <li><a href="#benefits" className="hover:text-[#43A047] transition">Services</a></li>
+              <li><a href="#calculator" className="hover:text-[#43A047] transition">Get Started</a></li>
+              <li><a href="#" className="hover:text-[#43A047] transition">Legal Notice</a></li>
+              <li><a href="#" className="hover:text-[#43A047] transition">Privacy Policy</a></li>
             </ul>
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xl font-bold tracking-wide">Social media</h3>
-            <div className="flex flex-col space-y-2 text-sm">
-              <a href="#" className="hover:underline flex items-center gap-2">📘 Facebook</a>
-              <a href="#" className="hover:underline flex items-center gap-2">𝕏 X</a>
-              <a href="#" className="hover:underline flex items-center gap-2">📷 Instagram</a>
+            <h3 className="text-lg font-bold tracking-wide text-white">Social media</h3>
+            <div className="flex flex-col space-y-2 text-xs text-slate-400">
+              <a href="#" className="hover:text-[#43A047] transition flex items-center gap-2">📘 Facebook</a>
+              <a href="#" className="hover:text-[#43A047] transition flex items-center gap-2">𝕏 X</a>
+              <a href="#" className="hover:text-[#43A047] transition flex items-center gap-2">📷 Instagram</a>
             </div>
           </div>
 
         </div>
       </footer>
 
-      {/* የተሳካ መሆኑን እና መለያ ቁጥር (Booking ID) የሚያሳይ ፖፕ-አፕ (Modal) */}
+      {/* Success Modal Popup displaying unique tracking/booking ID */}
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-          <div className={`max-w-md w-full p-6 rounded-2xl border shadow-2xl text-center transform transition-all ${
-            isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-900"
+          <div className={`max-w-md w-full p-6 rounded-3xl border shadow-2xl text-center transform transition-all ${
+            isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-white" : "bg-white border-slate-200 text-slate-900"
           }`}>
-            <div className="w-16 h-16 bg-green-500/20 border border-green-500 text-green-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
+            <div className="w-16 h-16 bg-[#43A047]/20 border border-[#43A047] text-[#43A047] rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
               ✓
             </div>
-            <h3 className="text-2xl font-bold mb-2 text-green-500">{t.modalTitle}</h3>
+            <h3 className="text-2xl font-bold mb-2 text-[#43A047]">{t.modalTitle}</h3>
             
-            <div className={`my-4 p-4 rounded-xl border text-center ${
-              isDarkMode ? "bg-slate-950 border-green-500/40" : "bg-green-50 border-green-300"
+            <div className={`my-4 p-4 rounded-2xl border text-center ${
+              isDarkMode ? "bg-[#0B132B] border-[#43A047]/40" : "bg-green-50 border-green-300"
             }`}>
               <span className="text-xs text-slate-400 block mb-1">{t.modalIdLabel}</span>
-              <span className="text-2xl font-mono font-extrabold text-green-400 tracking-wider">
+              <span className="text-2xl font-mono font-extrabold text-[#43A047] tracking-wider">
                 {generatedBookingId}
               </span>
             </div>
@@ -704,7 +719,7 @@ export default function Home() {
             </p>
             <button
               onClick={() => setShowSuccessModal(false)}
-              className="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-green-600/30 text-base"
+              className="w-full bg-[#43A047] hover:bg-[#388E3C] text-white font-semibold py-3.5 rounded-2xl transition shadow-lg shadow-[#43A047]/30 text-base"
             >
               {t.modalBtn}
             </button>
