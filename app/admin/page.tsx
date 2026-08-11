@@ -304,51 +304,51 @@ export default function AdminPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#020617', color: '#ffffff', padding: '24px', fontFamily: 'sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#F8FAFC', color: '#0F172A', padding: '24px', fontFamily: 'sans-serif' }}>
       {/* Conditional rendering for login screen */}
       {!isLoggedIn ? (
-        <div style={{ maxWidth: '400px', margin: '80px auto', backgroundColor: '#0f172a', padding: '32px', borderRadius: '12px', border: '1px solid #1e293b', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', color: '#4ade80', textAlign: 'center' }}>
+        <div style={{ maxWidth: '400px', margin: '80px auto', backgroundColor: '#FFFFFF', padding: '32px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', color: '#15803D', textAlign: 'center' }}>
             Staff Admin Login
           </h1>
           
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Username:</label>
+              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Username:</label>
               <input 
                 type="text" 
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                 required
               />
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Password:</label>
+              <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Password:</label>
               <div style={{ position: 'relative' }}>
                 <input 
                   type={showPassword ? "text" : "password"} 
                   value={password} 
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{ width: '100%', padding: '10px', paddingRight: '45px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '10px', paddingRight: '45px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#64748B', cursor: 'pointer' }}
                 >
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
             </div>
 
-            {loginError && <p style={{ color: '#f87171', fontSize: '14px' }}>{loginError}</p>}
+            {loginError && <p style={{ color: '#DC2626', fontSize: '14px' }}>{loginError}</p>}
 
             <button 
               type="submit"
-              style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
+              style={{ width: '100%', backgroundColor: '#15803D', color: '#FFFFFF', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
               disabled={loading}
             >
               {loading ? 'Logging in...' : 'Login'}
@@ -358,11 +358,11 @@ export default function AdminPage() {
       ) : (
         /* Main dashboard layout after successful login */
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0f172a', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b' }}>
-            <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#4ade80' }}>Company Management Dashboard</h1>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+            <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#15803D' }}>GreenSpark Management Dashboard</h1>
             <button 
               onClick={() => setIsLoggedIn(false)}
-              style={{ backgroundColor: '#dc2626', color: '#ffffff', padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
+              style={{ backgroundColor: '#DC2626', color: '#FFFFFF', padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
             >
               Logout
             </button>
@@ -377,9 +377,10 @@ export default function AdminPage() {
                 borderRadius: '8px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
-                backgroundColor: activeTab === 'register' ? '#16a34a' : '#0f172a',
-                color: '#ffffff',
-                border: '1px solid #1e293b'
+                backgroundColor: activeTab === 'register' ? '#15803D' : '#FFFFFF',
+                color: activeTab === 'register' ? '#FFFFFF' : '#334155',
+                border: '1px solid #E2E8F0',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
               }}
             >
               Register (View Records)
@@ -392,9 +393,10 @@ export default function AdminPage() {
                 borderRadius: '8px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
-                backgroundColor: activeTab === 'new-registration' ? '#16a34a' : '#0f172a',
-                color: '#ffffff',
-                border: '1px solid #1e293b'
+                backgroundColor: activeTab === 'new-registration' ? '#15803D' : '#FFFFFF',
+                color: activeTab === 'new-registration' ? '#FFFFFF' : '#334155',
+                border: '1px solid #E2E8F0',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
               }}
             >
               New Registration (Walk-in)
@@ -402,9 +404,9 @@ export default function AdminPage() {
           </div>
 
           {activeTab === 'register' ? (
-            <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
               
-              <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #334155', paddingBottom: '12px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid #E2E8F0', paddingBottom: '12px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => setSubRegisterTab('personal')}
                   style={{
@@ -412,10 +414,10 @@ export default function AdminPage() {
                     borderRadius: '6px',
                     fontWeight: '600',
                     cursor: 'pointer',
-                    backgroundColor: subRegisterTab === 'personal' ? '#334155' : 'transparent',
-                    color: subRegisterTab === 'personal' ? '#4ade80' : '#94a3b8',
+                    backgroundColor: subRegisterTab === 'personal' ? '#F0FDF4' : 'transparent',
+                    color: subRegisterTab === 'personal' ? '#15803D' : '#64748B',
                     border: '1px solid',
-                    borderColor: subRegisterTab === 'personal' ? '#475569' : 'transparent'
+                    borderColor: subRegisterTab === 'personal' ? '#BBF7D0' : 'transparent'
                   }}
                 >
                   Personal ({personalRecords.length})
@@ -427,10 +429,10 @@ export default function AdminPage() {
                     borderRadius: '6px',
                     fontWeight: '600',
                     cursor: 'pointer',
-                    backgroundColor: subRegisterTab === 'corporate' ? '#334155' : 'transparent',
-                    color: subRegisterTab === 'corporate' ? '#4ade80' : '#94a3b8',
+                    backgroundColor: subRegisterTab === 'corporate' ? '#F0FDF4' : 'transparent',
+                    color: subRegisterTab === 'corporate' ? '#15803D' : '#64748B',
                     border: '1px solid',
-                    borderColor: subRegisterTab === 'corporate' ? '#475569' : 'transparent'
+                    borderColor: subRegisterTab === 'corporate' ? '#BBF7D0' : 'transparent'
                   }}
                 >
                   Corporate ({corporateRecords.length})
@@ -442,10 +444,10 @@ export default function AdminPage() {
                     borderRadius: '6px',
                     fontWeight: '600',
                     cursor: 'pointer',
-                    backgroundColor: subRegisterTab === 'completed' ? '#065f46' : 'transparent',
-                    color: subRegisterTab === 'completed' ? '#34d399' : '#94a3b8',
+                    backgroundColor: subRegisterTab === 'completed' ? '#ECFDF5' : 'transparent',
+                    color: subRegisterTab === 'completed' ? '#047857' : '#64748B',
                     border: '1px solid',
-                    borderColor: subRegisterTab === 'completed' ? '#059669' : 'transparent'
+                    borderColor: subRegisterTab === 'completed' ? '#A7F3D0' : 'transparent'
                   }}
                 >
                   Completed ({completedRecords.length})
@@ -458,19 +460,19 @@ export default function AdminPage() {
                   placeholder="Search by Booking ID (e.g. GS-22542), Name, or Phone..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{ flex: 1, padding: '10px 14px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', fontSize: '14px', boxSizing: 'border-box' }}
+                  style={{ flex: 1, padding: '10px 14px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: '14px', boxSizing: 'border-box' }}
                 />
                 {searchQuery && (
                   <button 
                     onClick={() => setSearchQuery('')}
-                    style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', padding: '10px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
+                    style={{ backgroundColor: '#E2E8F0', color: '#334155', border: 'none', padding: '10px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
                   >
                     Clear
                   </button>
                 )}
                 <button
                   onClick={fetchAllRecords}
-                  style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', padding: '10px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
+                  style={{ backgroundColor: '#E2E8F0', color: '#334155', border: 'none', padding: '10px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
                 >
                   {fetchingRecords ? 'Refreshing...' : 'Refresh'}
                 </button>
@@ -478,9 +480,9 @@ export default function AdminPage() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {fetchingRecords ? (
-                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>Loading records...</p>
+                  <p style={{ color: '#64748B', textAlign: 'center', padding: '20px' }}>Loading records...</p>
                 ) : displayedRecords.length === 0 ? (
-                  <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px' }}>No records found.</p>
+                  <p style={{ color: '#64748B', textAlign: 'center', padding: '20px' }}>No records found.</p>
                 ) : (
                   displayedRecords.map((item, index) => {
                     const isDone = (item.status || '').toLowerCase().includes('complet');
@@ -488,22 +490,22 @@ export default function AdminPage() {
                       <div 
                         key={item.id || index} 
                         onClick={() => setSelectedRecord(item)}
-                        style={{ padding: '16px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
+                        style={{ padding: '16px', backgroundColor: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
                       >
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: '13px', backgroundColor: '#0284c7', color: '#ffffff', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
+                            <span style={{ fontSize: '13px', backgroundColor: '#0284C7', color: '#FFFFFF', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
                               Booking ID: {getBookingIdDisplay(item)}
                             </span>
-                            <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#4ade80' }}>
+                            <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#15803D' }}>
                               {getDisplayName(item)}
                             </p>
                           </div>
-                          <p style={{ fontSize: '13px', color: '#94a3b8', margin: '6px 0 0 0' }}>
+                          <p style={{ fontSize: '13px', color: '#64748B', margin: '6px 0 0 0' }}>
                             {item.phone ? `Phone: ${item.phone}` : (item.customer_type || 'Record')}
                           </p>
                         </div>
-                        <span style={{ fontSize: '12px', backgroundColor: isDone ? '#065f46' : '#064e3b', color: isDone ? '#34d399' : '#6ee7b7', padding: '6px 12px', borderRadius: '6px' }}>
+                        <span style={{ fontSize: '12px', backgroundColor: isDone ? '#D1FAE5' : '#FEF3C7', color: isDone ? '#065F46' : '#92400E', padding: '6px 12px', borderRadius: '6px', fontWeight: 'bold' }}>
                           {item.status || 'Registered'}
                         </span>
                       </div>
@@ -514,23 +516,23 @@ export default function AdminPage() {
             </div>
           ) : (
             /* Walk-in registration form view */
-            <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#e2e8f0' }}>
-                New Walk-in Registration Form <span style={{ fontSize: '13px', color: '#ef4444' }}>(ሁሉም መስኮች መሞላት አለባቸው)</span>
+            <div style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#0F172A' }}>
+                New Walk-in Registration Form <span style={{ fontSize: '13px', color: '#DC2626' }}>(ሁሉም መስኮች መሞላት አለባቸው)</span>
               </h2>
 
               <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
                 <button
                   type="button"
                   onClick={() => setRegistrationType('personal')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'personal' ? '#334155' : '#1e293b', color: '#ffffff', border: '1px solid #475569' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'personal' ? '#15803D' : '#F8FAFC', color: registrationType === 'personal' ? '#FFFFFF' : '#334155', border: '1px solid #CBD5E1' }}
                 >
                   Personal
                 </button>
                 <button
                   type="button"
                   onClick={() => setRegistrationType('corporate')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'corporate' ? '#334155' : '#1e293b', color: '#ffffff', border: '1px solid #475569' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'corporate' ? '#15803D' : '#F8FAFC', color: registrationType === 'corporate' ? '#FFFFFF' : '#334155', border: '1px solid #CBD5E1' }}
                 >
                   Corporate
                 </button>
@@ -538,7 +540,7 @@ export default function AdminPage() {
 
               <form onSubmit={handleWalkInSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>
                     {registrationType === 'personal' ? 'Full Name *:' : 'Company Name *:'}
                   </label>
                   <input 
@@ -546,38 +548,38 @@ export default function AdminPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder={registrationType === 'personal' ? 'Enter full name...' : 'Enter company name...'}
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Phone Number *:</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Phone Number *:</label>
                     <input 
                       type="text" 
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="0911..."
-                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Plate Number (ሰሌዳ ቁጥር) *:</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Plate Number (ሰሌዳ ቁጥር) *:</label>
                     <input 
                       type="text" 
                       value={plateNumber}
                       onChange={(e) => setPlateNumber(e.target.value)}
                       placeholder="3 - A12345"
-                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#4ade80', fontWeight: 'bold' }}>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#15803D', fontWeight: 'bold' }}>
                     የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈለጉትን ይምረጡና ብዛት ያስገቡ) *:
                   </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #CBD5E1' }}>
                     {vehicleOptions.map((vName) => {
                       const isSelected = selectedVehicles[vName] !== undefined;
                       const quantity = selectedVehicles[vName] || 1;
@@ -588,10 +590,10 @@ export default function AdminPage() {
                             display: 'flex', 
                             flexDirection: 'column',
                             gap: '8px', 
-                            backgroundColor: '#0f172a', 
+                            backgroundColor: '#FFFFFF', 
                             padding: '12px', 
                             borderRadius: '6px', 
-                            border: `1px solid ${isSelected ? '#4ade80' : '#334155'}`,
+                            border: `1px solid ${isSelected ? '#15803D' : '#E2E8F0'}`,
                             transition: 'all 0.2s'
                           }}
                         >
@@ -603,21 +605,21 @@ export default function AdminPage() {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => {}} 
-                              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#16a34a' }}
+                              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#15803D' }}
                             />
-                            <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: '500', userSelect: 'none' }}>{vName}</span>
+                            <span style={{ fontSize: '14px', color: '#0F172A', fontWeight: '500', userSelect: 'none' }}>{vName}</span>
                           </div>
 
                           {isSelected && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', paddingLeft: '28px' }}>
-                              <span style={{ fontSize: '12px', color: '#94a3b8' }}>ብዛት:</span>
+                              <span style={{ fontSize: '12px', color: '#64748B' }}>ብዛት:</span>
                               <input 
                                 type="number" 
                                 min="1" 
                                 value={quantity}
                                 onChange={(e) => handleQuantityChange(vName, parseInt(e.target.value) || 1)}
                                 onClick={(e) => e.stopPropagation()}
-                                style={{ width: '70px', padding: '4px 8px', borderRadius: '4px', backgroundColor: '#1e293b', border: '1px solid #475569', color: '#ffffff', fontSize: '14px' }}
+                                style={{ width: '70px', padding: '4px 8px', borderRadius: '4px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: '14px' }}
                               />
                             </div>
                           )}
@@ -629,31 +631,31 @@ export default function AdminPage() {
 
                 {registrationType === 'corporate' && (
                   <div>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>TIN Number (የቲን ቁጥር) *:</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>TIN Number (የቲን ቁጥር) *:</label>
                     <input 
                       type="text" 
                       value={tinNumber}
                       onChange={(e) => setTinNumber(e.target.value)}
                       placeholder="Enter TIN number..."
-                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                     />
                   </div>
                 )}
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>Address (አድራሻ) *:</label>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Address (አድራሻ) *:</label>
                   <input 
                     type="text" 
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Enter address..."
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#1e293b', border: '1px solid #334155', color: '#ffffff', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', backgroundColor: '#F8FAFC', border: '1px solid #CBD5E1', color: '#0F172A', boxSizing: 'border-box' }}
                   />
                 </div>
 
                 <button 
                   type="submit"
-                  style={{ width: '100%', backgroundColor: '#16a34a', color: '#ffffff', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer', marginTop: '8px' }}
+                  style={{ width: '100%', backgroundColor: '#15803D', color: '#FFFFFF', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer', marginTop: '8px' }}
                   disabled={submittingWalkIn}
                 >
                   {submittingWalkIn ? 'Saving...' : 'Submit Registration'}
@@ -664,24 +666,24 @@ export default function AdminPage() {
 
           {/* Modal popup displaying selected record details */}
           {selectedRecord && (
-            <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
-              <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
+              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)', maxHeight: '90vh', overflowY: 'auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#4ade80', margin: 0 }}>Booking Details</h3>
+                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#15803D', margin: 0 }}>Booking Details</h3>
                   <button 
                     onClick={() => setSelectedRecord(null)}
-                    style={{ backgroundColor: '#334155', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer' }}
+                    style={{ backgroundColor: '#E2E8F0', color: '#334155', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer' }}
                   >
                     Close
                   </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#e2e8f0', backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px' }}>
-                  <p style={{ margin: 0, color: '#38bdf8', fontWeight: 'bold' }}><strong>Booking ID:</strong> {getBookingIdDisplay(selectedRecord)}</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#334155', backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                  <p style={{ margin: 0, color: '#0284C7', fontWeight: 'bold' }}><strong>Booking ID:</strong> {getBookingIdDisplay(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Name / Company:</strong> {getDisplayName(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>Phone:</strong> {selectedRecord.phone || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Status:</strong> <span style={{ color: '#34d399', fontWeight: 'bold' }}>{selectedRecord.status || 'N/A'}</span></p>
+                  <p style={{ margin: 0 }}><strong>Status:</strong> <span style={{ color: '#059669', fontWeight: 'bold' }}>{selectedRecord.status || 'N/A'}</span></p>
                   <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
                   
                   {Object.entries(selectedRecord).map(([key, value]) => {
@@ -699,14 +701,14 @@ export default function AdminPage() {
                 <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Completed')}
-                    style={{ flex: 1, backgroundColor: '#16a34a', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                    style={{ flex: 1, backgroundColor: '#15803D', color: '#FFFFFF', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                     disabled={updatingStatus}
                   >
                     {updatingStatus ? 'Updating...' : 'Mark as Completed'}
                   </button>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Pending')}
-                    style={{ flex: 1, backgroundColor: '#ca8a04', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                    style={{ flex: 1, backgroundColor: '#D97706', color: '#FFFFFF', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                     disabled={updatingStatus}
                   >
                     {updatingStatus ? 'Updating...' : 'Mark as Pending'}
