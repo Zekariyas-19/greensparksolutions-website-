@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 export default function AdminPage() {
+  // Login state variables
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -10,10 +11,12 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Navigation and tab management states
   const [activeTab, setActiveTab] = useState<'register' | 'new-registration'>('register');
   const [subRegisterTab, setSubRegisterTab] = useState<'personal' | 'corporate' | 'completed'>('personal');
   const [registrationType, setRegistrationType] = useState<'personal' | 'corporate'>('personal');
 
+  // Database records and selection states
   const [allRecords, setAllRecords] = useState<any[]>([]);
   const [fetchingRecords, setFetchingRecords] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
@@ -21,14 +24,14 @@ export default function AdminPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  // የዎክ-ኢን ፎርም መሠረታዊ መረጃዎች
+  // Walk-in form input states
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [plateNumber, setPlateNumber] = useState('');
   const [tinNumber, setTinNumber] = useState('');
   const [address, setAddress] = useState('');
   
-  // ትክክለኛው የመኪና ዓይነቶች ዝርዝር
+  // Available vehicle options list
   const vehicleOptions = [
     'የቤት መኪና',
     'ሚኒባስ',
@@ -40,11 +43,11 @@ export default function AdminPage() {
     'ተሳቢ ቦቲ'
   ];
 
-  // የተመረጡ መኪኖች እና ብዛታቸው (ለምሳሌ: { 'የቤት መኪና': 2 })
+  // Selected vehicles and their respective quantities
   const [selectedVehicles, setSelectedVehicles] = useState<{ [key: string]: number }>({});
-
   const [submittingWalkIn, setSubmittingWalkIn] = useState(false);
 
+  // Handle staff login submission
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -71,6 +74,7 @@ export default function AdminPage() {
     }
   };
 
+  // Fetch all bookings from Supabase
   const fetchAllRecords = async () => {
     setFetchingRecords(true);
     try {
@@ -115,6 +119,7 @@ export default function AdminPage() {
     return String(vehiclesData);
   };
 
+  // Update status of a booking record (e.g., Completed or Pending)
   const handleUpdateStatus = async (recordId: any, newStatus: string) => {
     setUpdatingStatus(true);
     try {
@@ -146,20 +151,20 @@ export default function AdminPage() {
     }
   };
 
-  // ቼክቦክሱን ሲጫኑ ወይም ሲያጠፉ
+  // Handle vehicle checkbox toggling
   const handleCheckboxChange = (vName: string) => {
     setSelectedVehicles(prev => {
       const updated = { ...prev };
       if (updated[vName] !== undefined) {
         delete updated[vName];
       } else {
-        updated[vName] = 1; // ነባሪ ብዛት 1
+        updated[vName] = 1;
       }
       return updated;
     });
   };
 
-  // የብዛት ለውጥ (Quantity change)
+  // Handle vehicle quantity change
   const handleQuantityChange = (vName: string, qty: number) => {
     if (qty < 1) return;
     setSelectedVehicles(prev => ({
@@ -168,6 +173,7 @@ export default function AdminPage() {
     }));
   };
 
+  // Handle walk-in registration form submission
   const handleWalkInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -245,6 +251,7 @@ export default function AdminPage() {
     }
   };
 
+  // Filter records by status and customer type
   const completedRecords = allRecords.filter(item => {
     const st = item.status?.toLowerCase() || '';
     return st.includes('complet') || st.includes('ready') || st.includes('done');
@@ -298,6 +305,7 @@ export default function AdminPage() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#020617', color: '#ffffff', padding: '24px', fontFamily: 'sans-serif' }}>
+      {/* Conditional rendering for login screen */}
       {!isLoggedIn ? (
         <div style={{ maxWidth: '400px', margin: '80px auto', backgroundColor: '#0f172a', padding: '32px', borderRadius: '12px', border: '1px solid #1e293b', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', color: '#4ade80', textAlign: 'center' }}>
@@ -348,6 +356,7 @@ export default function AdminPage() {
           </form>
         </div>
       ) : (
+        /* Main dashboard layout after successful login */
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0f172a', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b' }}>
             <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#4ade80' }}>Company Management Dashboard</h1>
@@ -504,6 +513,7 @@ export default function AdminPage() {
               </div>
             </div>
           ) : (
+            /* Walk-in registration form view */
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '12px', border: '1px solid #1e293b' }}>
               <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#e2e8f0' }}>
                 New Walk-in Registration Form <span style={{ fontSize: '13px', color: '#ef4444' }}>(ሁሉም መስኮች መሞላት አለባቸው)</span>
@@ -563,7 +573,6 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* የተሽከርካሪ ዓይነቶች እና ብዛት ማስገቢያ */}
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#4ade80', fontWeight: 'bold' }}>
                     የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈለጉትን ይምረጡና ብዛት ያስገቡ) *:
@@ -599,7 +608,6 @@ export default function AdminPage() {
                             <span style={{ fontSize: '14px', color: '#ffffff', fontWeight: '500', userSelect: 'none' }}>{vName}</span>
                           </div>
 
-                          {/* ተመርጦ ከሆነ የብዛት (Quantity) ማስገቢያ ሳጥን ይታያል */}
                           {isSelected && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', paddingLeft: '28px' }}>
                               <span style={{ fontSize: '12px', color: '#94a3b8' }}>ብዛት:</span>
@@ -654,7 +662,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* የተመረጠውን ሪከርድ ዝርዝር የሚያሳይ ፖፕ-አፕ (Modal) ከማርክ ማድረጊያ ቁልፎች ጋር */}
+          {/* Modal popup displaying selected record details */}
           {selectedRecord && (
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
               <div style={{ backgroundColor: '#0f172a', border: '1px solid #334155', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)', maxHeight: '90vh', overflowY: 'auto' }}>
@@ -687,7 +695,7 @@ export default function AdminPage() {
                   })}
                 </div>
 
-                {/* የማርክ ማድረጊያ አዝራሮች (Mark as Completed & Mark Pending) */}
+                {/* Status action buttons */}
                 <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Completed')}
@@ -698,10 +706,10 @@ export default function AdminPage() {
                   </button>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Pending')}
-                    style={{ backgroundColor: '#ca8a04', color: '#ffffff', border: 'none', padding: '10px 14px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                    style={{ flex: 1, backgroundColor: '#ca8a04', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                     disabled={updatingStatus}
                   >
-                    {updatingStatus ? 'Updating...' : 'Mark Pending'}
+                    {updatingStatus ? 'Updating...' : 'Mark as Pending'}
                   </button>
                 </div>
               </div>
