@@ -232,11 +232,11 @@ export default function Home() {
 
   return (
     <main className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode ? "bg-[#0B132B] text-white" : "bg-slate-50 text-slate-900"
+      isDarkMode ? "bg-[#0D233A] text-white" : "bg-slate-50 text-slate-900"
     }`}>
-      {/* Navigation bar incorporating official brand color codes (#0B132B, #1C2541, #43A047, #1E88E5) */}
+      {/* Navigation bar synchronized with official logo colors (Deep Navy #0D233A and Brand Green #2E7D32) */}
       <nav className={`flex justify-between items-center px-4 md:px-8 py-4 border-b sticky top-0 z-40 transition-colors ${
-        isDarkMode ? "border-[#1C2541] bg-[#0B132B]/95 backdrop-blur-md" : "border-slate-200 bg-white/95 backdrop-blur-md"
+        isDarkMode ? "border-[#143454] bg-[#0D233A]/95 backdrop-blur-md" : "border-slate-200 bg-white/95 backdrop-blur-md"
       }`}>
         <div className="flex items-center gap-3">
           <img 
@@ -245,16 +245,16 @@ export default function Home() {
             className="w-12 h-12 md:w-14 md:h-14 object-contain" 
           />
           <div className="flex flex-col">
-            <span className="text-lg md:text-2xl font-extrabold tracking-tight text-[#43A047] leading-none">GreenSpark</span>
-            <span className="text-[9px] md:text-[10px] text-[#1E88E5] tracking-widest uppercase font-semibold">SOLUTIONS PLC</span>
+            <span className="text-lg md:text-2xl font-extrabold tracking-tight text-[#2E7D32] leading-none">GreenSpark</span>
+            <span className="text-[9px] md:text-[10px] text-slate-400 tracking-widest uppercase font-semibold">SOLUTIONS PLC</span>
           </div>
         </div>
         
         {/* Desktop Menu layout */}
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          <a href="#benefits" className="hover:text-[#43A047] transition">{t.navServices}</a>
-          <a href="#calculator" className="hover:text-[#43A047] transition">{t.navCalc}</a>
-          <a href="#booking" className="bg-[#43A047] hover:bg-[#388E3C] text-white px-5 py-2.5 rounded-xl transition shadow-md shadow-[#43A047]/20 font-semibold">
+          <a href="#benefits" className="hover:text-[#2E7D32] transition">{t.navServices}</a>
+          <a href="#calculator" className="hover:text-[#2E7D32] transition">{t.navCalc}</a>
+          <a href="#booking" className="bg-[#2E7D32] hover:bg-[#256428] text-white px-5 py-2.5 rounded-xl transition shadow-md shadow-[#2E7D32]/20 font-semibold">
             {t.navBook}
           </a>
 
@@ -262,7 +262,7 @@ export default function Home() {
             onClick={() => setIsDarkMode(!isDarkMode)}
             className={`p-2.5 rounded-xl border text-lg leading-none transition ${
               isDarkMode 
-                ? "bg-[#1C2541] border-[#3A506B] text-yellow-400 hover:bg-[#2A3B5F]" 
+                ? "bg-[#143454] border-[#224b7a] text-yellow-400 hover:bg-[#1a406b]" 
                 : "bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200"
             }`}
           >
@@ -274,7 +274,7 @@ export default function Home() {
             onChange={(e) => setLang(e.target.value as "am" | "en")}
             className={`font-semibold px-3 py-2 rounded-xl focus:outline-none cursor-pointer border text-xs transition ${
               isDarkMode 
-                ? "bg-[#1C2541] border-[#3A506B] text-[#43A047]" 
+                ? "bg-[#143454] border-[#224b7a] text-[#2E7D32]" 
                 : "bg-slate-100 border-slate-300 text-green-700"
             }`}
           >
@@ -288,7 +288,7 @@ export default function Home() {
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
             className={`p-2 rounded-lg border text-sm transition ${
-              isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-yellow-400" : "bg-slate-100 border-slate-300 text-slate-700"
+              isDarkMode ? "bg-[#143454] border-[#224b7a] text-yellow-400" : "bg-slate-100 border-slate-300 text-slate-700"
             }`}
           >
             {isDarkMode ? "☀️" : "🌙"}
@@ -298,7 +298,7 @@ export default function Home() {
             value={lang} 
             onChange={(e) => setLang(e.target.value as "am" | "en")}
             className={`font-semibold px-2 py-1.5 rounded-lg focus:outline-none border text-xs ${
-              isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-[#43A047]" : "bg-slate-100 border-slate-300 text-green-700"
+              isDarkMode ? "bg-[#143454] border-[#224b7a] text-[#2E7D32]" : "bg-slate-100 border-slate-300 text-green-700"
             }`}
           >
             <option value="am">አማ</option>
@@ -308,7 +308,7 @@ export default function Home() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`p-2 rounded-lg border text-base ${
-              isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-white" : "bg-slate-100 border-slate-300 text-slate-900"
+              isDarkMode ? "bg-[#143454] border-[#224b7a] text-white" : "bg-slate-100 border-slate-300 text-slate-900"
             }`}
           >
             {mobileMenuOpen ? "✕" : "☰"}
@@ -319,26 +319,26 @@ export default function Home() {
       {/* Mobile dropdown menu view */}
       {mobileMenuOpen && (
         <div className={`md:hidden flex flex-col space-y-3 px-6 py-5 border-b shadow-lg transition-all ${
-          isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-white" : "bg-white border-slate-200 text-slate-900"
+          isDarkMode ? "bg-[#143454] border-[#224b7a] text-white" : "bg-white border-slate-200 text-slate-900"
         }`}>
           <a 
             href="#benefits" 
             onClick={() => setMobileMenuOpen(false)}
-            className="text-base font-medium py-1.5 hover:text-[#43A047]"
+            className="text-base font-medium py-1.5 hover:text-[#2E7D32]"
           >
             {t.navServices}
           </a>
           <a 
             href="#calculator" 
             onClick={() => setMobileMenuOpen(false)}
-            className="text-base font-medium py-1.5 hover:text-[#43A047]"
+            className="text-base font-medium py-1.5 hover:text-[#2E7D32]"
           >
             {t.navCalc}
           </a>
           <a 
             href="#booking" 
             onClick={() => setMobileMenuOpen(false)}
-            className="bg-[#43A047] text-center hover:bg-[#388E3C] text-white px-4 py-2.5 rounded-xl font-medium transition shadow-md"
+            className="bg-[#2E7D32] text-center hover:bg-[#256428] text-white px-4 py-2.5 rounded-xl font-medium transition shadow-md"
           >
             {t.navBook}
           </a>
@@ -348,36 +348,36 @@ export default function Home() {
       {/* Hero section highlighting corporate brand identity and messaging */}
       <section className="flex flex-col items-center justify-center text-center px-4 pt-12 pb-8 max-w-5xl mx-auto">
         <span className={`px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border tracking-wide uppercase ${
-          isDarkMode ? "bg-[#1E88E5]/10 border-[#1E88E5]/30 text-[#1E88E5]" : "bg-blue-50 border-blue-200 text-blue-700"
+          isDarkMode ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-amber-50 border-amber-200 text-amber-700"
         }`}>
           Powering Efficiency, Protecting the Planet
         </span>
         <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
-          {t.heroTitle1} <span className="text-[#43A047]">{t.heroTitle2}</span> {t.heroTitle3}
+          {t.heroTitle1} <span className="text-[#2E7D32]">{t.heroTitle2}</span> {t.heroTitle3}
         </h2>
         <p className={`text-base md:text-xl mb-10 max-w-2xl leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>
           {t.heroDesc}
         </p>
 
         <div id="benefits" className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-4 text-left">
-          <div className={`p-6 rounded-2xl border transition hover:border-[#43A047] ${
-            isDarkMode ? "bg-[#1C2541]/70 border-[#3A506B]" : "bg-white border-slate-200 shadow-sm"
+          <div className={`p-6 rounded-2xl border transition hover:border-[#2E7D32] ${
+            isDarkMode ? "bg-[#143454]/70 border-[#224b7a]" : "bg-white border-slate-200 shadow-sm"
           }`}>
-            <h4 className="text-[#43A047] font-bold text-lg mb-2">{t.feat1Title}</h4>
+            <h4 className="text-[#2E7D32] font-bold text-lg mb-2">{t.feat1Title}</h4>
             <p className={`text-xs leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>{t.feat1Desc}</p>
           </div>
 
-          <div className={`p-6 rounded-2xl border transition hover:border-[#43A047] ${
-            isDarkMode ? "bg-[#1C2541]/70 border-[#3A506B]" : "bg-white border-slate-200 shadow-sm"
+          <div className={`p-6 rounded-2xl border transition hover:border-[#2E7D32] ${
+            isDarkMode ? "bg-[#143454]/70 border-[#224b7a]" : "bg-white border-slate-200 shadow-sm"
           }`}>
-            <h4 className="text-[#1E88E5] font-bold text-lg mb-2">{t.feat2Title}</h4>
+            <h4 className="text-amber-400 font-bold text-lg mb-2">{t.feat2Title}</h4>
             <p className={`text-xs leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>{t.feat2Desc}</p>
           </div>
 
-          <div className={`p-6 rounded-2xl border transition hover:border-[#43A047] ${
-            isDarkMode ? "bg-[#1C2541]/70 border-[#3A506B]" : "bg-white border-slate-200 shadow-sm"
+          <div className={`p-6 rounded-2xl border transition hover:border-[#2E7D32] ${
+            isDarkMode ? "bg-[#143454]/70 border-[#224b7a]" : "bg-white border-slate-200 shadow-sm"
           }`}>
-            <h4 className="text-[#43A047] font-bold text-lg mb-2">{t.feat3Title}</h4>
+            <h4 className="text-[#2E7D32] font-bold text-lg mb-2">{t.feat3Title}</h4>
             <p className={`text-xs leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>{t.feat3Desc}</p>
           </div>
         </div>
@@ -386,7 +386,7 @@ export default function Home() {
       {/* ROI Calculator Section */}
       <section id="calculator" className="max-w-4xl mx-auto px-4 py-10">
         <div className={`p-6 md:p-10 rounded-3xl border shadow-xl ${
-          isDarkMode ? "bg-[#1C2541]/90 border-[#3A506B]" : "bg-white border-slate-200"
+          isDarkMode ? "bg-[#143454]/90 border-[#224b7a]" : "bg-white border-slate-200"
         }`}>
           <h3 className="text-xl md:text-2xl font-bold text-center mb-2">{t.calcTitle}</h3>
           <p className={`text-xs text-center mb-8 ${isDarkMode ? "text-slate-300" : "text-slate-500"}`}>{t.calcSub}</p>
@@ -396,7 +396,7 @@ export default function Home() {
               <div>
                 <div className="flex justify-between text-sm font-semibold mb-2">
                   <span>{t.calcVehiclesLabel}</span>
-                  <span className="text-[#43A047]">{totalVehicles}</span>
+                  <span className="text-[#2E7D32]">{totalVehicles}</span>
                 </div>
                 <input 
                   type="range" 
@@ -404,14 +404,14 @@ export default function Home() {
                   max="50" 
                   value={totalVehicles} 
                   onChange={(e) => setTotalVehicles(parseInt(e.target.value))}
-                  className="w-full accent-[#43A047] cursor-pointer"
+                  className="w-full accent-[#2E7D32] cursor-pointer"
                 />
               </div>
 
               <div>
                 <div className="flex justify-between text-sm font-semibold mb-2">
                   <span>{t.calcKmLabel}</span>
-                  <span className="text-[#43A047]">{dailyKm} KM</span>
+                  <span className="text-[#2E7D32]">{dailyKm} KM</span>
                 </div>
                 <input 
                   type="range" 
@@ -420,17 +420,17 @@ export default function Home() {
                   step="10"
                   value={dailyKm} 
                   onChange={(e) => setDailyKm(parseInt(e.target.value))}
-                  className="w-full accent-[#43A047] cursor-pointer"
+                  className="w-full accent-[#2E7D32] cursor-pointer"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
               <div className={`p-4 rounded-2xl border text-center ${
-                isDarkMode ? "bg-[#0B132B] border-[#3A506B]" : "bg-slate-50 border-slate-200"
+                isDarkMode ? "bg-[#0D233A] border-[#224b7a]" : "bg-slate-50 border-slate-200"
               }`}>
                 <span className="text-xs text-slate-400 block mb-1">{t.calcDailyEst}</span>
-                <span className="text-2xl font-extrabold text-[#43A047]">
+                <span className="text-2xl font-extrabold text-[#2E7D32]">
                   {estimatedDailySavings.toLocaleString()} {t.currency}
                 </span>
               </div>
@@ -439,7 +439,7 @@ export default function Home() {
                 isDarkMode ? "bg-green-950/30 border-green-800/50" : "bg-green-50 border-green-200"
               }`}>
                 <span className="text-xs text-green-400 block mb-1 font-medium">{t.calcYearlyEst}</span>
-                <span className="text-3xl font-extrabold text-[#43A047]">
+                <span className="text-3xl font-extrabold text-[#2E7D32]">
                   {estimatedYearlySavings.toLocaleString()} {t.currency}
                 </span>
               </div>
@@ -452,19 +452,19 @@ export default function Home() {
       <section id="booking" className="max-w-2xl mx-auto px-4 pb-20">
         <div className={`p-6 md:p-10 rounded-3xl shadow-2xl border transition ${
           isDarkMode 
-            ? "bg-[#1C2541] border-[#3A506B]" 
+            ? "bg-[#143454] border-[#224b7a]" 
             : "bg-white border-slate-200 shadow-slate-200"
         }`}>
           <h3 className="text-xl md:text-2xl font-bold text-center mb-2">{t.formTitle}</h3>
           <p className={`text-xs text-center mb-6 ${isDarkMode ? "text-slate-300" : "text-slate-500"}`}>{t.formSub}</p>
 
-          <div className="flex bg-[#0B132B] p-1.5 rounded-xl border border-[#3A506B] mb-6">
+          <div className="flex bg-[#0D233A] p-1.5 rounded-xl border border-[#224b7a] mb-6">
             <button
               type="button"
               onClick={() => setCustomerType("individual")}
               className={`flex-1 py-2.5 text-xs md:text-sm font-semibold rounded-lg transition ${
                 customerType === "individual"
-                  ? "bg-[#43A047] text-white shadow-md"
+                  ? "bg-[#2E7D32] text-white shadow-md"
                   : isDarkMode ? "text-slate-300 hover:text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -475,7 +475,7 @@ export default function Home() {
               onClick={() => setCustomerType("company")}
               className={`flex-1 py-2.5 text-xs md:text-sm font-semibold rounded-lg transition ${
                 customerType === "company"
-                  ? "bg-[#43A047] text-white shadow-md"
+                  ? "bg-[#2E7D32] text-white shadow-md"
                   : isDarkMode ? "text-slate-300 hover:text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -500,8 +500,8 @@ export default function Home() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder={t.phFullName} 
-                    className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
-                      isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                    className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#2E7D32] transition ${
+                      isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                     }`}
                   />
                 </div>
@@ -514,8 +514,8 @@ export default function Home() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder={t.phPhone} 
-                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
-                        isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#2E7D32] transition ${
+                        isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                       }`}
                     />
                   </div>
@@ -527,8 +527,8 @@ export default function Home() {
                       value={plate}
                       onChange={(e) => setPlate(e.target.value)}
                       placeholder={t.phPlate} 
-                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
-                        isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#2E7D32] transition ${
+                        isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                       }`}
                     />
                   </div>
@@ -546,8 +546,8 @@ export default function Home() {
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     placeholder={t.phCompanyName} 
-                    className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
-                      isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                    className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#2E7D32] transition ${
+                      isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                     }`}
                   />
                 </div>
@@ -560,8 +560,8 @@ export default function Home() {
                       value={tin}
                       onChange={(e) => setTin(e.target.value)}
                       placeholder={t.phTin} 
-                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
-                        isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#2E7D32] transition ${
+                        isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                       }`}
                     />
                   </div>
@@ -573,8 +573,8 @@ export default function Home() {
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder={t.phAddress} 
-                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#43A047] transition ${
-                        isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#2E7D32] transition ${
+                        isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
                       }`}
                     />
                   </div>
@@ -583,7 +583,7 @@ export default function Home() {
             )}
 
             <div className="pt-4">
-              <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? "text-[#43A047]" : "text-green-700"}`}>
+              <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? "text-[#2E7D32]" : "text-green-700"}`}>
                 {t.labelVehicleSelection}
               </label>
 
@@ -595,8 +595,8 @@ export default function Home() {
                       key={item.key} 
                       className={`flex items-center justify-between p-3.5 rounded-xl border transition ${
                         isSelected 
-                          ? "border-[#43A047] bg-[#43A047]/10" 
-                          : isDarkMode ? "border-[#3A506B] bg-[#0B132B]/50" : "border-slate-200 bg-slate-50"
+                          ? "border-[#2E7D32] bg-[#2E7D32]/10" 
+                          : isDarkMode ? "border-[#224b7a] bg-[#0D233A]/50" : "border-slate-200 bg-slate-50"
                       }`}
                     >
                       <label className="flex items-center space-x-3 cursor-pointer flex-1">
@@ -604,7 +604,7 @@ export default function Home() {
                           type="checkbox" 
                           checked={isSelected}
                           onChange={() => handleVehicleToggle(item.key)}
-                          className="w-4 h-4 accent-[#43A047] rounded cursor-pointer"
+                          className="w-4 h-4 accent-[#2E7D32] rounded cursor-pointer"
                         />
                         <span className="text-sm font-medium">{item.label}</span>
                       </label>
@@ -617,8 +617,8 @@ export default function Home() {
                             min="1"
                             value={vehicleCounts[item.key]}
                             onChange={(e) => handleCountChange(item.key, parseInt(e.target.value) || 1)}
-                            className={`w-16 rounded-lg px-2.5 py-1.5 text-center text-sm border focus:outline-none focus:border-[#43A047] ${
-                              isDarkMode ? "bg-[#0B132B] border-[#3A506B] text-white" : "bg-white border-slate-300 text-slate-900"
+                            className={`w-16 rounded-lg px-2.5 py-1.5 text-center text-sm border focus:outline-none focus:border-[#2E7D32] ${
+                              isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-white border-slate-300 text-slate-900"
                             }`}
                           />
                         </div>
@@ -632,7 +632,7 @@ export default function Home() {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-[#43A047] hover:bg-[#388E3C] text-white font-semibold py-3.5 rounded-xl transition mt-6 shadow-lg shadow-[#43A047]/20 text-base disabled:opacity-50"
+              className="w-full bg-[#2E7D32] hover:bg-[#256428] text-white font-semibold py-3.5 rounded-xl transition mt-6 shadow-lg shadow-[#2E7D32]/20 text-base disabled:opacity-50"
             >
               {loading ? (lang === "am" ? "በመላክ ላይ..." : "Submitting...") : t.btnSubmit}
             </button>
@@ -641,7 +641,7 @@ export default function Home() {
       </section>
 
       {/* Footer section maintaining official corporate colors and details */}
-      <footer className="bg-[#0B132B] text-slate-300 border-t border-[#1C2541] py-12 px-6 md:px-16">
+      <footer className="bg-[#0D233A] text-slate-300 border-t border-[#143454] py-12 px-6 md:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           
           <div className="space-y-4">
@@ -672,22 +672,22 @@ export default function Home() {
           <div className="space-y-3">
             <h3 className="text-lg font-bold tracking-wide text-white">Navigation</h3>
             <ul className="space-y-2 text-xs text-slate-400">
-              <li><a href="#" className="hover:text-[#43A047] transition">Home</a></li>
-              <li><a href="#" className="hover:text-[#43A047] transition">About Us</a></li>
-              <li><a href="#" className="hover:text-[#43A047] transition">Values</a></li>
-              <li><a href="#benefits" className="hover:text-[#43A047] transition">Services</a></li>
-              <li><a href="#calculator" className="hover:text-[#43A047] transition">Get Started</a></li>
-              <li><a href="#" className="hover:text-[#43A047] transition">Legal Notice</a></li>
-              <li><a href="#" className="hover:text-[#43A047] transition">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-[#2E7D32] transition">Home</a></li>
+              <li><a href="#" className="hover:text-[#2E7D32] transition">About Us</a></li>
+              <li><a href="#" className="hover:text-[#2E7D32] transition">Values</a></li>
+              <li><a href="#benefits" className="hover:text-[#2E7D32] transition">Services</a></li>
+              <li><a href="#calculator" className="hover:text-[#2E7D32] transition">Get Started</a></li>
+              <li><a href="#" className="hover:text-[#2E7D32] transition">Legal Notice</a></li>
+              <li><a href="#" className="hover:text-[#2E7D32] transition">Privacy Policy</a></li>
             </ul>
           </div>
 
           <div className="space-y-3">
             <h3 className="text-lg font-bold tracking-wide text-white">Social media</h3>
             <div className="flex flex-col space-y-2 text-xs text-slate-400">
-              <a href="#" className="hover:text-[#43A047] transition flex items-center gap-2">📘 Facebook</a>
-              <a href="#" className="hover:text-[#43A047] transition flex items-center gap-2">𝕏 X</a>
-              <a href="#" className="hover:text-[#43A047] transition flex items-center gap-2">📷 Instagram</a>
+              <a href="#" className="hover:text-[#2E7D32] transition flex items-center gap-2">📘 Facebook</a>
+              <a href="#" className="hover:text-[#2E7D32] transition flex items-center gap-2">𝕏 X</a>
+              <a href="#" className="hover:text-[#2E7D32] transition flex items-center gap-2">📷 Instagram</a>
             </div>
           </div>
 
@@ -698,18 +698,18 @@ export default function Home() {
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
           <div className={`max-w-md w-full p-6 rounded-3xl border shadow-2xl text-center transform transition-all ${
-            isDarkMode ? "bg-[#1C2541] border-[#3A506B] text-white" : "bg-white border-slate-200 text-slate-900"
+            isDarkMode ? "bg-[#143454] border-[#224b7a] text-white" : "bg-white border-slate-200 text-slate-900"
           }`}>
-            <div className="w-16 h-16 bg-[#43A047]/20 border border-[#43A047] text-[#43A047] rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
+            <div className="w-16 h-16 bg-[#2E7D32]/20 border border-[#2E7D32] text-[#2E7D32] rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
               ✓
             </div>
-            <h3 className="text-2xl font-bold mb-2 text-[#43A047]">{t.modalTitle}</h3>
+            <h3 className="text-2xl font-bold mb-2 text-[#2E7D32]">{t.modalTitle}</h3>
             
             <div className={`my-4 p-4 rounded-2xl border text-center ${
-              isDarkMode ? "bg-[#0B132B] border-[#43A047]/40" : "bg-green-50 border-green-300"
+              isDarkMode ? "bg-[#0D233A] border-[#2E7D32]/40" : "bg-green-50 border-green-300"
             }`}>
               <span className="text-xs text-slate-400 block mb-1">{t.modalIdLabel}</span>
-              <span className="text-2xl font-mono font-extrabold text-[#43A047] tracking-wider">
+              <span className="text-2xl font-mono font-extrabold text-[#2E7D32] tracking-wider">
                 {generatedBookingId}
               </span>
             </div>
@@ -719,7 +719,7 @@ export default function Home() {
             </p>
             <button
               onClick={() => setShowSuccessModal(false)}
-              className="w-full bg-[#43A047] hover:bg-[#388E3C] text-white font-semibold py-3.5 rounded-2xl transition shadow-lg shadow-[#43A047]/30 text-base"
+              className="w-full bg-[#2E7D32] hover:bg-[#256428] text-white font-semibold py-3.5 rounded-2xl transition shadow-lg shadow-[#2E7D32]/30 text-base"
             >
               {t.modalBtn}
             </button>
