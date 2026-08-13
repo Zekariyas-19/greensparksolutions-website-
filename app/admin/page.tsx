@@ -28,15 +28,14 @@ export default function AdminPage() {
   const [tinNumber, setTinNumber] = useState('');
   const [address, setAddress] = useState('');
   
+  // Updated vehicle options based on the second image reference
   const vehicleOptions = [
-    'የቤት መኪና',
-    'ሚኒባስ',
-    'ባስ / አውቶቡስ',
-    'ፒካፕ',
-    'የደረቅ ጭነት',
-    'የደረቅ ጭነት ተሳቢ',
-    'ቦቲ',
-    'ተሳቢ ቦቲ'
+    'AA (እስከ 10 ሊትር)',
+    'A (እስከ 40 ሊትር)',
+    'B (እስከ 70 ሊትር)',
+    'C (እስከ 150 ሊትር)',
+    'D (እስከ 350 ሊትር)',
+    'E (800 እና ከዚህ በላይ ሊትር)'
   ];
 
   const [selectedVehicles, setSelectedVehicles] = useState<{ [key: string]: number }>({});
@@ -167,32 +166,32 @@ export default function AdminPage() {
     e.preventDefault();
     
     if (!fullName.trim()) {
-      alert('Please enter full name or company name.');
+      alert('እባክዎ ሙሉ ስም ወይም የድርጅት ስም ያስገቡ።');
       return;
     }
 
     if (!phone.trim()) {
-      alert('Please enter phone number.');
+      alert('እባክዎ ስልክ ቁጥር ያስገቡ።');
       return;
     }
 
     if (!plateNumber.trim()) {
-      alert('Please enter plate number.');
+      alert('እባክዎ ሰሌዳ ቁጥር ያስገቡ።');
       return;
     }
 
     if (Object.keys(selectedVehicles).length === 0) {
-      alert('Please select at least one vehicle type.');
+      alert('እባክዎ ቢያንስ አንድ የመኪና መጠን ይምረጡ።');
       return;
     }
 
     if (registrationType === 'corporate' && !tinNumber.trim()) {
-      alert('Please enter the corporate TIN number.');
+      alert('እባክዎ የግብር ከፋይ መለያ ቁጥር (TIN) ያስገቡ።');
       return;
     }
 
     if (!address.trim()) {
-      alert('Please enter an address.');
+      alert('እባክዎ አድራሻ ያስገቡ።');
       return;
     }
 
@@ -221,7 +220,7 @@ export default function AdminPage() {
       if (error) {
         alert('Error saving record: ' + error.message);
       } else {
-        alert('Registration completed successfully!');
+        alert('ምዝገባው በተሳካ ሁኔታ ተጠናቋል!');
         setFullName('');
         setPhone('');
         setPlateNumber('');
@@ -234,7 +233,7 @@ export default function AdminPage() {
       }
     } catch (err) {
       console.error('Error:', err);
-      alert('An error occurred during registration.');
+      alert('ምዝገባ በሚካሄድበት ጊዜ ስህተት ተፈጥሯል።');
     } finally {
       setSubmittingWalkIn(false);
     }
@@ -295,9 +294,16 @@ export default function AdminPage() {
     <div style={{ minHeight: '100vh', backgroundColor: '#FFFFFF', color: '#0F172A', padding: '24px', fontFamily: 'sans-serif' }}>
       {!isLoggedIn ? (
         <div style={{ maxWidth: '400px', margin: '80px auto', backgroundColor: '#FFFFFF', padding: '32px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px', color: '#15803D', textAlign: 'center' }}>
-            Staff Admin Login
-          </h1>
+          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+            <img 
+              src="/logo.png" 
+              alt="GreenSpark Logo" 
+              style={{ width: '50px', height: '50px', objectFit: 'contain', margin: '0 auto 8px auto', display: 'block' }} 
+            />
+            <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#16A34A', margin: 0 }}>
+              Staff Admin Login
+            </h1>
+          </div>
           
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
@@ -326,7 +332,7 @@ export default function AdminPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#64748B', cursor: 'pointer' }}
                 >
-                  {showPassword ? 'Hide' : 'Show'}
+                  {showPassword ? 'ደብቅ' : 'አሳይ'}
                 </button>
               </div>
             </div>
@@ -335,16 +341,17 @@ export default function AdminPage() {
 
             <button 
               type="submit"
-              style={{ width: '100%', backgroundColor: '#15803D', color: '#FFFFFF', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
+              style={{ width: '100%', backgroundColor: '#16A34A', color: '#FFFFFF', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
               disabled={loading}
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? ' በመግባት ላይ...' : 'ግባ'}
             </button>
           </form>
         </div>
       ) : (
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {/* Header with Logo and Company Name */}
+          
+          {/* Header with Logo and Brand Name */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <img 
@@ -352,7 +359,7 @@ export default function AdminPage() {
                 alt="GreenSpark Logo" 
                 style={{ width: '40px', height: '40px', objectFit: 'contain' }} 
               />
-              <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#15803D', margin: 0 }}>
+              <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#16A34A', margin: 0 }}>
                 GreenSpark Management
               </h1>
             </div>
@@ -360,7 +367,7 @@ export default function AdminPage() {
               onClick={() => setIsLoggedIn(false)}
               style={{ backgroundColor: '#DC2626', color: '#FFFFFF', padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
             >
-              Logout
+              ውጣ (Logout)
             </button>
           </div>
 
@@ -373,13 +380,13 @@ export default function AdminPage() {
                 borderRadius: '8px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
-                backgroundColor: activeTab === 'register' ? '#15803D' : '#FFFFFF',
+                backgroundColor: activeTab === 'register' ? '#0F385A' : '#FFFFFF',
                 color: activeTab === 'register' ? '#FFFFFF' : '#334155',
                 border: '1px solid #E2E8F0',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
               }}
             >
-              Register (View Records)
+              መዝገብ (Records)
             </button>
             <button
               onClick={() => setActiveTab('new-registration')}
@@ -389,13 +396,13 @@ export default function AdminPage() {
                 borderRadius: '8px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
-                backgroundColor: activeTab === 'new-registration' ? '#15803D' : '#FFFFFF',
+                backgroundColor: activeTab === 'new-registration' ? '#16A34A' : '#FFFFFF',
                 color: activeTab === 'new-registration' ? '#FFFFFF' : '#334155',
                 border: '1px solid #E2E8F0',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
               }}
             >
-              New Registration (Walk-in)
+              አዲስ ምዝገባ (New Walk-in)
             </button>
           </div>
 
@@ -411,12 +418,12 @@ export default function AdminPage() {
                     fontWeight: '600',
                     cursor: 'pointer',
                     backgroundColor: subRegisterTab === 'personal' ? '#F0FDF4' : 'transparent',
-                    color: subRegisterTab === 'personal' ? '#15803D' : '#64748B',
+                    color: subRegisterTab === 'personal' ? '#16A34A' : '#64748B',
                     border: '1px solid',
                     borderColor: subRegisterTab === 'personal' ? '#BBF7D0' : 'transparent'
                   }}
                 >
-                  Personal ({personalRecords.length})
+                  ግለሰብ / Personal ({personalRecords.length})
                 </button>
                 <button
                   onClick={() => setSubRegisterTab('corporate')}
@@ -426,12 +433,12 @@ export default function AdminPage() {
                     fontWeight: '600',
                     cursor: 'pointer',
                     backgroundColor: subRegisterTab === 'corporate' ? '#F0FDF4' : 'transparent',
-                    color: subRegisterTab === 'corporate' ? '#15803D' : '#64748B',
+                    color: subRegisterTab === 'corporate' ? '#16A34A' : '#64748B',
                     border: '1px solid',
                     borderColor: subRegisterTab === 'corporate' ? '#BBF7D0' : 'transparent'
                   }}
                 >
-                  Corporate ({corporateRecords.length})
+                  ድርጅት / Corporate ({corporateRecords.length})
                 </button>
                 <button
                   onClick={() => setSubRegisterTab('completed')}
@@ -446,14 +453,14 @@ export default function AdminPage() {
                     borderColor: subRegisterTab === 'completed' ? '#A7F3D0' : 'transparent'
                   }}
                 >
-                  Completed ({completedRecords.length})
+                  የተጠናቀቁ / Completed ({completedRecords.length})
                 </button>
               </div>
 
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                 <input 
                   type="text"
-                  placeholder="Search by Booking ID (e.g. GS-22542), Name, or Phone..."
+                  placeholder="በመለያ (Booking ID)፣ በስም ወይም በስልክ ቁጥር ይፈልጉ..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{ flex: 1, padding: '10px 14px', borderRadius: '6px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: '14px', boxSizing: 'border-box' }}
@@ -463,22 +470,22 @@ export default function AdminPage() {
                     onClick={() => setSearchQuery('')}
                     style={{ backgroundColor: '#E2E8F0', color: '#334155', border: 'none', padding: '10px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
                   >
-                    Clear
+                    አጽዳ
                   </button>
                 )}
                 <button
                   onClick={fetchAllRecords}
                   style={{ backgroundColor: '#E2E8F0', color: '#334155', border: 'none', padding: '10px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
                 >
-                  {fetchingRecords ? 'Refreshing...' : 'Refresh'}
+                  {fetchingRecords ? 'በመጫን ላይ...' : 'አድስ (Refresh)'}
                 </button>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {fetchingRecords ? (
-                  <p style={{ color: '#64748B', textAlign: 'center', padding: '20px' }}>Loading records...</p>
+                  <p style={{ color: '#64748B', textAlign: 'center', padding: '20px' }}>መረጃዎችን በመጫን ላይ...</p>
                 ) : displayedRecords.length === 0 ? (
-                  <p style={{ color: '#64748B', textAlign: 'center', padding: '20px' }}>No records found.</p>
+                  <p style={{ color: '#64748B', textAlign: 'center', padding: '20px' }}>ምንም መረጃ አልተገኘም።</p>
                 ) : (
                   displayedRecords.map((item, index) => {
                     const isDone = (item.status || '').toLowerCase().includes('complet');
@@ -491,18 +498,18 @@ export default function AdminPage() {
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                             <span style={{ fontSize: '13px', backgroundColor: '#0284C7', color: '#FFFFFF', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-                              Booking ID: {getBookingIdDisplay(item)}
+                              ID: {getBookingIdDisplay(item)}
                             </span>
-                            <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#15803D' }}>
+                            <p style={{ fontWeight: 'bold', margin: 0, fontSize: '16px', color: '#16A34A' }}>
                               {getDisplayName(item)}
                             </p>
                           </div>
                           <p style={{ fontSize: '13px', color: '#64748B', margin: '6px 0 0 0' }}>
-                            {item.phone ? `Phone: ${item.phone}` : (item.customer_type || 'Record')}
+                            {item.phone ? `ስልክ: ${item.phone}` : (item.customer_type || 'መዝገብ')}
                           </p>
                         </div>
                         <span style={{ fontSize: '12px', backgroundColor: isDone ? '#D1FAE5' : '#FEF3C7', color: isDone ? '#065F46' : '#92400E', padding: '6px 12px', borderRadius: '6px', fontWeight: 'bold' }}>
-                          {item.status || 'Registered'}
+                          {item.status || 'የተመዘገበ'}
                         </span>
                       </div>
                     );
@@ -512,22 +519,48 @@ export default function AdminPage() {
             </div>
           ) : (
             <div style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#0F172A' }}>
-                New Walk-in Registration Form <span style={{ fontSize: '13px', color: '#DC2626' }}>(All fields must be filled)</span>
-              </h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '600', margin: 0, color: '#0F385A' }}>
+                  New Walk-in Registration Form
+                </h2>
+                <span style={{ fontSize: '12px', color: '#DC2626', fontWeight: 'bold' }}>(ሁሉም ክፍሎች መሞላት አለባቸው)</span>
+              </div>
 
+              {/* Exact matching toggle buttons from Image 1 */}
               <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
                 <button
                   type="button"
                   onClick={() => setRegistrationType('personal')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'personal' ? '#15803D' : '#FFFFFF', color: registrationType === 'personal' ? '#FFFFFF' : '#334155', border: '1px solid #CBD5E1' }}
+                  style={{ 
+                    flex: 1, 
+                    padding: '12px', 
+                    borderRadius: '8px', 
+                    fontWeight: 'bold', 
+                    cursor: 'pointer', 
+                    backgroundColor: registrationType === 'personal' ? '#16A34A' : '#FFFFFF', 
+                    color: registrationType === 'personal' ? '#FFFFFF' : '#0F385A', 
+                    border: '1px solid',
+                    borderColor: registrationType === 'personal' ? '#16A34A' : '#CBD5E1',
+                    boxShadow: registrationType === 'personal' ? '0 4px 6px -1px rgba(22, 163, 74, 0.2)' : 'none'
+                  }}
                 >
                   Personal
                 </button>
                 <button
                   type="button"
                   onClick={() => setRegistrationType('corporate')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: registrationType === 'corporate' ? '#15803D' : '#FFFFFF', color: registrationType === 'corporate' ? '#FFFFFF' : '#334155', border: '1px solid #CBD5E1' }}
+                  style={{ 
+                    flex: 1, 
+                    padding: '12px', 
+                    borderRadius: '8px', 
+                    fontWeight: 'bold', 
+                    cursor: 'pointer', 
+                    backgroundColor: registrationType === 'corporate' ? '#16A34A' : '#FFFFFF', 
+                    color: registrationType === 'corporate' ? '#FFFFFF' : '#0F385A', 
+                    border: '1px solid',
+                    borderColor: registrationType === 'corporate' ? '#16A34A' : '#CBD5E1',
+                    boxShadow: registrationType === 'corporate' ? '0 4px 6px -1px rgba(22, 163, 74, 0.2)' : 'none'
+                  }}
                 >
                   Corporate
                 </button>
@@ -535,7 +568,7 @@ export default function AdminPage() {
 
               <form onSubmit={handleWalkInSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#0F385A', fontWeight: '500' }}>
                     {registrationType === 'personal' ? 'Full Name *:' : 'Company Name *:'}
                   </label>
                   <input 
@@ -549,7 +582,7 @@ export default function AdminPage() {
 
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Phone Number *:</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#0F385A', fontWeight: '500' }}>Phone Number *:</label>
                     <input 
                       type="text" 
                       value={phone}
@@ -559,7 +592,7 @@ export default function AdminPage() {
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Plate Number *:</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#0F385A', fontWeight: '500' }}>Plate Number *:</label>
                     <input 
                       type="text" 
                       value={plateNumber}
@@ -571,7 +604,7 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#15803D', fontWeight: 'bold' }}>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#16A34A', fontWeight: 'bold' }}>
                     Vehicle Types and Quantities (Select required and enter quantity) *:
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #CBD5E1' }}>
@@ -588,7 +621,7 @@ export default function AdminPage() {
                             backgroundColor: '#FFFFFF', 
                             padding: '12px', 
                             borderRadius: '6px', 
-                            border: `1px solid ${isSelected ? '#15803D' : '#E2E8F0'}`,
+                            border: `1px solid ${isSelected ? '#16A34A' : '#E2E8F0'}`,
                             transition: 'all 0.2s'
                           }}
                         >
@@ -600,14 +633,14 @@ export default function AdminPage() {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => {}} 
-                              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#15803D' }}
+                              style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#16A34A' }}
                             />
-                            <span style={{ fontSize: '14px', color: '#0F172A', fontWeight: '500', userSelect: 'none' }}>{vName}</span>
+                            <span style={{ fontSize: '13px', color: '#0F385A', fontWeight: '500', userSelect: 'none' }}>{vName}</span>
                           </div>
 
                           {isSelected && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', paddingLeft: '28px' }}>
-                              <span style={{ fontSize: '12px', color: '#64748B' }}>Qty:</span>
+                              <span style={{ fontSize: '12px', color: '#64748B' }}>ብዛት (Qty):</span>
                               <input 
                                 type="number" 
                                 min="1" 
@@ -626,7 +659,7 @@ export default function AdminPage() {
 
                 {registrationType === 'corporate' && (
                   <div>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>TIN Number *:</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#0F385A', fontWeight: '500' }}>TIN Number *:</label>
                     <input 
                       type="text" 
                       value={tinNumber}
@@ -638,7 +671,7 @@ export default function AdminPage() {
                 )}
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Address *:</label>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#0F385A', fontWeight: '500' }}>Address *:</label>
                   <input 
                     type="text" 
                     value={address}
@@ -650,10 +683,10 @@ export default function AdminPage() {
 
                 <button 
                   type="submit"
-                  style={{ width: '100%', backgroundColor: '#15803D', color: '#FFFFFF', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer', marginTop: '8px' }}
+                  style={{ width: '100%', backgroundColor: '#16A34A', color: '#FFFFFF', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer', marginTop: '8px' }}
                   disabled={submittingWalkIn}
                 >
-                  {submittingWalkIn ? 'Saving...' : 'Submit Registration'}
+                  {submittingWriterLoading => submittingWalkIn ? 'በመቆጠብ ላይ...' : 'Submit Registration'}
                 </button>
               </form>
             </div>
@@ -663,29 +696,29 @@ export default function AdminPage() {
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 }}>
               <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)', maxHeight: '90vh', overflowY: 'auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#15803D', margin: 0 }}>Booking Details</h3>
+                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#0F385A', margin: 0 }}>የምዝገባ ዝርዝር መረጃ (Booking Details)</h3>
                   <button 
                     onClick={() => setSelectedRecord(null)}
                     style={{ backgroundColor: '#E2E8F0', color: '#334155', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer' }}
                   >
-                    Close
+                    ዝጋ
                   </button>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#334155', backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                  <p style={{ margin: 0, color: '#0284C7', fontWeight: 'bold' }}><strong>Booking ID:</strong> {getBookingIdDisplay(selectedRecord)}</p>
-                  <p style={{ margin: 0 }}><strong>Name / Company:</strong> {getDisplayName(selectedRecord)}</p>
-                  <p style={{ margin: 0 }}><strong>Customer Type:</strong> {selectedRecord.customer_type || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Phone:</strong> {selectedRecord.phone || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Plate Number:</strong> {selectedRecord.plate_number || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>Status:</strong> <span style={{ color: '#059669', fontWeight: 'bold' }}>{selectedRecord.status || 'N/A'}</span></p>
-                  <p style={{ margin: 0 }}><strong>Date / Time:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
+                  <p style={{ margin: 0, color: '#0F385A', fontWeight: 'bold' }}><strong>መለያ (Booking ID):</strong> {getBookingIdDisplay(selectedRecord)}</p>
+                  <p style={{ margin: 0 }}><strong>ስም / ድርጅት:</strong> {getDisplayName(selectedRecord)}</p>
+                  <p style={{ margin: 0 }}><strong>የደንበኛ ዓይነት:</strong> {selectedRecord.customer_type || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>ስልክ:</strong> {selectedRecord.phone || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>ሰሌዳ ቁጥር:</strong> {selectedRecord.plate_number || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>ሁኔታ (Status):</strong> <span style={{ color: '#059669', fontWeight: 'bold' }}>{selectedRecord.status || 'N/A'}</span></p>
+                  <p style={{ margin: 0 }}><strong>ቀን / ሰዓት:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
                   
                   {Object.entries(selectedRecord).map(([key, value]) => {
                     if (['id', 'booking_id', 'name', 'full_name', 'company_name', 'customer_type', 'phone', 'phone_number', 'plate_number', 'status', 'created_at'].includes(key)) return null;
                     
                     if (key === 'vehicles') {
-                      return <p key={key} style={{ margin: 0 }}><strong>vehicles:</strong> {renderVehicleDetails(value)}</p>;
+                      return <p key={key} style={{ margin: 0 }}><strong>የተመረጡ መኪኖች:</strong> {renderVehicleDetails(value)}</p>;
                     }
 
                     return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
@@ -695,10 +728,10 @@ export default function AdminPage() {
                 <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Completed')}
-                    style={{ flex: 1, backgroundColor: '#15803D', color: '#FFFFFF', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                    style={{ flex: 1, backgroundColor: '#16A34A', color: '#FFFFFF', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                     disabled={updatingStatus}
                   >
-                    {updatingStatus ? 'Updating...' : 'Mark as Completed'}
+                    {updatingStatus ? 'በማዘመን ላይ...' : 'እንደተጠናቀቀ ምልክት አድርግ (Mark as Completed)'}
                   </button>
                 </div>
               </div>
