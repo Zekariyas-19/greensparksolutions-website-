@@ -4,14 +4,12 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function Home() {
-  // State management for language, theme, mobile navigation, and customer details
   const [lang, setLang] = useState<"am" | "en">("am");
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   
   const [customerType, setCustomerType] = useState<"individual" | "company">("individual");
   
-  // Form inputs for individual and corporate entities
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [plate, setPlate] = useState("");
@@ -19,23 +17,14 @@ export default function Home() {
   const [tin, setTin] = useState("");
   const [address, setAddress] = useState("");
 
-  // Loading state, notification statuses, and success modal states
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [generatedBookingId, setGeneratedBookingId] = useState("");
 
-  // Fleet management states for selected vehicles and calculation metrics
   const [vehicleCounts, setVehicleCounts] = useState<{ [key: string]: number }>({});
-  const [dailyKm, setDailyKm] = useState<number>(300);
-  const [totalVehicles, setTotalVehicles] = useState<number>(5);
 
-  // ROI estimation calculations based on vehicle quantity, mileage, and efficiency metrics
-  const estimatedDailySavings = Math.round(totalVehicles * (dailyKm / 3) * 0.12 * 180.46);
-  const estimatedYearlySavings = Math.round(estimatedDailySavings * 180);
-
-  // Toggle vehicle selection or remove it if already selected
   const handleVehicleToggle = (key: string) => {
     setVehicleCounts((prev) => {
       const copy = { ...prev };
@@ -48,7 +37,6 @@ export default function Home() {
     });
   };
 
-  // Update specific vehicle count ensuring it never goes below 1
   const handleCountChange = (key: string, count: number) => {
     setVehicleCounts((prev) => ({
       ...prev,
@@ -56,7 +44,6 @@ export default function Home() {
     }));
   };
 
-  // Handle form submission, generate tracking ID, and save payload to Supabase database
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -87,7 +74,6 @@ export default function Home() {
       setGeneratedBookingId(uniqueId);
       setShowSuccessModal(true);
 
-      // Reset form fields after successful deployment/submission
       setFullName("");
       setPhone("");
       setPlate("");
@@ -106,11 +92,9 @@ export default function Home() {
     }
   };
 
-  // Multi-language content dictionary (Amharic and English translations)
   const content = {
     am: {
       navServices: "ጥቅሞች",
-      navCalc: "የቁጠባ ማስያ",
       navBook: "ቦታ ይያዙ",
       heroTitle1: "የነዳጅ ወጪዎን",
       heroTitle2: "ከ10% - 30%",
@@ -122,11 +106,6 @@ export default function Home() {
       feat2Desc: "የአየር ብክለትን በመቀነስ የአካባቢ ጥበቃ ደንቦችን ያሟላል",
       feat3Title: "ዘላቂ አገልግሎት",
       feat3Desc: "ለረጅም ዓመታት ያለምንም ተጨማሪ ጥገና የሚያገለግል",
-      calcVehiclesLabel: "የተሽከርካሪዎች ብዛት፦",
-      calcKmLabel: "በቀን የሚያደርጉት አማካይ ጉዞ (ኪ.ሜ)፦",
-      calcDailyEst: "የቀን የገንዘብ ቁጠባ (ግምት)፦",
-      calcYearlyEst: "የ1 ዓመት የገንዘብ ቁጠባ (ግምት)፦",
-      currency: "ብር",
       formTitle: "የግዢ እና ተረኛ መያዣ ቅጽ",
       formSub: "መረጃዎን ያስገቡ፤ ባለሙያዎቻችን አነጋግረውዎት ተገቢውን SUPERTECH ሞዴል ይገጥሙልዎታል",
       tabIndividual: "ግለሰብ",
@@ -160,7 +139,6 @@ export default function Home() {
     },
     en: {
       navServices: "Benefits",
-      navCalc: "Calculator",
       navBook: "Book Now",
       heroTitle1: "Reduce Fuel Costs",
       heroTitle2: "By 10% - 30%",
@@ -172,11 +150,6 @@ export default function Home() {
       feat2Desc: "Dramatically reduces environmental air pollution",
       feat3Title: "Long-lasting Reliability",
       feat3Desc: "Built for extended durability with zero maintenance required",
-      calcVehiclesLabel: "Number of Vehicles:",
-      calcKmLabel: "Avg. Daily Mileage (KM):",
-      calcDailyEst: "Est. Daily Savings:",
-      calcYearlyEst: "Est. 1-Year Savings:",
-      currency: "ETB",
       formTitle: "SUPERTECH Booking Form",
       formSub: "Fill out the details below to reserve your installation slot",
       tabIndividual: "Individual Vehicle",
@@ -212,7 +185,6 @@ export default function Home() {
 
   const t = content[lang];
 
-  // List of configurable vehicles mapped to translation dictionary
   const vehicleList = [
     { key: "personal", label: t.catPersonal },
     { key: "minibus", label: t.subMinibus },
@@ -228,7 +200,6 @@ export default function Home() {
     <main className={`min-h-screen transition-colors duration-300 ${
       isDarkMode ? "bg-[#0D233A] text-white" : "bg-slate-50 text-slate-900"
     }`}>
-      {/* Navigation bar synchronized with official logo colors (Deep Navy #0D233A and Brand Green #2E7D32) */}
       <nav className={`flex justify-between items-center px-4 md:px-8 py-4 border-b sticky top-0 z-40 transition-colors ${
         isDarkMode ? "border-[#143454] bg-[#0D233A]/95 backdrop-blur-md" : "border-slate-200 bg-white/95 backdrop-blur-md"
       }`}>
@@ -244,10 +215,8 @@ export default function Home() {
           </div>
         </div>
         
-        {/* Desktop Menu layout */}
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
           <a href="#benefits" className="hover:text-[#2E7D32] transition">{t.navServices}</a>
-          <a href="#calculator" className="hover:text-[#2E7D32] transition">{t.navCalc}</a>
           <a href="#booking" className="bg-[#2E7D32] hover:bg-[#256428] text-white px-5 py-2.5 rounded-xl transition shadow-md shadow-[#2E7D32]/20 font-semibold">
             {t.navBook}
           </a>
@@ -277,7 +246,6 @@ export default function Home() {
           </select>
         </div>
 
-        {/* Mobile controls */}
         <div className="flex md:hidden items-center space-x-2">
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
@@ -310,7 +278,6 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Mobile dropdown menu view */}
       {mobileMenuOpen && (
         <div className={`md:hidden flex flex-col space-y-3 px-6 py-5 border-b shadow-lg transition-all ${
           isDarkMode ? "bg-[#143454] border-[#224b7a] text-white" : "bg-white border-slate-200 text-slate-900"
@@ -323,13 +290,6 @@ export default function Home() {
             {t.navServices}
           </a>
           <a 
-            href="#calculator" 
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-base font-medium py-1.5 hover:text-[#2E7D32]"
-          >
-            {t.navCalc}
-          </a>
-          <a 
             href="#booking" 
             onClick={() => setMobileMenuOpen(false)}
             className="bg-[#2E7D32] text-center hover:bg-[#256428] text-white px-4 py-2.5 rounded-xl font-medium transition shadow-md"
@@ -339,7 +299,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hero section highlighting corporate brand identity and messaging */}
       <section className="flex flex-col items-center justify-center text-center px-4 pt-16 pb-8 max-w-5xl mx-auto">
         <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
           {t.heroTitle1} <span className="text-[#2E7D32]">{t.heroTitle2}</span> {t.heroTitle3}
@@ -372,70 +331,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ROI Calculator Section */}
-      <section id="calculator" className="max-w-4xl mx-auto px-4 py-10">
-        <div className={`p-6 md:p-10 rounded-3xl border shadow-xl ${
-          isDarkMode ? "bg-[#143454]/90 border-[#224b7a]" : "bg-white border-slate-200"
-        }`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div className="space-y-6">
-              <div>
-                <div className="flex justify-between text-sm font-semibold mb-2">
-                  <span>{t.calcVehiclesLabel}</span>
-                  <span className="text-[#2E7D32]">{totalVehicles}</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="1" 
-                  max="50" 
-                  value={totalVehicles} 
-                  onChange={(e) => setTotalVehicles(parseInt(e.target.value))}
-                  className="w-full accent-[#2E7D32] cursor-pointer"
-                />
-              </div>
-
-              <div>
-                <div className="flex justify-between text-sm font-semibold mb-2">
-                  <span>{t.calcKmLabel}</span>
-                  <span className="text-[#2E7D32]">{dailyKm} KM</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="50" 
-                  max="800" 
-                  step="10"
-                  value={dailyKm} 
-                  onChange={(e) => setDailyKm(parseInt(e.target.value))}
-                  className="w-full accent-[#2E7D32] cursor-pointer"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              <div className={`p-4 rounded-2xl border text-center ${
-                isDarkMode ? "bg-[#0D233A] border-[#224b7a]" : "bg-slate-50 border-slate-200"
-              }`}>
-                <span className="text-xs text-slate-400 block mb-1">{t.calcDailyEst}</span>
-                <span className="text-2xl font-extrabold text-[#2E7D32]">
-                  {estimatedDailySavings.toLocaleString()} {t.currency}
-                </span>
-              </div>
-
-              <div className={`p-4 rounded-2xl border text-center ${
-                isDarkMode ? "bg-green-950/30 border-green-800/50" : "bg-green-50 border-green-200"
-              }`}>
-                <span className="text-xs text-green-400 block mb-1 font-medium">{t.calcYearlyEst}</span>
-                <span className="text-3xl font-extrabold text-[#2E7D32]">
-                  {estimatedYearlySavings.toLocaleString()} {t.currency}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Booking Form Section for Individual and Company options */}
-      <section id="booking" className="max-w-2xl mx-auto px-4 pb-20">
+      <section id="booking" className="max-w-2xl mx-auto px-4 pb-20 pt-10">
         <div className={`p-6 md:p-10 rounded-3xl shadow-2xl border transition ${
           isDarkMode 
             ? "bg-[#143454] border-[#224b7a]" 
@@ -626,7 +522,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer section maintaining official corporate colors and details */}
       <footer className="bg-[#0D233A] text-slate-300 border-t border-[#143454] py-12 px-6 md:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
           
@@ -662,7 +557,7 @@ export default function Home() {
               <li><a href="#" className="hover:text-[#2E7D32] transition">About Us</a></li>
               <li><a href="#" className="hover:text-[#2E7D32] transition">Values</a></li>
               <li><a href="#benefits" className="hover:text-[#2E7D32] transition">Services</a></li>
-              <li><a href="#calculator" className="hover:text-[#2E7D32] transition">Get Started</a></li>
+              <li><a href="#booking" className="hover:text-[#2E7D32] transition">Get Started</a></li>
               <li><a href="#" className="hover:text-[#2E7D32] transition">Legal Notice</a></li>
               <li><a href="#" className="hover:text-[#2E7D32] transition">Privacy Policy</a></li>
             </ul>
@@ -680,7 +575,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Success Modal Popup displaying unique tracking/booking ID */}
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
           <div className={`max-w-md w-full p-6 rounded-3xl border shadow-2xl text-center transform transition-all ${
