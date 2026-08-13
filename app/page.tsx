@@ -197,7 +197,7 @@ export default function Home() {
           />
           <div className={`flex flex-col justify-center border-l pl-3 ${isDark ? "border-slate-700" : "border-slate-300"}`}>
             <span className={`text-lg md:text-xl font-bold tracking-tight leading-tight ${isDark ? "text-white" : "text-[#00529B]"}`}>
-              Gree<span className={isDark ? "text-white" : "text-[#43B02A]"}>n</span><span className={isDark ? "text-white" : "text-[#43B02A]"}>Spark</span>
+              Gree<span className="text-[#43B02A]">n</span><span className={isDark ? "text-white" : "text-[#43B02A]"}>Spark</span>
             </span>
             <div className="flex items-center space-x-1">
               <div className={`h-[1px] w-4 ${isDark ? "bg-slate-500" : "bg-[#00529B]"}`}></div>
@@ -469,7 +469,7 @@ export default function Home() {
             <div className={`p-2.5 rounded-xl inline-flex items-center gap-2 border shadow-md ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-transparent"}`}>
               <img src="/logo.png" alt="GreenSpark Logo" className="h-8 object-contain" />
               <div className="flex flex-col">
-                <span className={`font-bold text-xs leading-tight ${isDark ? "text-white" : "text-slate-900"}`}>Gree<span className={isDark ? "text-white" : "text-[#43B02A]"}>n</span><span className={isDark ? "text-white" : "text-[#43B02A]"}>Spark</span></span>
+                <span className={`font-bold text-xs leading-tight ${isDark ? "text-white" : "text-slate-900"}`}>Gree<span className="text-[#43B02A]">n</span><span className={isDark ? "text-white" : "text-[#43B02A]"}>Spark</span></span>
                 <span className={`text-[8px] font-bold tracking-widest ${isDark ? "text-slate-400" : "text-slate-500"}`}>SOLUTIONS PLC</span>
               </div>
             </div>
