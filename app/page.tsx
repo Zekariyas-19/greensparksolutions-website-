@@ -112,7 +112,6 @@ export default function Home() {
       navServices: "ጥቅሞች",
       navCalc: "የቁጠባ ማስያ",
       navBook: "ቦታ ይያዙ",
-      heroBadge: "SUPERTECH - የነዳጅ ቁጠባ እና የአካባቢ ጥበቃ መፍትሔ",
       heroTitle1: "የነዳጅ ወጪዎን",
       heroTitle2: "ከ10% - 30%",
       heroTitle3: "ይቀንሱ",
@@ -123,8 +122,6 @@ export default function Home() {
       feat2Desc: "የአየር ብክለትን በመቀነስ የአካባቢ ጥበቃ ደንቦችን ያሟላል",
       feat3Title: "ዘላቂ አገልግሎት",
       feat3Desc: "ለረጅም ዓመታት ያለምንም ተጨማሪ ጥገና የሚያገለግል",
-      calcTitle: "የነዳጅ ወጪ ቁጠባ ማስያ (ROI Calculator)",
-      calcSub: "ተሽከርካሪዎችዎ በቀን የሚያደርጉትን ጉዞ እና ብዛት በማስገባት የሚቆጥቡትን የብር መጠን ይመልከቱ",
       calcVehiclesLabel: "የተሽከርካሪዎች ብዛት፦",
       calcKmLabel: "በቀን የሚያደርጉት አማካይ ጉዞ (ኪ.ሜ)፦",
       calcDailyEst: "የቀን የገንዘብ ቁጠባ (ግምት)፦",
@@ -165,7 +162,6 @@ export default function Home() {
       navServices: "Benefits",
       navCalc: "Calculator",
       navBook: "Book Now",
-      heroBadge: "SUPERTECH - Fuel Efficiency & Sustainability",
       heroTitle1: "Reduce Fuel Costs",
       heroTitle2: "By 10% - 30%",
       heroTitle3: "Guaranteed",
@@ -176,8 +172,6 @@ export default function Home() {
       feat2Desc: "Dramatically reduces environmental air pollution",
       feat3Title: "Long-lasting Reliability",
       feat3Desc: "Built for extended durability with zero maintenance required",
-      calcTitle: "Fuel Savings Calculator (ROI)",
-      calcSub: "Estimate your financial savings based on daily mileage and fleet size",
       calcVehiclesLabel: "Number of Vehicles:",
       calcKmLabel: "Avg. Daily Mileage (KM):",
       calcDailyEst: "Est. Daily Savings:",
@@ -346,12 +340,7 @@ export default function Home() {
       )}
 
       {/* Hero section highlighting corporate brand identity and messaging */}
-      <section className="flex flex-col items-center justify-center text-center px-4 pt-12 pb-8 max-w-5xl mx-auto">
-        <span className={`px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border tracking-wide uppercase ${
-          isDarkMode ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-amber-50 border-amber-200 text-amber-700"
-        }`}>
-          Powering Efficiency, Protecting the Planet
-        </span>
+      <section className="flex flex-col items-center justify-center text-center px-4 pt-16 pb-8 max-w-5xl mx-auto">
         <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
           {t.heroTitle1} <span className="text-[#2E7D32]">{t.heroTitle2}</span> {t.heroTitle3}
         </h2>
@@ -388,9 +377,6 @@ export default function Home() {
         <div className={`p-6 md:p-10 rounded-3xl border shadow-xl ${
           isDarkMode ? "bg-[#143454]/90 border-[#224b7a]" : "bg-white border-slate-200"
         }`}>
-          <h3 className="text-xl md:text-2xl font-bold text-center mb-2">{t.calcTitle}</h3>
-          <p className={`text-xs text-center mb-8 ${isDarkMode ? "text-slate-300" : "text-slate-500"}`}>{t.calcSub}</p>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="space-y-6">
               <div>
