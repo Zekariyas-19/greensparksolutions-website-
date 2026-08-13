@@ -521,9 +521,15 @@ export default function Home() {
           <div className="space-y-3">
             <h3 className="text-base font-bold tracking-wide text-white">Social media</h3>
             <div className="flex flex-col space-y-2 text-xs text-slate-400">
-              <a href="#" className="hover:text-[#43B02A] transition">📘 Facebook</a>
-              <a href="#" className="hover:text-[#43B02A] transition">𝕏 X (Twitter)</a>
-              <a href="#" className="hover:text-[#43B02A] transition">📷 Instagram</a>
+              <a href="https://facebook.com/greenspark.solutions" target="_blank" rel="noopener noreferrer" className="hover:text-[#43B02A] transition flex items-center gap-1.5">
+                <span>🌐</span> Facebook
+              </a>
+              <a href="https://t.me/greenspark_solutions" target="_blank" rel="noopener noreferrer" className="hover:text-[#43B02A] transition flex items-center gap-1.5">
+                <span>✈️</span> Telegram
+              </a>
+              <a href="https://www.tiktok.com/@greenspark.solutions" target="_blank" rel="noopener noreferrer" className="hover:text-[#43B02A] transition flex items-center gap-1.5">
+                <span>🎬</span> TikTok
+              </a>
             </div>
           </div>
 
