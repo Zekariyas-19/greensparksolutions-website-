@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function Home() {
   const [lang, setLang] = useState<"am" | "en">("am");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [customerType, setCustomerType] = useState<"individual" | "company">("individual");
   
@@ -180,55 +181,74 @@ export default function Home() {
     { key: "E", label: t.tierE },
   ];
 
+  const isDark = theme === "dark";
+
   return (
-    <main className="min-h-screen bg-[#0B132B] text-slate-100 font-sans selection:bg-[#43B02A] selection:text-white">
+    <main className={`min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#0B132B] text-slate-100 selection:bg-[#43B02A] selection:text-white" : "bg-[#F8FAFC] text-slate-800 selection:bg-[#43B02A] selection:text-white"}`}>
       {/* Top Brand Accent Line */}
       <div className="h-2 w-full bg-gradient-to-r from-[#00529B] via-[#43B02A] to-[#00529B]"></div>
 
-      {/* Navigation Bar matching Dark Mode and Dark Business Card Style */}
-      <nav className="flex justify-between items-center px-6 md:px-16 py-4 bg-[#0B132B]/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 shadow-sm">
-        {/* Brand Logo and Styled Name Matching Dark Card Layout */}
+      {/* Navigation Bar with Theme & Language Switchers */}
+      <nav className={`flex justify-between items-center px-6 md:px-16 py-4 backdrop-blur-md border-b sticky top-0 z-40 shadow-sm transition-colors duration-300 ${isDark ? "bg-[#0B132B]/90 border-slate-800" : "bg-white/90 border-slate-200"}`}>
+        {/* Brand Logo and Styled Name Matching Manual */}
         <div className="flex items-center gap-3">
           <img 
             src="/logo.png" 
             alt="GreenSpark Solutions Logo" 
-            className="h-10 md:h-14 w-auto object-contain brightness-0 invert" 
+            className={`h-10 md:h-14 w-auto object-contain transition-all duration-300 ${isDark ? "brightness-0 invert" : ""}`} 
           />
-          <div className="flex flex-col justify-center border-l border-slate-700 pl-3">
-            <span className="text-lg md:text-xl font-bold tracking-tight text-white leading-tight">
+          <div className={`flex flex-col justify-center border-l pl-3 ${isDark ? "border-slate-700" : "border-slate-300"}`}>
+            <span className={`text-lg md:text-xl font-bold tracking-tight leading-tight ${isDark ? "text-white" : "text-[#00529B]"}`}>
               Green<span className="text-[#43B02A]">Spark</span>
             </span>
             <div className="flex items-center space-x-1">
-              <div className="h-[1px] w-4 bg-slate-500"></div>
-              <span className="text-[9px] md:text-[10px] font-extrabold tracking-[0.2em] text-slate-400 uppercase">
+              <div className={`h-[1px] w-4 ${isDark ? "bg-slate-500" : "bg-[#00529B]"}`}></div>
+              <span className={`text-[9px] md:text-[10px] font-extrabold tracking-[0.2em] uppercase ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                 SOLUTIONS PLC
               </span>
-              <div className="h-[1px] w-4 bg-slate-500"></div>
+              <div className={`h-[1px] w-4 ${isDark ? "bg-slate-500" : "bg-[#00529B]"}`}></div>
             </div>
           </div>
         </div>
         
-        <div className="hidden md:flex items-center space-x-8 text-sm font-semibold">
-          <a href="#benefits" className="text-slate-300 hover:text-[#43B02A] transition">{t.navServices}</a>
+        <div className="hidden md:flex items-center space-x-6 text-sm font-semibold">
+          <a href="#benefits" className={`transition ${isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-700 hover:text-[#00529B]"}`}>{t.navServices}</a>
           <a href="#booking" className="bg-[#43B02A] hover:bg-[#389623] text-white px-6 py-2.5 rounded-lg transition shadow-md shadow-[#43B02A]/20">
             {t.navBook}
           </a>
 
+          {/* Theme Switcher Button */}
+          <button
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+            className={`p-2 rounded-lg border transition text-sm flex items-center justify-center ${isDark ? "border-slate-700 bg-[#1C2541] text-amber-400 hover:bg-slate-800" : "border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100"}`}
+            title="Toggle Light/Dark Mode"
+          >
+            {isDark ? "☀️" : "🌙"}
+          </button>
+
           <select 
             value={lang} 
             onChange={(e) => setLang(e.target.value as "am" | "en")}
-            className="font-bold px-3 py-2 rounded-lg focus:outline-none cursor-pointer border border-slate-700 bg-[#1C2541] text-white transition text-xs"
+            className={`font-bold px-3 py-2 rounded-lg focus:outline-none cursor-pointer border transition text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-[#00529B]"}`}
           >
             <option value="am">አማርኛ</option>
             <option value="en">English</option>
           </select>
         </div>
 
-        <div className="flex md:hidden items-center space-x-3">
+        <div className="flex md:hidden items-center space-x-2">
+          {/* Theme Switcher Button Mobile */}
+          <button
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+            className={`p-2 rounded-lg border text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-amber-400" : "border-slate-300 bg-slate-50 text-slate-700"}`}
+          >
+            {isDark ? "☀️" : "🌙"}
+          </button>
+
           <select 
             value={lang} 
             onChange={(e) => setLang(e.target.value as "am" | "en")}
-            className="font-bold px-2.5 py-1.5 rounded-lg border border-slate-700 bg-[#1C2541] text-white text-xs"
+            className={`font-bold px-2.5 py-1.5 rounded-lg border text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-[#00529B]"}`}
           >
             <option value="am">አማ</option>
             <option value="en">EN</option>
@@ -236,7 +256,7 @@ export default function Home() {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg border border-slate-700 bg-[#1C2541] text-white text-base"
+            className={`p-2 rounded-lg border text-base ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-slate-800"}`}
           >
             {mobileMenuOpen ? "✕" : "☰"}
           </button>
@@ -244,11 +264,11 @@ export default function Home() {
       </nav>
 
       {mobileMenuOpen && (
-        <div className="md:hidden flex flex-col space-y-3 px-6 py-5 bg-[#1C2541] border-b border-slate-800 shadow-lg">
+        <div className={`md:hidden flex flex-col space-y-3 px-6 py-5 border-b shadow-lg transition-colors duration-300 ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
           <a 
             href="#benefits" 
             onClick={() => setMobileMenuOpen(false)}
-            className="text-base font-medium py-1.5 text-slate-300 hover:text-[#43B02A]"
+            className={`text-base font-medium py-1.5 ${isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-700 hover:text-[#00529B]"}`}
           >
             {t.navServices}
           </a>
@@ -264,46 +284,46 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center px-4 pt-16 pb-12 max-w-5xl mx-auto">
-        <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-white leading-tight">
+        <h2 className={`text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight ${isDark ? "text-white" : "text-[#00529B]"}`}>
           {t.heroTitle1} <span className="text-[#43B02A]">{t.heroTitle2}</span> {t.heroTitle3}
         </h2>
-        <p className="text-base md:text-xl mb-12 max-w-2xl leading-relaxed text-slate-300 font-medium">
+        <p className={`text-base md:text-xl mb-12 max-w-2xl leading-relaxed font-medium ${isDark ? "text-slate-300" : "text-slate-600"}`}>
           {t.heroDesc}
         </p>
 
         {/* Benefits Cards */}
         <div id="benefits" className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-4 text-left">
-          <div className="p-6 rounded-2xl border border-slate-800 bg-[#1C2541] shadow-sm hover:shadow-md hover:border-[#43B02A] transition">
+          <div className={`p-6 rounded-2xl border transition shadow-sm hover:shadow-md ${isDark ? "border-slate-800 bg-[#1C2541] hover:border-[#43B02A]" : "border-slate-200 bg-white hover:border-[#43B02A]"}`}>
             <h4 className="text-[#43B02A] font-bold text-lg mb-2">{t.feat1Title}</h4>
-            <p className="text-xs leading-relaxed text-slate-300">{t.feat1Desc}</p>
+            <p className={`text-xs leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat1Desc}</p>
           </div>
 
-          <div className="p-6 rounded-2xl border border-slate-800 bg-[#1C2541] shadow-sm hover:shadow-md hover:border-[#00529B] transition">
-            <h4 className="text-[#60A5FA] font-bold text-lg mb-2">{t.feat2Title}</h4>
-            <p className="text-xs leading-relaxed text-slate-300">{t.feat2Desc}</p>
+          <div className={`p-6 rounded-2xl border transition shadow-sm hover:shadow-md ${isDark ? "border-slate-800 bg-[#1C2541] hover:border-[#00529B]" : "border-slate-200 bg-white hover:border-[#00529B]"}`}>
+            <h4 className={`font-bold text-lg mb-2 ${isDark ? "text-[#60A5FA]" : "text-[#00529B]"}`}>{t.feat2Title}</h4>
+            <p className={`text-xs leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat2Desc}</p>
           </div>
 
-          <div className="p-6 rounded-2xl border border-slate-800 bg-[#1C2541] shadow-sm hover:shadow-md hover:border-[#43B02A] transition">
+          <div className={`p-6 rounded-2xl border transition shadow-sm hover:shadow-md ${isDark ? "border-slate-800 bg-[#1C2541] hover:border-[#43B02A]" : "border-slate-200 bg-white hover:border-[#43B02A]"}`}>
             <h4 className="text-[#43B02A] font-bold text-lg mb-2">{t.feat3Title}</h4>
-            <p className="text-xs leading-relaxed text-slate-300">{t.feat3Desc}</p>
+            <p className={`text-xs leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat3Desc}</p>
           </div>
         </div>
       </section>
 
       {/* Booking Form Section */}
       <section id="booking" className="max-w-2xl mx-auto px-4 pb-20 pt-6">
-        <div className="p-6 md:p-10 rounded-3xl shadow-2xl border border-slate-800 bg-[#1C2541]">
-          <h3 className="text-xl md:text-2xl font-bold text-center mb-2 text-white">{t.formTitle}</h3>
-          <p className="text-xs text-center mb-6 text-slate-400 font-medium">{t.formSub}</p>
+        <div className={`p-6 md:p-10 rounded-3xl shadow-xl border transition-colors duration-300 ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
+          <h3 className={`text-xl md:text-2xl font-bold text-center mb-2 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.formTitle}</h3>
+          <p className={`text-xs text-center mb-6 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.formSub}</p>
 
-          <div className="flex bg-[#0B132B] p-1.5 rounded-xl border border-slate-800 mb-6">
+          <div className={`flex p-1.5 rounded-xl border mb-6 ${isDark ? "bg-[#0B132B] border-slate-800" : "bg-slate-100 border-slate-200"}`}>
             <button
               type="button"
               onClick={() => setCustomerType("individual")}
               className={`flex-1 py-2.5 text-xs md:text-sm font-bold rounded-lg transition ${
                 customerType === "individual"
                   ? "bg-[#00529B] text-white shadow-sm"
-                  : "text-slate-400 hover:text-white"
+                  : isDark ? "text-slate-400 hover:text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               {t.tabIndividual}
@@ -314,7 +334,7 @@ export default function Home() {
               className={`flex-1 py-2.5 text-xs md:text-sm font-bold rounded-lg transition ${
                 customerType === "company"
                   ? "bg-[#00529B] text-white shadow-sm"
-                  : "text-slate-400 hover:text-white"
+                  : isDark ? "text-slate-400 hover:text-white" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               {t.tabCompany}
@@ -322,7 +342,7 @@ export default function Home() {
           </div>
 
           {statusMessage && (
-            <div className="p-4 rounded-xl text-sm mb-4 font-semibold text-center bg-red-950/50 border border-red-800 text-red-400">
+            <div className={`p-4 rounded-xl text-sm mb-4 font-semibold text-center border ${isDark ? "bg-red-950/50 border-red-800 text-red-400" : "bg-red-50 border-red-300 text-red-600"}`}>
               {statusMessage.text}
             </div>
           )}
@@ -331,25 +351,25 @@ export default function Home() {
             {customerType === "individual" && (
               <>
                 <div>
-                  <label className="block text-sm font-semibold mb-1 text-slate-300">{t.labelFullName}</label>
+                  <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelFullName}</label>
                   <input 
                     type="text" 
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder={t.phFullName} 
-                    className="w-full rounded-xl px-4 py-3 border border-slate-700 bg-[#0B132B] text-white placeholder-slate-500 focus:outline-none focus:border-[#43B02A] transition text-sm"
+                    className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-1 text-slate-300">{t.labelPhone}</label>
+                  <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelPhone}</label>
                   <input 
                     type="tel" 
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={t.phPhone} 
-                    className="w-full rounded-xl px-4 py-3 border border-slate-700 bg-[#0B132B] text-white placeholder-slate-500 focus:outline-none focus:border-[#43B02A] transition text-sm"
+                    className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
                   />
                 </div>
               </>
@@ -358,37 +378,37 @@ export default function Home() {
             {customerType === "company" && (
               <>
                 <div>
-                  <label className="block text-sm font-semibold mb-1 text-slate-300">{t.labelCompanyName}</label>
+                  <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelCompanyName}</label>
                   <input 
                     type="text" 
                     required
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     placeholder={t.phCompanyName} 
-                    className="w-full rounded-xl px-4 py-3 border border-slate-700 bg-[#0B132B] text-white placeholder-slate-500 focus:outline-none focus:border-[#43B02A] transition text-sm"
+                    className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-1 text-slate-300">{t.labelTin}</label>
+                    <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelTin}</label>
                     <input 
                       type="text" 
                       required
                       value={tin}
                       onChange={(e) => setTin(e.target.value)}
                       placeholder={t.phTin} 
-                      className="w-full rounded-xl px-4 py-3 border border-slate-700 bg-[#0B132B] text-white placeholder-slate-500 focus:outline-none focus:border-[#43B02A] transition text-sm"
+                      className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold mb-1 text-slate-300">{t.labelAddress}</label>
+                    <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelAddress}</label>
                     <input 
                       type="text" 
                       required
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder={t.phAddress} 
-                      className="w-full rounded-xl px-4 py-3 border border-slate-700 bg-[#0B132B] text-white placeholder-slate-500 focus:outline-none focus:border-[#43B02A] transition text-sm"
+                      className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
                     />
                   </div>
                 </div>
@@ -396,7 +416,7 @@ export default function Home() {
             )}
 
             <div className="pt-4">
-              <label className="block text-sm font-bold mb-3 text-slate-300">
+              <label className={`block text-sm font-bold mb-3 ${isDark ? "text-slate-300" : "text-[#00529B]"}`}>
                 {t.labelVehicleSelection}
               </label>
 
@@ -408,8 +428,8 @@ export default function Home() {
                       key={item.key} 
                       className={`flex items-center justify-between p-3.5 rounded-xl border transition ${
                         isSelected 
-                          ? "border-[#43B02A] bg-[#43B02A]/10 shadow-sm" 
-                          : "border-slate-800 bg-[#0B132B]"
+                          ? isDark ? "border-[#43B02A] bg-[#43B02A]/10 shadow-sm" : "border-[#43B02A] bg-[#43B02A]/5 shadow-sm" 
+                          : isDark ? "border-slate-800 bg-[#0B132B]" : "border-slate-200 bg-slate-50"
                       }`}
                     >
                       <label className="flex items-center space-x-3 cursor-pointer flex-1">
@@ -419,18 +439,18 @@ export default function Home() {
                           onChange={() => handleVehicleToggle(item.key)}
                           className="w-4 h-4 accent-[#43B02A] rounded cursor-pointer"
                         />
-                        <span className="text-sm font-semibold text-slate-200">{item.label}</span>
+                        <span className={`text-sm font-semibold ${isDark ? "text-slate-200" : "text-slate-700"}`}>{item.label}</span>
                       </label>
 
                       {isSelected && (
                         <div className="flex items-center space-x-2">
-                          <span className="text-xs text-slate-400 font-medium">ብዛት፦</span>
+                          <span className={`text-xs font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>ብዛት፦</span>
                           <input 
                             type="number" 
                             min="1"
                             value={vehicleCounts[item.key]}
                             onChange={(e) => handleCountChange(item.key, parseInt(e.target.value) || 1)}
-                            className="w-16 rounded-xl px-2.5 py-1.5 text-center text-sm border border-slate-700 bg-[#1C2541] text-white focus:outline-none focus:border-[#43B02A]"
+                            className={`w-16 rounded-xl px-2.5 py-1.5 text-center text-sm border focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-white text-slate-900"}`}
                           />
                         </div>
                       )}
@@ -452,15 +472,15 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#050B14] text-slate-300 border-t border-slate-800 pt-12 pb-6 px-6 md:px-16">
+      <footer className={`border-t pt-12 pb-6 px-6 md:px-16 transition-colors duration-300 ${isDark ? "bg-[#050B14] text-slate-300 border-slate-800" : "bg-slate-900 text-slate-200 border-slate-800"}`}>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 pb-10">
           
           <div className="space-y-4">
-            <div className="bg-[#1C2541] p-2.5 rounded-xl inline-flex items-center gap-2 border border-slate-800 shadow-md">
-              <img src="/logo.png" alt="GreenSpark Logo" className="h-8 object-contain brightness-0 invert" />
+            <div className={`p-2.5 rounded-xl inline-flex items-center gap-2 border shadow-md ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-transparent"}`}>
+              <img src="/logo.png" alt="GreenSpark Logo" className={`h-8 object-contain ${isDark ? "brightness-0 invert" : ""}`} />
               <div className="flex flex-col">
-                <span className="text-white font-bold text-xs leading-tight">GreenSpark</span>
-                <span className="text-[8px] text-slate-400 font-bold tracking-widest">SOLUTIONS PLC</span>
+                <span className={`font-bold text-xs leading-tight ${isDark ? "text-white" : "text-slate-900"}`}>GreenSpark</span>
+                <span className={`text-[8px] font-bold tracking-widest ${isDark ? "text-slate-400" : "text-slate-500"}`}>SOLUTIONS PLC</span>
               </div>
             </div>
             <p className="text-xs leading-relaxed text-slate-400">
@@ -509,18 +529,18 @@ export default function Home() {
 
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="max-w-md w-full p-6 rounded-3xl border border-slate-800 bg-[#1C2541] shadow-2xl text-center text-white">
+          <div className={`max-w-md w-full p-6 rounded-3xl border shadow-2xl text-center ${isDark ? "border-slate-800 bg-[#1C2541] text-white" : "border-slate-200 bg-white text-slate-900"}`}>
             <div className="w-16 h-16 bg-[#43B02A]/20 border border-[#43B02A] text-[#43B02A] rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
               ✓
             </div>
-            <h3 className="text-2xl font-bold mb-2 text-white">{t.modalTitle}</h3>
+            <h3 className={`text-2xl font-bold mb-2 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.modalTitle}</h3>
             
-            <div className="my-4 p-4 rounded-2xl border border-green-800 bg-green-950/40 text-center">
-              <span className="text-xs text-slate-400 block mb-1 font-medium">{t.modalIdLabel}</span>
+            <div className={`my-4 p-4 rounded-2xl border text-center ${isDark ? "border-green-800 bg-green-950/40" : "border-green-200 bg-green-50"}`}>
+              <span className={`text-xs block mb-1 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.modalIdLabel}</span>
               <span className="text-xl font-black text-[#43B02A] tracking-wider font-mono">{generatedBookingId}</span>
             </div>
 
-            <p className="text-xs leading-relaxed mb-6 text-slate-300">
+            <p className={`text-xs leading-relaxed mb-6 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
               {t.modalDesc}
             </p>
 
