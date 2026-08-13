@@ -117,20 +117,18 @@ export default function Home() {
       phTin: "የቲን ቁጥር ያስገቡ",
       labelAddress: "አድራሻ",
       phAddress: "ከተማ / ክፍለ ከተማ",
-      labelVehicleSelection: "የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈልጉትን ይምረጡ)",
+      labelVehicleSelection: "የወርሃዊ ነዳጅ ፍጆታ መጠን (በሊትር) እና ብዛት ይምረጡ",
       btnSubmit: "ቦታ ያዙ / ጥያቄ ይላኩ",
       modalTitle: "በተሳካ ሁኔታ ተልኳል! 🎉",
       modalIdLabel: "የእርስዎ ልዩ መለያ ቁጥር (Booking ID)፦",
       modalDesc: "ጥያቄዎ ደርሶናል። ባለሙያዎቻችን በቅርቡ በስልክ ቁጥርዎ ያነጋግሮታል። እባክዎን ይህንን መለያ ቁጥር ይያዙ።",
       modalBtn: "እሺ (Close)",
-      catPersonal: "የቤት መኪና",
-      subMinibus: "ሚኒባስ",
-      subBus: "ባስ / አውቶቡስ",
-      subPickup: "ፒካፕ",
-      subIsuzu: "የደረቅ ጭነት",
-      subTrailer: "የደረቅ ጭነት ተሳቢ",
-      subBotti: "ቦቲ",
-      subTrailerBotti: "ተሳቢ ቦቲ"
+      tierAA: "AA (እስከ 10 ሊትር)",
+      tierA: "A (እስከ 40 ሊትር)",
+      tierB: "B (እስከ 70 ሊትር)",
+      tierC: "C (እስከ 150 ሊትር)",
+      tierD: "D (እስከ 350 ሊትር)",
+      tierE: "E (800 እና ከዛ በላይ ሊትር)"
     },
     en: {
       navServices: "Benefits",
@@ -147,8 +145,8 @@ export default function Home() {
       feat3Desc: "Built for extended durability with zero maintenance required",
       formTitle: "SUPERTECH Booking Form",
       formSub: "Fill out the details below to reserve your installation slot",
-      tabIndividual: "Individual Vehicle",
-      tabCompany: "Company Fleet",
+      tabIndividual: "Individual",
+      tabCompany: "Company",
       labelFullName: "Full Name",
       phFullName: "Enter full name",
       labelPhone: "Phone Number",
@@ -159,34 +157,30 @@ export default function Home() {
       phTin: "Enter TIN number",
       labelAddress: "Address",
       phAddress: "City / Sub-city",
-      labelVehicleSelection: "Select Vehicle Types & Quantities",
+      labelVehicleSelection: "Select Monthly Fuel Consumption Tier & Quantity",
       btnSubmit: "Submit Booking Request",
       modalTitle: "Successfully Submitted! 🎉",
       modalIdLabel: "Your Unique Tracking ID:",
       modalDesc: "Your request has been received. Our team will contact you shortly. Please save this reference ID.",
       modalBtn: "Close",
-      catPersonal: "Personal Vehicle",
-      subMinibus: "Minibus",
-      subBus: "Bus",
-      subPickup: "Pickup",
-      subIsuzu: "Isuzu",
-      subBotti: "Tanker Botti",
-      subTrailer: "Dry Cargo Trailer",
-      subTrailerBotti: "Trailer Tanker"
+      tierAA: "AA (Up to 10 Liters)",
+      tierA: "A (Up to 40 Liters)",
+      tierB: "B (Up to 70 Liters)",
+      tierC: "C (Up to 150 Liters)",
+      tierD: "D (Up to 350 Liters)",
+      tierE: "E (800 and above Liters)"
     }
   };
 
   const t = content[lang];
 
   const vehicleList = [
-    { key: "personal", label: t.catPersonal },
-    { key: "minibus", label: t.subMinibus },
-    { key: "bus", label: t.subBus },
-    { key: "pickup", label: t.subPickup },
-    { key: "isuzu", label: t.subIsuzu },
-    { key: "trailer", label: t.subTrailer },
-    { key: "botti", label: t.subBotti },
-    { key: "trailerBotti", label: t.subTrailerBotti },
+    { key: "AA", label: t.tierAA },
+    { key: "A", label: t.tierA },
+    { key: "B", label: t.tierB },
+    { key: "C", label: t.tierC },
+    { key: "D", label: t.tierD },
+    { key: "E", label: t.tierE },
   ];
 
   return (
