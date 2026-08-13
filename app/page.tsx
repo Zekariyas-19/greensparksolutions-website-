@@ -185,18 +185,14 @@ export default function Home() {
       {/* Top Brand Accent Line */}
       <div className="h-2 w-full bg-gradient-to-r from-[#00529B] via-[#43B02A] to-[#00529B]"></div>
 
-      {/* Navigation Bar with Logo + Full Company Name */}
+      {/* Navigation Bar matching Official Brand Identity Full Logo */}
       <nav className="flex justify-between items-center px-6 md:px-16 py-4 bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center">
           <img 
             src="/logo.png" 
-            alt="GreenSpark Solutions PLC Logo" 
+            alt="GreenSpark Solutions PLC Full Logo" 
             className="h-12 md:h-16 w-auto object-contain" 
           />
-          <div className="flex flex-col">
-            <span className="text-xl md:text-2xl font-black tracking-tight text-[#00529B] leading-none">GreenSpark</span>
-            <span className="text-[10px] md:text-xs text-slate-500 font-bold tracking-widest uppercase mt-1">SOLUTIONS PLC</span>
-          </div>
         </div>
         
         <div className="hidden md:flex items-center space-x-8 text-sm font-semibold">
@@ -447,9 +443,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 pb-10">
           
           <div className="space-y-4">
-            <div className="bg-white p-2.5 rounded-xl inline-flex items-center gap-2 shadow-md">
-              <img src="/logo.png" alt="GreenSpark Logo" className="h-8 object-contain" />
-              <span className="text-slate-900 font-bold text-sm tracking-tight">GreenSpark</span>
+            <div className="bg-white p-2.5 rounded-xl inline-flex shadow-md">
+              <img src="/logo.png" alt="GreenSpark Solutions Logo" className="h-8 object-contain" />
             </div>
             <p className="text-xs leading-relaxed text-slate-400">
               GreenSpark Solutions PLC is dedicated to advancing sustainable technologies in the East African market. Based in Addis Ababa, we specialize in distributing SUPERTECH devices that reduce emissions and enhance fuel efficiency.
