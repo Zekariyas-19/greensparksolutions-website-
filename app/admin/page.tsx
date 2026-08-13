@@ -167,32 +167,32 @@ export default function AdminPage() {
     e.preventDefault();
     
     if (!fullName.trim()) {
-      alert('እባክዎ ሙሉ ስም ወይም የድርጅት ስም ያስገቡ።');
+      alert('Please enter full name or company name.');
       return;
     }
 
     if (!phone.trim()) {
-      alert('እባክዎ የስልክ ቁጥር ያስገቡ።');
+      alert('Please enter phone number.');
       return;
     }
 
     if (!plateNumber.trim()) {
-      alert('እባክዎ የሰሌዳ ቁጥር ያስገቡ።');
+      alert('Please enter plate number.');
       return;
     }
 
     if (Object.keys(selectedVehicles).length === 0) {
-      alert('እባክዎ ቢያንስ አንድ የተሽከርካሪ ዓይነት ይምረጡ።');
+      alert('Please select at least one vehicle type.');
       return;
     }
 
     if (registrationType === 'corporate' && !tinNumber.trim()) {
-      alert('እባክዎ የድርጅቱን የቲን ቁጥር ያስገቡ።');
+      alert('Please enter the corporate TIN number.');
       return;
     }
 
     if (!address.trim()) {
-      alert('እባክዎ አድራሻ ያስገቡ።');
+      alert('Please enter an address.');
       return;
     }
 
@@ -221,7 +221,7 @@ export default function AdminPage() {
       if (error) {
         alert('Error saving record: ' + error.message);
       } else {
-        alert('ምዝገባው በተሳካ ሁኔታ ተጠናቋል!');
+        alert('Registration completed successfully!');
         setFullName('');
         setPhone('');
         setPlateNumber('');
@@ -344,8 +344,18 @@ export default function AdminPage() {
         </div>
       ) : (
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* Header with Logo and Company Name */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-            <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#15803D' }}>GreenSpark Management Dashboard</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <img 
+                src="/logo.png" 
+                alt="GreenSpark Logo" 
+                style={{ width: '40px', height: '40px', objectFit: 'contain' }} 
+              />
+              <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#15803D', margin: 0 }}>
+                GreenSpark Management
+              </h1>
+            </div>
             <button 
               onClick={() => setIsLoggedIn(false)}
               style={{ backgroundColor: '#DC2626', color: '#FFFFFF', padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
@@ -503,7 +513,7 @@ export default function AdminPage() {
           ) : (
             <div style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
               <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#0F172A' }}>
-                New Walk-in Registration Form <span style={{ fontSize: '13px', color: '#DC2626' }}>(ሁሉም መስኮች መሞላት አለባቸው)</span>
+                New Walk-in Registration Form <span style={{ fontSize: '13px', color: '#DC2626' }}>(All fields must be filled)</span>
               </h2>
 
               <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
@@ -549,7 +559,7 @@ export default function AdminPage() {
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Plate Number (ሰሌዳ ቁጥር) *:</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Plate Number *:</label>
                     <input 
                       type="text" 
                       value={plateNumber}
@@ -562,7 +572,7 @@ export default function AdminPage() {
 
                 <div>
                   <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: '#15803D', fontWeight: 'bold' }}>
-                    የተሽከርካሪ ዓይነቶች እና ብዛት (የሚፈለጉትን ይምረጡና ብዛት ያስገቡ) *:
+                    Vehicle Types and Quantities (Select required and enter quantity) *:
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #CBD5E1' }}>
                     {vehicleOptions.map((vName) => {
@@ -597,7 +607,7 @@ export default function AdminPage() {
 
                           {isSelected && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', paddingLeft: '28px' }}>
-                              <span style={{ fontSize: '12px', color: '#64748B' }}>ብዛት:</span>
+                              <span style={{ fontSize: '12px', color: '#64748B' }}>Qty:</span>
                               <input 
                                 type="number" 
                                 min="1" 
@@ -616,7 +626,7 @@ export default function AdminPage() {
 
                 {registrationType === 'corporate' && (
                   <div>
-                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>TIN Number (የቲን ቁጥር) *:</label>
+                    <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>TIN Number *:</label>
                     <input 
                       type="text" 
                       value={tinNumber}
@@ -628,7 +638,7 @@ export default function AdminPage() {
                 )}
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Address (አድራሻ) *:</label>
+                  <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px', color: '#334155' }}>Address *:</label>
                   <input 
                     type="text" 
                     value={address}
@@ -689,13 +699,6 @@ export default function AdminPage() {
                     disabled={updatingStatus}
                   >
                     {updatingStatus ? 'Updating...' : 'Mark as Completed'}
-                  </button>
-                  <button
-                    onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Pending')}
-                    style={{ flex: 1, backgroundColor: '#D97706', color: '#FFFFFF', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
-                    disabled={updatingStatus}
-                  >
-                    Mark as Pending
                   </button>
                 </div>
               </div>
