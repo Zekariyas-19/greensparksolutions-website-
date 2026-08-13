@@ -28,7 +28,6 @@ export default function AdminPage() {
   const [tinNumber, setTinNumber] = useState('');
   const [address, setAddress] = useState('');
   
-  // Updated vehicle options based on the second image reference
   const vehicleOptions = [
     'AA (እስከ 10 ሊትር)',
     'A (እስከ 40 ሊትር)',
@@ -351,7 +350,6 @@ export default function AdminPage() {
       ) : (
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          {/* Header with Logo and Brand Name */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <img 
@@ -526,7 +524,6 @@ export default function AdminPage() {
                 <span style={{ fontSize: '12px', color: '#DC2626', fontWeight: 'bold' }}>(ሁሉም ክፍሎች መሞላት አለባቸው)</span>
               </div>
 
-              {/* Exact matching toggle buttons from Image 1 */}
               <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
                 <button
                   type="button"
@@ -686,7 +683,7 @@ export default function AdminPage() {
                   style={{ width: '100%', backgroundColor: '#16A34A', color: '#FFFFFF', padding: '12px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer', marginTop: '8px' }}
                   disabled={submittingWalkIn}
                 >
-                  {submittingWriterLoading => submittingWalkIn ? 'በመቆጠብ ላይ...' : 'Submit Registration'}
+                  {submittingWalkIn ? 'በመቆጠብ ላይ...' : 'Submit Registration'}
                 </button>
               </form>
             </div>
@@ -708,30 +705,21 @@ export default function AdminPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#334155', backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
                   <p style={{ margin: 0, color: '#0F385A', fontWeight: 'bold' }}><strong>መለያ (Booking ID):</strong> {getBookingIdDisplay(selectedRecord)}</p>
                   <p style={{ margin: 0 }}><strong>ስም / ድርጅት:</strong> {getDisplayName(selectedRecord)}</p>
-                  <p style={{ margin: 0 }}><strong>የደንበኛ ዓይነት:</strong> {selectedRecord.customer_type || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>ስልክ:</strong> {selectedRecord.phone || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>ስልክ ቁጥር:</strong> {selectedRecord.phone || 'N/A'}</p>
                   <p style={{ margin: 0 }}><strong>ሰሌዳ ቁጥር:</strong> {selectedRecord.plate_number || 'N/A'}</p>
-                  <p style={{ margin: 0 }}><strong>ሁኔታ (Status):</strong> <span style={{ color: '#059669', fontWeight: 'bold' }}>{selectedRecord.status || 'N/A'}</span></p>
-                  <p style={{ margin: 0 }}><strong>ቀን / ሰዓት:</strong> {selectedRecord.created_at ? new Date(selectedRecord.created_at).toLocaleString() : 'N/A'}</p>
-                  
-                  {Object.entries(selectedRecord).map(([key, value]) => {
-                    if (['id', 'booking_id', 'name', 'full_name', 'company_name', 'customer_type', 'phone', 'phone_number', 'plate_number', 'status', 'created_at'].includes(key)) return null;
-                    
-                    if (key === 'vehicles') {
-                      return <p key={key} style={{ margin: 0 }}><strong>የተመረጡ መኪኖች:</strong> {renderVehicleDetails(value)}</p>;
-                    }
-
-                    return <p key={key} style={{ margin: 0 }}><strong>{key}:</strong> {String(value)}</p>;
-                  })}
+                  <p style={{ margin: 0 }}><strong>የተመረጡ መኪኖች:</strong> {renderVehicleDetails(selectedRecord.vehicles)}</p>
+                  {selectedRecord.tin_number && <p style={{ margin: 0 }}><strong>TIN Number:</strong> {selectedRecord.tin_number}</p>}
+                  <p style={{ margin: 0 }}><strong>አድራሻ:</strong> {selectedRecord.address || 'N/A'}</p>
+                  <p style={{ margin: 0 }}><strong>ሁኔታ (Status):</strong> {selectedRecord.status || 'Pending'}</p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
                   <button
                     onClick={() => handleUpdateStatus(selectedRecord.id || selectedRecord.booking_id, 'Completed')}
-                    style={{ flex: 1, backgroundColor: '#16A34A', color: '#FFFFFF', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                     disabled={updatingStatus}
+                    style={{ flex: 1, backgroundColor: '#16A34A', color: '#FFFFFF', padding: '10px', borderRadius: '6px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
                   >
-                    {updatingStatus ? 'በማዘመን ላይ...' : 'እንደተጠናቀቀ ምልክት አድርግ (Mark as Completed)'}
+                    {updatingStatus ? 'በማዘመን ላይ...' : 'እንደ ተጠናቀቀ አድርግ (Mark Completed)'}
                   </button>
                 </div>
               </div>
