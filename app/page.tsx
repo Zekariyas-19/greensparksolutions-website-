@@ -12,7 +12,6 @@ export default function Home() {
   
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
-  const [plate, setPlate] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [tin, setTin] = useState("");
   const [address, setAddress] = useState("");
@@ -57,7 +56,6 @@ export default function Home() {
       customer_type: customerType,
       full_name: customerType === "individual" ? fullName : null,
       phone: customerType === "individual" ? phone : null,
-      plate_number: customerType === "individual" ? plate : null,
       company_name: customerType === "company" ? companyName : null,
       tin_number: customerType === "company" ? tin : null,
       address: customerType === "company" ? address : null,
@@ -76,7 +74,6 @@ export default function Home() {
 
       setFullName("");
       setPhone("");
-      setPlate("");
       setCompanyName("");
       setTin("");
       setAddress("");
@@ -114,8 +111,6 @@ export default function Home() {
       phFullName: "እባክዎን ስምዎን ያስገቡ",
       labelPhone: "ስልክ ቁጥር",
       phPhone: "0911...",
-      labelPlate: "ሰሌዳ ቁጥር",
-      phPlate: "3 - A12345",
       labelCompanyName: "የድርጅቱ ስም",
       phCompanyName: "የድርጅቱን ስም ያስገቡ",
       labelTin: "የቲን ቁጥር",
@@ -158,8 +153,6 @@ export default function Home() {
       phFullName: "Enter full name",
       labelPhone: "Phone Number",
       phPhone: "0911...",
-      labelPlate: "License Plate Number",
-      phPlate: "3 - A12345",
       labelCompanyName: "Company Name",
       phCompanyName: "Enter company name",
       labelTin: "TIN Number",
@@ -387,33 +380,18 @@ export default function Home() {
                     }`}
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className={`block text-sm font-medium mb-1 ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>{t.labelPhone}</label>
-                    <input 
-                      type="tel" 
-                      required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder={t.phPhone} 
-                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#2E7D32] transition ${
-                        isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
-                      }`}
-                    />
-                  </div>
-                  <div>
-                    <label className={`block text-sm font-medium mb-1 ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>{t.labelPlate}</label>
-                    <input 
-                      type="text" 
-                      required
-                      value={plate}
-                      onChange={(e) => setPlate(e.target.value)}
-                      placeholder={t.phPlate} 
-                      className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#2E7D32] transition ${
-                        isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
-                      }`}
-                    />
-                  </div>
+                <div>
+                  <label className={`block text-sm font-medium mb-1 ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>{t.labelPhone}</label>
+                  <input 
+                    type="tel" 
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder={t.phPhone} 
+                    className={`w-full rounded-xl px-4 py-3 border focus:outline-none focus:border-[#2E7D32] transition ${
+                      isDarkMode ? "bg-[#0D233A] border-[#224b7a] text-white" : "bg-slate-50 border-slate-300 text-slate-900"
+                    }`}
+                  />
                 </div>
               </>
             )}
