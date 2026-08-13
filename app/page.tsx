@@ -695,17 +695,16 @@ export default function Home() {
               isDarkMode ? "bg-[#0D233A] border-[#2E7D32]/40" : "bg-green-50 border-green-300"
             }`}>
               <span className="text-xs text-slate-400 block mb-1">{t.modalIdLabel}</span>
-              <span className="text-2xl font-mono font-extrabold text-[#2E7D32] tracking-wider">
-                {generatedBookingId}
-              </span>
+              <span className="text-xl font-black text-[#2E7D32] tracking-wider font-mono">{generatedBookingId}</span>
             </div>
 
-            <p className={`text-sm mb-6 ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>
+            <p className={`text-xs leading-relaxed mb-6 ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>
               {t.modalDesc}
             </p>
+
             <button
               onClick={() => setShowSuccessModal(false)}
-              className="w-full bg-[#2E7D32] hover:bg-[#256428] text-white font-semibold py-3.5 rounded-2xl transition shadow-lg shadow-[#2E7D32]/30 text-base"
+              className="w-full bg-[#2E7D32] hover:bg-[#256428] text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-[#2E7D32]/20 text-sm"
             >
               {t.modalBtn}
             </button>
