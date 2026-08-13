@@ -89,7 +89,6 @@ export default function Home() {
 
   const content = {
     am: {
-      navServices: "ጥቅሞች",
       navBook: "ቦታ ይያዙ",
       heroTitle1: "የነዳጅ ወጪዎን",
       heroTitle2: "ከ10% - 30%",
@@ -129,7 +128,6 @@ export default function Home() {
       tierE: "E (800 እና ከዛ በላይ ሊትር)"
     },
     en: {
-      navServices: "Benefits",
       navBook: "Book Now",
       heroTitle1: "Reduce Fuel Costs",
       heroTitle2: "By 10% - 30%",
@@ -212,7 +210,6 @@ export default function Home() {
         </div>
         
         <div className="hidden md:flex items-center space-x-6 text-sm font-semibold">
-          <a href="#benefits" className={`transition ${isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-700 hover:text-[#00529B]"}`}>{t.navServices}</a>
           <a href="#booking" className="bg-[#43B02A] hover:bg-[#389623] text-white px-6 py-2.5 rounded-lg transition shadow-md shadow-[#43B02A]/20">
             {t.navBook}
           </a>
@@ -265,13 +262,6 @@ export default function Home() {
 
       {mobileMenuOpen && (
         <div className={`md:hidden flex flex-col space-y-3 px-6 py-5 border-b shadow-lg transition-colors duration-300 ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
-          <a 
-            href="#benefits" 
-            onClick={() => setMobileMenuOpen(false)}
-            className={`text-base font-medium py-1.5 ${isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-700 hover:text-[#00529B]"}`}
-          >
-            {t.navServices}
-          </a>
           <a 
             href="#booking" 
             onClick={() => setMobileMenuOpen(false)}
