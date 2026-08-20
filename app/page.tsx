@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function Home() {
@@ -21,6 +21,11 @@ export default function Home() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [generatedBookingId, setGeneratedBookingId] = useState("");
   const [vehicleCounts, setVehicleCounts] = useState<{ [key: string]: number }>({});
+
+  // Booking Retrieval States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResult, setSearchResult] = useState<any[] | null>(null);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const handleVehicleToggle = (key: string) => {
     setVehicleCounts((prev) => {
@@ -87,19 +92,45 @@ export default function Home() {
     }
   };
 
+  const handleSearchBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    setSearchLoading(true);
+    setSearchResult(null);
+
+    try {
+      const { data, error } = await supabase
+        .from("bookings")
+        .select("*")
+        .or(`full_name.ilike.%${searchQuery}%,phone.ilike.%${searchQuery}%,booking_id.ilike.%${searchQuery}%`);
+
+      if (error) throw error;
+      setSearchResult(data || []);
+    } catch (err) {
+      console.error("Error searching bookings:", err);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
   const content = {
     am: {
       navBook: "ቦታ ይያዙ",
+      navTrack: "ቦታ ይፈልጉ",
+      topBanner: "የነዳጅ ዋጋ ንረት መፍትሄ፡ ከ10 መኪና በላይ ለሚያስገጥሙ በቀጥታ በስልክ ይደውሉልን!",
       heroTitle1: "የነዳጅ ወጪዎን",
       heroTitle2: "ከ10% - 30%",
       heroTitle3: "ይቀንሱ",
-      heroDesc: "Powering Efficiency, Protecting the Planet. የSUPERTECH መሣሪያን በመጠቀም የነዳጅ ወጪዎን ይቀንሱ፣ ሞተርዎን ይጠብቁ።",
+      heroDesc: "Powering Efficiency, Protecting the Planet. የSUPERTECH እና Eco-Tech Solutions PLC መሣሪያን በመጠቀም የነዳጅ ወጪዎን ይቀንሱ።",
       feat1Title: "10-30% የነዳጅ ቁጠባ",
       feat1Desc: "በየቀኑ በሚያደርጉት እንቅስቃሴ ከፍተኛ የነዳጅ ወጪን በከፍተኛ ሁኔታ ይቀንሳል",
       feat2Title: "እስከ 80% በካይ ጋዝ ቅነሳ",
-      feat2Desc: "የአየር ብክለትን በመቀነስ የአካባቢ ጥበቃ ደንቦችን ያሟላል",
+      feat2Desc: "የአየር ብክለትን በመቀነስ የአካባቢ ጥበቃ እና መመሪያ 1051/2017 ደንቦችን ያሟላል",
       feat3Title: "ዘላቂ አገልግሎት",
       feat3Desc: "ለረጅም ዓመታት ያለምንም ተጨማሪ ጥገና የሚያገለግል",
+      bulkAlertTitle: "ከ 10 መኪና በላይ ለሚያስገጥሙ ድርጅቶች/ግለሰቦች",
+      bulkAlertDesc: "ታንከር ውስጥ የሚገጠመውን ማሽን ከ 10 መኪና በላይ መግዛትና ማስገጥም ከፈለጉ፣ እባክዎ በቀጥታ በስልክ ቁጥሮቻችን ይደውሉልን።",
+      callUsBtn: "አሁን ይደውሉ፡ +251-983-470000",
       formTitle: "የግዢ እና ተረኛ መያዣ ቅጽ",
       formSub: "መረጃዎን ያስገቡ፤ ባለሙያዎቻችን አነጋግረውዎት ተገቢውን SUPERTECH ሞዴል ይገጥሙልዎታል",
       tabIndividual: "ግለሰብ",
@@ -116,6 +147,11 @@ export default function Home() {
       phAddress: "ከተማ / ክፍለ ከተማ",
       labelVehicleSelection: "የተሽከርካሪ ታንከር የነዳጅ መጠን (በሊትር) እና ብዛት ይምረጡ",
       btnSubmit: "ቦታ ያዙ / ጥያቄ ይላኩ",
+      searchSecTitle: "የደንበኛ ቦታ ማስያዣ መፈለጊያ (Booking Retrieval)",
+      searchSecSub: "በስምዎ፣ በስልክ ቁጥርዎ ወይም በልዩ መለያ ቁጥርዎ (Booking ID) ይፈልጉ",
+      searchPh: "ስም ወይም ስልክ ቁጥር ያስገቡ...",
+      searchBtn: "ፈልግ",
+      noResult: "ምንም የተገኘ መረጃ የለም።",
       modalTitle: "በተሳካ ሁኔታ ተልኳል! 🎉",
       modalIdLabel: "የእርስዎ ልዩ መለያ ቁጥር (Booking ID)፦",
       modalDesc: "ጥያቄዎ ደርሶናል። ባለሙያዎቻችን በቅርቡ በስልክ ቁጥርዎ ያነጋግሮታል። እባክዎን ይህንን መለያ ቁጥር ይያዙ።",
@@ -129,16 +165,21 @@ export default function Home() {
     },
     en: {
       navBook: "Book Now",
+      navTrack: "Track Booking",
+      topBanner: "Fuel Cost Solution: Call us directly for bulk installations of more than 10 vehicles!",
       heroTitle1: "Reduce Fuel Costs",
       heroTitle2: "By 10% - 30%",
       heroTitle3: "Guaranteed",
-      heroDesc: "Powering Efficiency, Protecting the Planet. Optimize combustion and lower emissions with SUPERTECH.",
+      heroDesc: "Powering Efficiency, Protecting the Planet. Optimize combustion and lower emissions with SUPERTECH and Eco-Tech Solutions PLC.",
       feat1Title: "10-30% Fuel Savings",
       feat1Desc: "Significant daily operational cost reduction for your vehicles",
       feat2Title: "80% Less Emissions",
-      feat2Desc: "Dramatically reduces environmental air pollution",
+      feat2Desc: "Dramatically reduces environmental air pollution complying with Directive 1051/2017",
       feat3Title: "Long-lasting Reliability",
       feat3Desc: "Built for extended durability with zero maintenance required",
+      bulkAlertTitle: "For Fleet Owners (More than 10 Vehicles)",
+      bulkAlertDesc: "If you are purchasing and installing machines for more than 10 vehicles, please contact us directly via phone.",
+      callUsBtn: "Call Now: +251-983-470000",
       formTitle: "SUPERTECH Booking Form",
       formSub: "Fill out the details below to reserve your installation slot",
       tabIndividual: "Individual",
@@ -155,6 +196,11 @@ export default function Home() {
       phAddress: "City / Sub-city",
       labelVehicleSelection: "Select Vehicle Fuel Tank Capacity Tier & Quantity",
       btnSubmit: "Submit Booking Request",
+      searchSecTitle: "Customer Booking Retrieval",
+      searchSecSub: "Search your previous bookings using your name, phone number, or booking ID",
+      searchPh: "Enter name or phone number...",
+      searchBtn: "Search",
+      noResult: "No bookings found.",
       modalTitle: "Successfully Submitted! 🎉",
       modalIdLabel: "Your Unique Tracking ID:",
       modalDesc: "Your request has been received. Our team will contact you shortly. Please save this reference ID.",
@@ -183,12 +229,16 @@ export default function Home() {
 
   return (
     <main className={`min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#0B132B] text-slate-100 selection:bg-[#43B02A] selection:text-white" : "bg-[#F8FAFC] text-slate-800 selection:bg-[#43B02A] selection:text-white"}`}>
+      {/* Top Banner Notice */}
+      <div className="bg-[#00529B] text-white text-center py-2 px-4 text-xs md:text-sm font-bold tracking-wide">
+        {t.topBanner}
+      </div>
+
       {/* Top Brand Accent Line */}
       <div className="h-2 w-full bg-gradient-to-r from-[#00529B] via-[#43B02A] to-[#00529B]"></div>
 
       {/* Navigation Bar with Theme & Language Switchers */}
       <nav className={`flex justify-between items-center px-6 md:px-16 py-4 backdrop-blur-md border-b sticky top-0 z-40 shadow-sm transition-colors duration-300 ${isDark ? "bg-[#0B132B]/90 border-slate-800" : "bg-white/90 border-slate-200"}`}>
-        {/* Brand Logo and Styled Name Matching Manual */}
         <div className="flex items-center gap-3">
           <img 
             src="/logo.png" 
@@ -218,11 +268,13 @@ export default function Home() {
         </div>
         
         <div className="hidden md:flex items-center space-x-6 text-sm font-semibold">
+          <a href="#search-booking" className={`hover:text-[#43B02A] transition ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+            {t.navTrack}
+          </a>
           <a href="#booking" className="bg-[#43B02A] hover:bg-[#389623] text-white px-6 py-2.5 rounded-lg transition shadow-md shadow-[#43B02A]/20">
             {t.navBook}
           </a>
 
-          {/* Theme Switcher Button */}
           <button
             onClick={() => setTheme(isDark ? "light" : "dark")}
             className={`p-2 rounded-lg border transition text-sm flex items-center justify-center ${isDark ? "border-slate-700 bg-[#1C2541] text-amber-400 hover:bg-slate-800" : "border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100"}`}
@@ -242,7 +294,6 @@ export default function Home() {
         </div>
 
         <div className="flex md:hidden items-center space-x-2">
-          {/* Theme Switcher Button Mobile */}
           <button
             onClick={() => setTheme(isDark ? "light" : "dark")}
             className={`p-2 rounded-lg border text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-amber-400" : "border-slate-300 bg-slate-50 text-slate-700"}`}
@@ -270,10 +321,13 @@ export default function Home() {
 
       {mobileMenuOpen && (
         <div className={`md:hidden flex flex-col space-y-3 px-6 py-5 border-b shadow-lg transition-colors duration-300 ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
+          <a href="#search-booking" onClick={() => setMobileMenuOpen(false)} className={`text-sm font-semibold ${isDark ? "text-slate-200" : "text-slate-700"}`}>
+            {t.navTrack}
+          </a>
           <a 
             href="#booking" 
             onClick={() => setMobileMenuOpen(false)}
-            className="bg-[#43B02A] text-center hover:bg-[#389623] text-white px-4 py-2.5 rounded-lg font-medium shadow-md"
+            className="bg-[#43B02A] text-center hover:bg-[#389623] text-white px-4 py-2.5 rounded-lg font-medium shadow-md text-sm"
           >
             {t.navBook}
           </a>
@@ -288,6 +342,20 @@ export default function Home() {
         <p className={`text-base md:text-xl mb-12 max-w-2xl leading-relaxed font-medium ${isDark ? "text-slate-300" : "text-slate-600"}`}>
           {t.heroDesc}
         </p>
+
+        {/* Bulk Order Alert Box (More than 10 vehicles) */}
+        <div className={`w-full max-w-3xl p-6 rounded-2xl border mb-10 text-left flex flex-col md:flex-row items-center justify-between gap-4 shadow-md ${isDark ? "bg-[#1C2541] border-[#43B02A]" : "bg-green-50 border-[#43B02A]"}`}>
+          <div>
+            <h4 className="text-[#43B02A] font-bold text-base mb-1">{t.bulkAlertTitle}</h4>
+            <p className={`text-xs md:text-sm ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.bulkAlertDesc}</p>
+          </div>
+          <a 
+            href="tel:+251983470000"
+            className="whitespace-nowrap bg-[#00529B] hover:bg-[#00407a] text-white font-bold px-5 py-3 rounded-xl transition shadow text-xs md:text-sm"
+          >
+            {t.callUsBtn}
+          </a>
+        </div>
 
         {/* Benefits Cards */}
         <div id="benefits" className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-4 text-left">
@@ -308,8 +376,52 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Booking Retrieval / Search Section */}
+      <section id="search-booking" className="max-w-2xl mx-auto px-4 py-8">
+        <div className={`p-6 md:p-8 rounded-3xl shadow-lg border ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
+          <h3 className={`text-lg md:text-xl font-bold text-center mb-1 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.searchSecTitle}</h3>
+          <p className={`text-xs text-center mb-4 ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.searchSecSub}</p>
+
+          <form onSubmit={handleSearchBooking} className="flex gap-2">
+            <input 
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t.searchPh}
+              className={`flex-1 rounded-xl px-4 py-2.5 border text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white" : "border-slate-300 bg-slate-50 text-slate-900"}`}
+            />
+            <button 
+              type="submit"
+              disabled={searchLoading}
+              className="bg-[#00529B] hover:bg-[#00407a] text-white px-5 py-2.5 rounded-xl font-bold text-sm transition shadow"
+            >
+              {searchLoading ? "..." : t.searchBtn}
+            </button>
+          </form>
+
+          {searchResult !== null && (
+            <div className="mt-4 space-y-3 max-h-60 overflow-y-auto">
+              {searchResult.length === 0 ? (
+                <p className={`text-xs text-center py-4 ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.noResult}</p>
+              ) : (
+                searchResult.map((item, idx) => (
+                  <div key={idx} className={`p-3.5 rounded-xl border text-xs space-y-1 ${isDark ? "border-slate-700 bg-[#0B132B]" : "border-slate-200 bg-slate-50"}`}>
+                    <div className="flex justify-between font-bold text-[#43B02A]">
+                      <span>ID: {item.booking_id}</span>
+                      <span className="uppercase">{item.customer_type}</span>
+                    </div>
+                    <p><span className="font-semibold">Name/Company:</span> {item.full_name || item.company_name}</p>
+                    <p><span className="font-semibold">Phone:</span> {item.phone || item.address}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Booking Form Section */}
-      <section id="booking" className="max-w-2xl mx-auto px-4 pb-20 pt-6">
+      <section id="booking" className="max-w-2xl mx-auto px-4 pb-20 pt-4">
         <div className={`p-6 md:p-10 rounded-3xl shadow-xl border transition-colors duration-300 ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
           <h3 className={`text-xl md:text-2xl font-bold text-center mb-2 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.formTitle}</h3>
           <p className={`text-xs text-center mb-6 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.formSub}</p>
@@ -492,7 +604,7 @@ export default function Home() {
               </div>
             </div>
             <p className="text-xs leading-relaxed text-slate-400">
-              GreenSpark Solutions PLC is dedicated to advancing sustainable technologies in the East African market. Based in Addis Ababa, we specialize in distributing SUPERTECH devices that reduce emissions and enhance fuel efficiency.
+              GreenSpark Solutions PLC (Eco-Tech Solutions partner) distributes SUPERTECH devices. Complying with Environmental Protection laws and Directive 1051/2017.
             </p>
           </div>
 
@@ -505,16 +617,15 @@ export default function Home() {
             <div className="text-xs space-y-1 text-slate-400">
               <p><span className="font-semibold text-white">Phone:</span> +251-983-470000 / +251-911-209255</p>
               <p><span className="font-semibold text-white">Email:</span> info@greensparksolutions.et</p>
-              <p><span className="font-semibold text-white">Web:</span> www.greensparksolutions.et</p>
             </div>
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-base font-bold tracking-wide text-white">Navigation</h3>
+            <h3 className="text-base font-bold tracking-wide text-white">References & Links</h3>
             <ul className="space-y-2 text-xs text-slate-400">
-              <li><a href="#" className="hover:text-[#43B02A] transition">Home</a></li>
-              <li><a href="#benefits" className="hover:text-[#43B02A] transition">Services</a></li>
-              <li><a href="#booking" className="hover:text-[#43B02A] transition">Get Started</a></li>
+              <li><a href="#booking" className="hover:text-[#43B02A] transition">SUPERTECH Booking</a></li>
+              <li><span className="text-slate-300">Eco-Tech Solutions PLC</span></li>
+              <li><span className="text-slate-300">Directive 1051/2017 Compliance</span></li>
             </ul>
           </div>
 
