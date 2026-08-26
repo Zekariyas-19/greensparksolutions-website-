@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 export default function Home() {
   const [lang, setLang] = useState<"am" | "en">("am");
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [menuDropdownOpen, setMenuDropdownOpen] = useState<boolean>(false);
   const [customerType, setCustomerType] = useState<"individual" | "company">("individual");
   
   const [fullName, setFullName] = useState("");
@@ -115,7 +115,13 @@ export default function Home() {
 
   const content = {
     am: {
-      navBook: "ቦታ ይያዙ",
+      navHome: "Home",
+      navValues: "Values",
+      navServices: "Services",
+      navBooking: "Booking",
+      navFounders: "Founders",
+      navComments: "Comments",
+      navAbout: "About us",
       navTrack: "ቦታ ይፈልጉ",
       topBanner: "የነዳጅ ዋጋ ንረት መፍትሄ፡ ከ10 መኪና በላይ ለሚያስገጥሙ በቀጥታ በስልክ ይደውሉልን!",
       heroTitle1: "የነዳጅ ወጪዎን",
@@ -164,7 +170,13 @@ export default function Home() {
       tierE: "E (800 እና ከዛ በላይ ሊትር)"
     },
     en: {
-      navBook: "Book Now",
+      navHome: "Home",
+      navValues: "Values",
+      navServices: "Services",
+      navBooking: "Booking",
+      navFounders: "Founders",
+      navComments: "Comments",
+      navAbout: "About us",
       navTrack: "Track Booking",
       topBanner: "Fuel Cost Solution: Call us directly for bulk installations of more than 10 vehicles!",
       heroTitle1: "Reduce Fuel Costs",
@@ -267,13 +279,14 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="hidden md:flex items-center space-x-6 text-sm font-semibold">
-          <a href="#search-booking" className={`hover:text-[#43B02A] transition ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-            {t.navTrack}
-          </a>
-          <a href="#booking" className="bg-[#43B02A] hover:bg-[#389623] text-white px-6 py-2.5 rounded-lg transition shadow-md shadow-[#43B02A]/20">
-            {t.navBook}
-          </a>
+        <div className="hidden md:flex items-center space-x-6 text-sm font-semibold relative">
+          <a href="#home" className={`hover:text-[#43B02A] transition ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.navHome}</a>
+          <a href="#benefits" className={`hover:text-[#43B02A] transition ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.navValues}</a>
+          <a href="#services" className={`hover:text-[#43B02A] transition ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.navServices}</a>
+          <a href="#booking" className={`hover:text-[#43B02A] transition ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.navBooking}</a>
+          <a href="#founders" className={`hover:text-[#43B02A] transition ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.navFounders}</a>
+          <a href="#comments" className={`hover:text-[#43B02A] transition ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.navComments}</a>
+          <a href="#about" className={`hover:text-[#43B02A] transition ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.navAbout}</a>
 
           <button
             onClick={() => setTheme(isDark ? "light" : "dark")}
@@ -293,7 +306,8 @@ export default function Home() {
           </select>
         </div>
 
-        <div className="flex md:hidden items-center space-x-2">
+        {/* Mobile View - No hamburger menu, drop-down button on click */}
+        <div className="flex md:hidden items-center space-x-2 relative">
           <button
             onClick={() => setTheme(isDark ? "light" : "dark")}
             className={`p-2 rounded-lg border text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-amber-400" : "border-slate-300 bg-slate-50 text-slate-700"}`}
@@ -310,32 +324,30 @@ export default function Home() {
             <option value="en">EN</option>
           </select>
 
+          {/* Click to open menu options (No hamburger bars) */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`p-2 rounded-lg border text-base ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-slate-800"}`}
+            onClick={() => setMenuDropdownOpen(!menuDropdownOpen)}
+            className={`px-3 py-1.5 rounded-lg border text-xs font-bold ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-slate-800"}`}
           >
-            {mobileMenuOpen ? "✕" : "☰"}
+            Menu ▾
           </button>
+
+          {menuDropdownOpen && (
+            <div className={`absolute right-0 top-12 w-48 rounded-xl shadow-xl border py-2 flex flex-col z-50 ${isDark ? "bg-[#1C2541] border-slate-700 text-slate-200" : "bg-white border-slate-200 text-slate-800"}`}>
+              <a href="#home" onClick={() => setMenuDropdownOpen(false)} className="px-4 py-2 text-xs hover:bg-slate-500/10">{t.navHome}</a>
+              <a href="#benefits" onClick={() => setMenuDropdownOpen(false)} className="px-4 py-2 text-xs hover:bg-slate-500/10">{t.navValues}</a>
+              <a href="#services" onClick={() => setMenuDropdownOpen(false)} className="px-4 py-2 text-xs hover:bg-slate-500/10">{t.navServices}</a>
+              <a href="#booking" onClick={() => setMenuDropdownOpen(false)} className="px-4 py-2 text-xs hover:bg-slate-500/10">{t.navBooking}</a>
+              <a href="#founders" onClick={() => setMenuDropdownOpen(false)} className="px-4 py-2 text-xs hover:bg-slate-500/10">{t.navFounders}</a>
+              <a href="#comments" onClick={() => setMenuDropdownOpen(false)} className="px-4 py-2 text-xs hover:bg-slate-500/10">{t.navComments}</a>
+              <a href="#about" onClick={() => setMenuDropdownOpen(false)} className="px-4 py-2 text-xs hover:bg-slate-500/10">{t.navAbout}</a>
+            </div>
+          )}
         </div>
       </nav>
 
-      {mobileMenuOpen && (
-        <div className={`md:hidden flex flex-col space-y-3 px-6 py-5 border-b shadow-lg transition-colors duration-300 ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
-          <a href="#search-booking" onClick={() => setMobileMenuOpen(false)} className={`text-sm font-semibold ${isDark ? "text-slate-200" : "text-slate-700"}`}>
-            {t.navTrack}
-          </a>
-          <a 
-            href="#booking" 
-            onClick={() => setMobileMenuOpen(false)}
-            className="bg-[#43B02A] text-center hover:bg-[#389623] text-white px-4 py-2.5 rounded-lg font-medium shadow-md text-sm"
-          >
-            {t.navBook}
-          </a>
-        </div>
-      )}
-
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center text-center px-4 pt-16 pb-12 max-w-5xl mx-auto">
+      <section id="home" className="flex flex-col items-center justify-center text-center px-4 pt-16 pb-12 max-w-5xl mx-auto">
         <h2 className={`text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight ${isDark ? "text-white" : "text-[#00529B]"}`}>
           {t.heroTitle1} <span className="text-[#43B02A]">{t.heroTitle2}</span> {t.heroTitle3}
         </h2>
@@ -374,6 +386,38 @@ export default function Home() {
             <p className={`text-xs leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat3Desc}</p>
           </div>
         </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="max-w-4xl mx-auto px-4 py-12 text-center">
+        <h3 className={`text-2xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Services</h3>
+        <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+          Providing advanced automotive equipment to reduce toxic gas emissions and optimize fuel consumption.
+        </p>
+      </section>
+
+      {/* Founders Section */}
+      <section id="founders" className="max-w-4xl mx-auto px-4 py-12 text-center">
+        <h3 className={`text-2xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Founders</h3>
+        <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+          Founded by visionary experts dedicated to green technology and environmental protection.
+        </p>
+      </section>
+
+      {/* Comments Section */}
+      <section id="comments" className="max-w-4xl mx-auto px-4 py-12 text-center">
+        <h3 className={`text-2xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Comments</h3>
+        <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+          Feedback and remarks regarding Supertech, Eco-Tech Solutions PLC, and Directive 1051/2017.
+        </p>
+      </section>
+
+      {/* About Us Section */}
+      <section id="about" className="max-w-4xl mx-auto px-4 py-12 text-center">
+        <h3 className={`text-2xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>About Us</h3>
+        <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+          GreenSpark Solutions PLC is committed to providing efficient fuel-saving and eco-friendly solutions.
+        </p>
       </section>
 
       {/* Booking Retrieval / Search Section */}
@@ -581,6 +625,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className={`p-6 md:p-8 rounded-3xl max-w-md w-full shadow-2xl border text-center ${isDark ? "bg-[#1C2541] border-slate-700 text-white" : "bg-white border-slate-200 text-slate-900"}`}>
+            <h3 className="text-xl font-bold mb-2 text-[#43B02A]">{t.modalTitle}</h3>
+            <p className={`text-xs mb-4 ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.modalDesc}</p>
+            <div className={`p-3 rounded-xl mb-6 font-mono text-lg font-bold border ${isDark ? "bg-[#0B132B] border-slate-700 text-[#43B02A]" : "bg-slate-50 border-slate-200 text-[#00529B]"}`}>
+              {generatedBookingId}
+            </div>
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              className="w-full bg-[#00529B] hover:bg-[#00407a] text-white font-bold py-3 rounded-xl transition text-sm shadow"
+            >
+              {t.modalBtn}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Footer */}
       <footer className={`border-t pt-12 pb-6 px-6 md:px-16 transition-colors duration-300 ${isDark ? "bg-[#050B14] text-slate-300 border-slate-800" : "bg-slate-900 text-slate-200 border-slate-800"}`}>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 pb-10">
@@ -638,46 +701,11 @@ export default function Home() {
               <a href="https://t.me/greenspark_solutions" target="_blank" rel="noopener noreferrer" className="hover:text-[#43B02A] transition flex items-center gap-1.5">
                 <span>✈️</span> Telegram
               </a>
-              <a href="https://www.tiktok.com/@greenspark.solutions" target="_blank" rel="noopener noreferrer" className="hover:text-[#43B02A] transition flex items-center gap-1.5">
-                <span>🎬</span> TikTok
-              </a>
             </div>
           </div>
 
-        </div>
-
-        <div className="max-w-7xl mx-auto pt-6 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between text-xs text-slate-400 gap-4 text-center">
-          <p className="font-medium text-slate-300 tracking-wide">Powering Efficiency, Protecting the Planet.</p>
-          <p>© {new Date().getFullYear()} GreenSpark Solutions PLC. All rights reserved.</p>
         </div>
       </footer>
-
-      {showSuccessModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className={`max-w-md w-full p-6 rounded-3xl border shadow-2xl text-center ${isDark ? "border-slate-800 bg-[#1C2541] text-white" : "border-slate-200 bg-white text-slate-900"}`}>
-            <div className="w-16 h-16 bg-[#43B02A]/20 border border-[#43B02A] text-[#43B02A] rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
-              ✓
-            </div>
-            <h3 className={`text-2xl font-bold mb-2 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.modalTitle}</h3>
-            
-            <div className={`my-4 p-4 rounded-2xl border text-center ${isDark ? "border-green-800 bg-green-950/40" : "border-green-200 bg-green-50"}`}>
-              <span className={`text-xs block mb-1 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.modalIdLabel}</span>
-              <span className="text-xl font-black text-[#43B02A] tracking-wider font-mono">{generatedBookingId}</span>
-            </div>
-
-            <p className={`text-xs leading-relaxed mb-6 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-              {t.modalDesc}
-            </p>
-
-            <button
-              onClick={() => setShowSuccessModal(false)}
-              className="w-full bg-[#43B02A] hover:bg-[#389623] text-white font-bold py-3 rounded-xl transition shadow-lg shadow-[#43B02A]/20 text-sm"
-            >
-              {t.modalBtn}
-            </button>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
