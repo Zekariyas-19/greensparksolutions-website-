@@ -7,7 +7,6 @@ export default function Home() {
   const [lang, setLang] = useState<"am" | "en">("am");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [activeTab, setActiveTab] = useState<string>("home");
-  const [menuDropdownOpen, setMenuDropdownOpen] = useState<boolean>(false);
   const [customerType, setCustomerType] = useState<"individual" | "company">("individual");
   
   const [fullName, setFullName] = useState("");
@@ -247,16 +246,16 @@ export default function Home() {
       {/* Top Brand Accent Line */}
       <div className="h-2 w-full bg-gradient-to-r from-[#00529B] via-[#43B02A] to-[#00529B]"></div>
 
-      {/* Navigation Bar */}
-      <nav className={`flex justify-between items-center px-6 md:px-16 py-4 backdrop-blur-md border-b sticky top-0 z-40 shadow-sm transition-colors duration-300 ${isDark ? "bg-[#0B132B]/90 border-slate-800" : "bg-white/90 border-slate-200"}`}>
+      {/* Navigation Bar - All links displayed directly on top */}
+      <nav className={`flex flex-col md:flex-row justify-between items-center px-4 md:px-16 py-3 backdrop-blur-md border-b sticky top-0 z-40 shadow-sm gap-3 transition-colors duration-300 ${isDark ? "bg-[#0B132B]/90 border-slate-800" : "bg-white/90 border-slate-200"}`}>
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab("home")}>
           <img 
             src="/logo.png" 
             alt="GreenSpark Solutions Logo" 
-            className="h-10 md:h-14 w-auto object-contain" 
+            className="h-10 md:h-12 w-auto object-contain" 
           />
           <div className={`flex flex-col justify-center border-l pl-3 ${isDark ? "border-slate-700" : "border-slate-300"}`}>
-            <span className={`text-lg md:text-xl font-bold tracking-tight leading-tight ${isDark ? "text-white" : "text-[#00529B]"}`}>
+            <span className={`text-base md:text-lg font-bold tracking-tight leading-tight ${isDark ? "text-white" : "text-[#00529B]"}`}>
               {isDark ? (
                 <>
                   Gree<span className="text-[#43B02A]">n</span><span className="text-white">Spark</span>
@@ -268,16 +267,17 @@ export default function Home() {
               )}
             </span>
             <div className="flex items-center space-x-1">
-              <div className={`h-[1px] w-4 ${isDark ? "bg-slate-500" : "bg-[#00529B]"}`}></div>
-              <span className={`text-[9px] md:text-[10px] font-extrabold tracking-[0.2em] uppercase ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+              <div className={`h-[1px] w-3 ${isDark ? "bg-slate-500" : "bg-[#00529B]"}`}></div>
+              <span className={`text-[8px] font-extrabold tracking-[0.2em] uppercase ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                 SOLUTIONS PLC
               </span>
-              <div className={`h-[1px] w-4 ${isDark ? "bg-slate-500" : "bg-[#00529B]"}`}></div>
+              <div className={`h-[1px] w-3 ${isDark ? "bg-slate-500" : "bg-[#00529B]"}`}></div>
             </div>
           </div>
         </div>
         
-        <div className="hidden md:flex items-center space-x-6 text-sm font-semibold">
+        {/* All Navigation Links Listed Directly */}
+        <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 text-xs md:text-sm font-semibold">
           <button onClick={() => setActiveTab("home")} className={`transition ${activeTab === "home" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navHome}</button>
           <button onClick={() => setActiveTab("values")} className={`transition ${activeTab === "values" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navValues}</button>
           <button onClick={() => setActiveTab("services")} className={`transition ${activeTab === "services" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navServices}</button>
@@ -286,66 +286,29 @@ export default function Home() {
           <button onClick={() => setActiveTab("comments")} className={`transition ${activeTab === "comments" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navComments}</button>
           <button onClick={() => setActiveTab("about")} className={`transition ${activeTab === "about" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navAbout}</button>
 
-          <button
-            onClick={() => setTheme(isDark ? "light" : "dark")}
-            className={`p-2 rounded-lg border transition text-sm flex items-center justify-center ${isDark ? "border-slate-700 bg-[#1C2541] text-amber-400 hover:bg-slate-800" : "border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100"}`}
-            title="Toggle Light/Dark Mode"
-          >
-            {isDark ? "☀️" : "🌙"}
-          </button>
+          <div className="flex items-center space-x-2 pl-2 border-l border-slate-300 dark:border-slate-700">
+            <button
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              className={`p-1.5 rounded-lg border transition text-xs flex items-center justify-center ${isDark ? "border-slate-700 bg-[#1C2541] text-amber-400 hover:bg-slate-800" : "border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100"}`}
+              title="Toggle Light/Dark Mode"
+            >
+              {isDark ? "☀️" : "🌙"}
+            </button>
 
-          <select 
-            value={lang} 
-            onChange={(e) => setLang(e.target.value as "am" | "en")}
-            className={`font-bold px-3 py-2 rounded-lg focus:outline-none cursor-pointer border transition text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-[#00529B]"}`}
-          >
-            <option value="am">አማርኛ</option>
-            <option value="en">English</option>
-          </select>
-        </div>
-
-        {/* Mobile View Dropdown Controls */}
-        <div className="flex md:hidden items-center space-x-2 relative">
-          <button
-            onClick={() => setTheme(isDark ? "light" : "dark")}
-            className={`p-2 rounded-lg border text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-amber-400" : "border-slate-300 bg-slate-50 text-slate-700"}`}
-          >
-            {isDark ? "☀️" : "🌙"}
-          </button>
-
-          <select 
-            value={lang} 
-            onChange={(e) => setLang(e.target.value as "am" | "en")}
-            className={`font-bold px-2.5 py-1.5 rounded-lg border text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-[#00529B]"}`}
-          >
-            <option value="am">አማ</option>
-            <option value="en">EN</option>
-          </select>
-
-          <button
-            onClick={() => setMenuDropdownOpen(!menuDropdownOpen)}
-            className={`px-3 py-1.5 rounded-lg border text-xs font-bold ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-slate-800"}`}
-          >
-            Menu ▾
-          </button>
-
-          {menuDropdownOpen && (
-            <div className={`absolute right-0 top-12 w-48 rounded-xl shadow-xl border py-2 flex flex-col z-50 ${isDark ? "bg-[#1C2541] border-slate-700 text-slate-200" : "bg-white border-slate-200 text-slate-800"}`}>
-              <button onClick={() => { setActiveTab("home"); setMenuDropdownOpen(false); }} className="text-left px-4 py-2 text-xs hover:bg-slate-500/10 font-semibold">{t.navHome}</button>
-              <button onClick={() => { setActiveTab("values"); setMenuDropdownOpen(false); }} className="text-left px-4 py-2 text-xs hover:bg-slate-500/10 font-semibold">{t.navValues}</button>
-              <button onClick={() => { setActiveTab("services"); setMenuDropdownOpen(false); }} className="text-left px-4 py-2 text-xs hover:bg-slate-500/10 font-semibold">{t.navServices}</button>
-              <button onClick={() => { setActiveTab("booking"); setMenuDropdownOpen(false); }} className="text-left px-4 py-2 text-xs hover:bg-slate-500/10 font-semibold">{t.navBooking}</button>
-              <button onClick={() => { setActiveTab("founders"); setMenuDropdownOpen(false); }} className="text-left px-4 py-2 text-xs hover:bg-slate-500/10 font-semibold">{t.navFounders}</button>
-              <button onClick={() => { setActiveTab("comments"); setMenuDropdownOpen(false); }} className="text-left px-4 py-2 text-xs hover:bg-slate-500/10 font-semibold">{t.navComments}</button>
-              <button onClick={() => { setActiveTab("about"); setMenuDropdownOpen(false); }} className="text-left px-4 py-2 text-xs hover:bg-slate-500/10 font-semibold">{t.navAbout}</button>
-            </div>
-          )}
+            <select 
+              value={lang} 
+              onChange={(e) => setLang(e.target.value as "am" | "en")}
+              className={`font-bold px-2 py-1.5 rounded-lg focus:outline-none cursor-pointer border transition text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-[#00529B]"}`}
+            >
+              <option value="am">አማርኛ</option>
+              <option value="en">English</option>
+            </select>
+          </div>
         </div>
       </nav>
 
-      {/* Dynamic Content Views based on activeTab */}
+      {/* Dynamic Content Views */}
       <div className="py-8">
-        {/* 1. HOME VIEW */}
         {activeTab === "home" && (
           <section className="flex flex-col items-center justify-center text-center px-4 max-w-5xl mx-auto min-h-[70vh]">
             <h2 className={`text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight ${isDark ? "text-white" : "text-[#00529B]"}`}>
@@ -355,7 +318,6 @@ export default function Home() {
               {t.heroDesc}
             </p>
 
-            {/* Bulk Order Alert Box */}
             <div className={`w-full max-w-3xl p-6 rounded-2xl border mb-10 text-left flex flex-col md:flex-row items-center justify-between gap-4 shadow-md ${isDark ? "bg-[#1C2541] border-[#43B02A]" : "bg-green-50 border-[#43B02A]"}`}>
               <div>
                 <h4 className="text-[#43B02A] font-bold text-base mb-1">{t.bulkAlertTitle}</h4>
@@ -380,7 +342,6 @@ export default function Home() {
           </section>
         )}
 
-        {/* 2. VALUES VIEW */}
         {activeTab === "values" && (
           <section className="max-w-5xl mx-auto px-4 min-h-[70vh]">
             <div className="text-center mb-10">
@@ -399,36 +360,23 @@ export default function Home() {
                 <div className="text-3xl mb-4">💰</div>
                 <h4 className="text-[#43B02A] font-bold text-xl mb-3">{t.feat1Title}</h4>
                 <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat1Desc}</p>
-                <ul className={`mt-4 text-xs space-y-2 list-disc pl-4 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-                  <li>{lang === "am" ? "የዕለት ተዕለት የነዳጅ ግዢ ወጪን በከፍተኛ ሁኔታ ይቀንሳል" : "Drastically cuts daily fuel purchase expenses"}</li>
-                  <li>{lang === "am" ? "ለረጅም ጉዞዎች የተሻለ የሃይል ቁጠባ ይሰጣል" : "Delivers optimal energy efficiency on long hauls"}</li>
-                </ul>
               </div>
 
               <div className={`p-8 rounded-2xl border transition shadow-sm ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
                 <div className="text-3xl mb-4">🌍</div>
                 <h4 className={`font-bold text-xl mb-3 ${isDark ? "text-[#60A5FA]" : "text-[#00529B]"}`}>{t.feat2Title}</h4>
                 <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat2Desc}</p>
-                <ul className={`mt-4 text-xs space-y-2 list-disc pl-4 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-                  <li>{lang === "am" ? "መመሪያ 1051/2017 መስፈርቶችን ሙሉ በሙሉ ያሟላል" : "Fully complies with Directive 1051/2017 standards"}</li>
-                  <li>{lang === "am" ? "አካባቢን ከመርዛማ ጭስ እና አየር ብክለት ይጠብቃል" : "Protects the environment from toxic emissions"}</li>
-                </ul>
               </div>
 
               <div className={`p-8 rounded-2xl border transition shadow-sm ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
                 <div className="text-3xl mb-4">⚙️</div>
                 <h4 className="text-[#43B02A] font-bold text-xl mb-3">{t.feat3Title}</h4>
                 <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat3Desc}</p>
-                <ul className={`mt-4 text-xs space-y-2 list-disc pl-4 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-                  <li>{lang === "am" ? "ተጨማሪ የጥገና ወጪ አያስፈልገውም" : "Requires zero additional maintenance costs"}</li>
-                  <li>{lang === "am" ? "በሰለጠኑ ባለሙያዎች ጥራት ያለው ገጠማ ይደረጋል" : "Professional installation by expert technicians"}</li>
-                </ul>
               </div>
             </div>
           </section>
         )}
 
-        {/* 3. SERVICES VIEW */}
         {activeTab === "services" && (
           <section className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[70vh]">
             <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Services</h3>
@@ -446,7 +394,6 @@ export default function Home() {
           </section>
         )}
 
-        {/* 4. BOOKING VIEW */}
         {activeTab === "booking" && (
           <div className="max-w-2xl mx-auto px-4 space-y-8 min-h-[70vh]">
             <div className={`p-6 md:p-8 rounded-3xl shadow-lg border ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
@@ -650,7 +597,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* 5. FOUNDERS VIEW */}
         {activeTab === "founders" && (
           <section className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[70vh]">
             <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Founders</h3>
@@ -667,7 +613,6 @@ export default function Home() {
           </section>
         )}
 
-        {/* 6. COMMENTS VIEW */}
         {activeTab === "comments" && (
           <section className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[70vh]">
             <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Comments</h3>
@@ -684,7 +629,6 @@ export default function Home() {
           </section>
         )}
 
-        {/* 7. ABOUT US VIEW */}
         {activeTab === "about" && (
           <section className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[70vh]">
             <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>About us</h3>
