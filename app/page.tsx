@@ -121,7 +121,6 @@ export default function Home() {
       navFounders: "Founders",
       navComments: "Comments",
       navAbout: "About us",
-      topBanner: "የነዳጅ ዋጋ ንረት መፍትሄ፡ ከ10 መኪና በላይ ለሚያስገጥሙ በቀጥታ በስልክ ይደውሉልን!",
       heroTitle1: "የነዳጅ ወጪዎን",
       heroTitle2: "ከ10% - 30%",
       heroTitle3: "ይቀንሱ",
@@ -175,7 +174,6 @@ export default function Home() {
       navFounders: "Founders",
       navComments: "Comments",
       navAbout: "About us",
-      topBanner: "Fuel Cost Solution: Call us directly for bulk installations of more than 10 vehicles!",
       heroTitle1: "Reduce Fuel Costs",
       heroTitle2: "By 10% - 30%",
       heroTitle3: "Guaranteed",
@@ -238,17 +236,12 @@ export default function Home() {
 
   return (
     <main className={`min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#0B132B] text-slate-100 selection:bg-[#43B02A] selection:text-white" : "bg-[#F8FAFC] text-slate-800 selection:bg-[#43B02A] selection:text-white"}`}>
-      {/* Top Banner Notice */}
-      <div className="bg-[#00529B] text-white text-center py-2 px-4 text-xs md:text-sm font-bold tracking-wide">
-        {t.topBanner}
-      </div>
-
-      {/* Top Brand Accent Line */}
-      <div className="h-2 w-full bg-gradient-to-r from-[#00529B] via-[#43B02A] to-[#00529B]"></div>
-
-      {/* Navigation Bar - All links displayed directly on top */}
-      <nav className={`flex flex-col md:flex-row justify-between items-center px-4 md:px-16 py-3 backdrop-blur-md border-b sticky top-0 z-40 shadow-sm gap-3 transition-colors duration-300 ${isDark ? "bg-[#0B132B]/90 border-slate-800" : "bg-white/90 border-slate-200"}`}>
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab("home")}>
+      
+      {/* Navigation Bar - Logo on left edge, links and controls properly aligned */}
+      <nav className={`flex flex-col md:flex-row justify-between items-center px-6 md:px-16 py-3 backdrop-blur-md border-b sticky top-0 z-40 shadow-sm gap-3 transition-colors duration-300 ${isDark ? "bg-[#0B132B]/90 border-slate-800" : "bg-white/90 border-slate-200"}`}>
+        
+        {/* Logo aligned to the far left */}
+        <div className="flex items-center gap-3 cursor-pointer self-start md:self-auto" onClick={() => setActiveTab("home")}>
           <img 
             src="/logo.png" 
             alt="GreenSpark Solutions Logo" 
@@ -276,7 +269,7 @@ export default function Home() {
           </div>
         </div>
         
-        {/* All Navigation Links Listed Directly */}
+        {/* Navigation Links and Controls */}
         <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 text-xs md:text-sm font-semibold">
           <button onClick={() => setActiveTab("home")} className={`transition ${activeTab === "home" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navHome}</button>
           <button onClick={() => setActiveTab("values")} className={`transition ${activeTab === "values" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navValues}</button>
