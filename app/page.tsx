@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 export default function Home() {
   const [lang, setLang] = useState<"am" | "en">("am");
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [activeTab, setActiveTab] = useState<string>("home"); // Tracks current active page view
+  const [activeTab, setActiveTab] = useState<string>("home");
   const [menuDropdownOpen, setMenuDropdownOpen] = useState<boolean>(false);
   const [customerType, setCustomerType] = useState<"individual" | "company">("individual");
   
@@ -23,7 +23,6 @@ export default function Home() {
   const [generatedBookingId, setGeneratedBookingId] = useState("");
   const [vehicleCounts, setVehicleCounts] = useState<{ [key: string]: number }>({});
 
-  // Booking Retrieval States
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState<any[] | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -381,7 +380,7 @@ export default function Home() {
           </section>
         )}
 
-        {/* 2. VALUES VIEW (Detailed User/Company Benefits) */}
+        {/* 2. VALUES VIEW */}
         {activeTab === "values" && (
           <section className="max-w-5xl mx-auto px-4 min-h-[70vh]">
             <div className="text-center mb-10">
@@ -447,10 +446,9 @@ export default function Home() {
           </section>
         )}
 
-        {/* 4. BOOKING VIEW (Form & Search) */}
+        {/* 4. BOOKING VIEW */}
         {activeTab === "booking" && (
           <div className="max-w-2xl mx-auto px-4 space-y-8 min-h-[70vh]">
-            {/* Search Section */}
             <div className={`p-6 md:p-8 rounded-3xl shadow-lg border ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
               <h3 className={`text-lg md:text-xl font-bold text-center mb-1 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.searchSecTitle}</h3>
               <p className={`text-xs text-center mb-4 ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.searchSecSub}</p>
@@ -477,7 +475,7 @@ export default function Home() {
                   {searchResult.length === 0 ? (
                     <p className={`text-xs text-center py-4 ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.noResult}</p>
                   ) : (
-                    searchResult.map((item, idx) => (
+                    searchResult.map((item: any, idx: number) => (
                       <div key={idx} className={`p-3.5 rounded-xl border text-xs space-y-1 ${isDark ? "border-slate-700 bg-[#0B132B]" : "border-slate-200 bg-slate-50"}`}>
                         <div className="flex justify-between font-bold text-[#43B02A]">
                           <span>ID: {item.booking_id}</span>
@@ -492,7 +490,6 @@ export default function Home() {
               )}
             </div>
 
-            {/* Booking Form */}
             <div className={`p-6 md:p-10 rounded-3xl shadow-xl border transition-colors duration-300 ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
               <h3 className={`text-xl md:text-2xl font-bold text-center mb-2 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.formTitle}</h3>
               <p className={`text-xs text-center mb-6 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.formSub}</p>
@@ -661,7 +658,7 @@ export default function Home() {
               Founded by visionary experts dedicated to green technology and environmental protection.
             </p>
             <div className={`p-8 rounded-2xl border ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
-              <p className={`text-sm ${isContext => isDark ? "text-slate-300" : "text-slate-700"}`}>
+              <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                 {lang === "am" 
                   ? "የድርጅታችን መስራቾች በዘላቂ ኢነርጂ እና በአውቶሞቲቭ ቴክኖሎጂ ዘርፍ የረጅም ጊዜ ልምድ ያላቸው ባለሙያዎች ናቸው።" 
                   : "Our founders are visionary experts with extensive experience in sustainable energy and automotive engineering."}
@@ -698,7 +695,7 @@ export default function Home() {
               <h4 className="text-[#43B02A] font-bold text-xl">{lang === "am" ? "ስለ ድርጅታችን" : "About GreenSpark Solutions PLC"}</h4>
               <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                 {lang === "am"
-                  ? "ግሪን ስፓርክ ሶሉሽንስ ኃ.የተ.የግ ማህበር ከአኮ-ቴክ ሶሉሽንስ ጋር በመተባበር የSUPERTECH መሣሪያዎችን በማከፋፈልና በማስገጠም ላይ ይገኛል። አላማችንም የአካባቢ ብክለትን በመቀነስ እና የነዳጅ ወጪን በማዳን ለሀገራችን እድገት አስተዋጽኦ ማድረግ ነው።"
+                  ? "ግሪን ስፓርክ ሶሉሽንስ ኃ.የተ.የግ ማህበር ከአኮ-ቴክ ሶሉሽንስ ጋር በመተባበር የSUPERTECH መሣሪያዎችን በማከፋፈልና በማስገጥም ላይ ይገኛል። አላማችንም የአካባቢ ብክለትን በመቀነስ እና የነዳጅ ወጪን በማዳን ለሀገራችን እድገት አስተዋጽኦ ማድረግ ነው።"
                   : "GreenSpark Solutions PLC (in partnership with Eco-Tech Solutions) distributes SUPERTECH devices. Our goal is to reduce environmental air pollution and save fuel costs in compliance with national standards."}
               </p>
             </div>
