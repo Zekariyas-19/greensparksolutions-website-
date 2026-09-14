@@ -85,7 +85,7 @@ export default function Home() {
       phone: customerType === "individual" ? phone : null,
       company_name: customerType === "company" ? companyName : null,
       tin_number: customerType === "company" ? tin : null,
-      address: customerType === "company" ? companyPhone : null, // Storing company phone in address column
+      address: customerType === "company" ? companyPhone : null,
       vehicles: vehicleCounts,
     };
 
@@ -678,6 +678,11 @@ export default function Home() {
             </div>
           </div>
 
+        </div>
+
+        {/* Copyright Notice Bar */}
+        <div className={`max-w-7xl mx-auto pt-6 mt-6 border-t text-center text-xs ${isDark ? "border-slate-800 text-slate-500" : "border-slate-800 text-slate-400"}`}>
+          © {new Date().getFullYear()} GreenSpark Solutions PLC. All rights reserved.
         </div>
       </footer>
     </main>
