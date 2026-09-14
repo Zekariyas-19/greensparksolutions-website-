@@ -13,7 +13,7 @@ export default function Home() {
   const [phone, setPhone] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [tin, setTin] = useState("");
-  const [address, setAddress] = useState("");
+  const [companyPhone, setCompanyPhone] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -60,19 +60,19 @@ export default function Home() {
       return;
     }
 
-    // Validation 2: Check Phone Number for Individual (Must start with 09 or 07 and be 10 digits)
-    if (customerType === "individual") {
-      const phoneRegex = /^(09|07)\d{8}$/;
-      if (!phoneRegex.test(phone.trim())) {
-        setStatusMessage({
-          type: "error",
-          text: lang === "am" 
-            ? "እባክዎ ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ (በ 09 ወይም 07 የሚጀምር 10 አሃዝ ቁጥር)" 
-            : "Please enter a valid 10-digit Ethiopian phone number starting with 09 or 07."
-        });
-        setLoading(false);
-        return;
-      }
+    // Validation 2: Check Phone Number (Must start with 09 or 07 and be 10 digits)
+    const phoneRegex = /^(09|07)\d{8}$/;
+    const phoneToValidate = customerType === "individual" ? phone.trim() : companyPhone.trim();
+    
+    if (!phoneRegex.test(phoneToValidate)) {
+      setStatusMessage({
+        type: "error",
+        text: lang === "am" 
+          ? "እባክዎ ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ (በ 09 ወይም 07 የሚጀምር 10 አሃዝ ቁጥር)" 
+          : "Please enter a valid 10-digit Ethiopian phone number starting with 09 or 07."
+      });
+      setLoading(false);
+      return;
     }
 
     const randomNum = Math.floor(10000 + Math.random() * 90000);
@@ -85,7 +85,7 @@ export default function Home() {
       phone: customerType === "individual" ? phone : null,
       company_name: customerType === "company" ? companyName : null,
       tin_number: customerType === "company" ? tin : null,
-      address: customerType === "company" ? address : null,
+      address: customerType === "company" ? companyPhone : null, // Storing company phone in address column
       vehicles: vehicleCounts,
     };
 
@@ -103,7 +103,7 @@ export default function Home() {
       setPhone("");
       setCompanyName("");
       setTin("");
-      setAddress("");
+      setCompanyPhone("");
       setVehicleCounts({});
     } catch (err: any) {
       console.error("Error inserting data details:", err.message || JSON.stringify(err));
@@ -150,8 +150,8 @@ export default function Home() {
       phCompanyName: "የድርጅቱን ስም ያስገቡ",
       labelTin: "የቲን ቁጥር",
       phTin: "የቲን ቁጥር ያስገቡ",
-      labelAddress: "አድራሻ",
-      phAddress: "ከተማ / ክፍለ ከተማ",
+      labelCompanyPhone: "ስልክ ቁጥር (09... ወይም 07...)",
+      phCompanyPhone: "0911234567",
       labelVehicleSelection: "የተሽከርካሪ ታንከር የነዳጅ መጠን (በሊትር) እና ብዛት ይምረጡ",
       btnSubmit: "ቦታ ያዙ / ጥያቄ ይላኩ",
       modalTitle: "በተሳካ ሁኔታ ተልኳል! 🎉",
@@ -198,8 +198,8 @@ export default function Home() {
       phCompanyName: "Enter company name",
       labelTin: "TIN Number",
       phTin: "Enter TIN number",
-      labelAddress: "Address",
-      phAddress: "City / Sub-city",
+      labelCompanyPhone: "Phone Number (09... or 07...)",
+      phCompanyPhone: "0911234567",
       labelVehicleSelection: "Select Vehicle Fuel Tank Capacity Tier & Quantity",
       btnSubmit: "Submit Booking Request",
       modalTitle: "Successfully Submitted! 🎉",
@@ -471,13 +471,14 @@ export default function Home() {
                         />
                       </div>
                       <div>
-                        <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelAddress}</label>
+                        <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelCompanyPhone}</label>
                         <input 
-                          type="text" 
+                          type="tel" 
                           required
-                          value={address}
-                          onChange={(e) => setAddress(e.target.value)}
-                          placeholder={t.phAddress} 
+                          maxLength={10}
+                          value={companyPhone}
+                          onChange={(e) => setCompanyPhone(e.target.value)}
+                          placeholder={t.phCompanyPhone} 
                           className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
                         />
                       </div>
