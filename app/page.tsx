@@ -253,7 +253,6 @@ export default function Home() {
               {isDark ? "☀️" : "🌙"}
             </button>
 
-            {/* Single Toggle Button for Language instead of Dropdown */}
             <button
               onClick={() => setLang(lang === "am" ? "en" : "am")}
               className={`font-bold px-3 py-1.5 rounded-lg border transition text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-white hover:bg-slate-800" : "border-slate-300 bg-slate-50 text-[#00529B] hover:bg-slate-100"}`}
@@ -351,7 +350,6 @@ export default function Home() {
           </section>
         )}
 
-        {/* BOOKING VIEW - Search removed, only booking form remains */}
         {activeTab === "booking" && (
           <div className="max-w-2xl mx-auto px-4 space-y-8 min-h-[70vh]">
             <div className={`p-6 md:p-10 rounded-3xl shadow-xl border transition-colors duration-300 ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
@@ -634,11 +632,19 @@ export default function Home() {
           <div className="space-y-3">
             <h3 className="text-base font-bold tracking-wide text-white">Social media</h3>
             <div className="flex flex-col space-y-2 text-xs text-slate-400">
-              <a href="https://facebook.com/greenspark.solutions" target="_blank" rel="noopener noreferrer" className="hover:text-[#43B02A] transition flex items-center gap-1.5">
-                <span>🌐</span> Facebook
+              <a href="https://facebook.com/greenspark.solutions" target="_blank" rel="noopener noreferrer" className="hover:text-[#43B02A] transition flex items-center gap-2">
+                {/* Official Facebook SVG Icon */}
+                <svg className="w-4 h-4 fill-current text-blue-500" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span>Facebook</span>
               </a>
-              <a href="https://t.me/greenspark_solutions" target="_blank" rel="noopener noreferrer" className="hover:text-[#43B02A] transition flex items-center gap-1.5">
-                <span>✈️</span> Telegram
+              <a href="https://t.me/greenspark_solutions" target="_blank" rel="noopener noreferrer" className="hover:text-[#43B02A] transition flex items-center gap-2">
+                {/* Official Telegram SVG Icon */}
+                <svg className="w-4 h-4 fill-current text-sky-400" viewBox="0 0 24 24">
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.141.119.098.152.228.163.33.016.116.033.378.016.583z"/>
+                </svg>
+                <span>Telegram</span>
               </a>
             </div>
           </div>
