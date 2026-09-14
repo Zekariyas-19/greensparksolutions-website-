@@ -22,10 +22,6 @@ export default function Home() {
   const [generatedBookingId, setGeneratedBookingId] = useState("");
   const [vehicleCounts, setVehicleCounts] = useState<{ [key: string]: number }>({});
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResult, setSearchResult] = useState<any[] | null>(null);
-  const [searchLoading, setSearchLoading] = useState(false);
-
   const handleVehicleToggle = (key: string) => {
     setVehicleCounts((prev) => {
       const copy = { ...prev };
@@ -91,27 +87,6 @@ export default function Home() {
     }
   };
 
-  const handleSearchBooking = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-    setSearchLoading(true);
-    setSearchResult(null);
-
-    try {
-      const { data, error } = await supabase
-        .from("bookings")
-        .select("*")
-        .or(`full_name.ilike.%${searchQuery}%,phone.ilike.%${searchQuery}%,booking_id.ilike.%${searchQuery}%`);
-
-      if (error) throw error;
-      setSearchResult(data || []);
-    } catch (err) {
-      console.error("Error searching bookings:", err);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
-
   const content = {
     am: {
       navHome: "Home",
@@ -150,11 +125,6 @@ export default function Home() {
       phAddress: "ከተማ / ክፍለ ከተማ",
       labelVehicleSelection: "የተሽከርካሪ ታንከር የነዳጅ መጠን (በሊትር) እና ብዛት ይምረጡ",
       btnSubmit: "ቦታ ያዙ / ጥያቄ ይላኩ",
-      searchSecTitle: "የደንበኛ ቦታ ማስያዣ መፈለጊያ (Booking Retrieval)",
-      searchSecSub: "በስምዎ፣ በስልክ ቁጥርዎ ወይም በልዩ መለያ ቁጥርዎ (Booking ID) ይፈልጉ",
-      searchPh: "ስም ወይም ስልክ ቁጥር ያስገቡ...",
-      searchBtn: "ፈልግ",
-      noResult: "ምንም የተገኘ መረጃ የለም።",
       modalTitle: "በተሳካ ሁኔታ ተልኳል! 🎉",
       modalIdLabel: "የእርስዎ ልዩ መለያ ቁጥር (Booking ID)፦",
       modalDesc: "ጥያቄዎ ደርሶናል። ባለሙያዎቻችን በቅርቡ በስልክ ቁጥርዎ ያነጋግሮታል። እባክዎን ይህንን መለያ ቁጥር ይያዙ።",
@@ -203,11 +173,6 @@ export default function Home() {
       phAddress: "City / Sub-city",
       labelVehicleSelection: "Select Vehicle Fuel Tank Capacity Tier & Quantity",
       btnSubmit: "Submit Booking Request",
-      searchSecTitle: "Customer Booking Retrieval",
-      searchSecSub: "Search your previous bookings using your name, phone number, or booking ID",
-      searchPh: "Enter name or phone number...",
-      searchBtn: "Search",
-      noResult: "No bookings found.",
       modalTitle: "Successfully Submitted! 🎉",
       modalIdLabel: "Your Unique Tracking ID:",
       modalDesc: "Your request has been received. Our team will contact you shortly. Please save this reference ID.",
@@ -237,10 +202,10 @@ export default function Home() {
   return (
     <main className={`min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#0B132B] text-slate-100 selection:bg-[#43B02A] selection:text-white" : "bg-[#F8FAFC] text-slate-800 selection:bg-[#43B02A] selection:text-white"}`}>
       
-      {/* Navigation Bar - Logo on left edge, links and controls properly aligned */}
+      {/* Navigation Bar */}
       <nav className={`flex flex-col md:flex-row justify-between items-center px-6 md:px-16 py-3 backdrop-blur-md border-b sticky top-0 z-40 shadow-sm gap-3 transition-colors duration-300 ${isDark ? "bg-[#0B132B]/90 border-slate-800" : "bg-white/90 border-slate-200"}`}>
         
-        {/* Logo aligned to the far left */}
+        {/* Logo */}
         <div className="flex items-center gap-3 cursor-pointer self-start md:self-auto" onClick={() => setActiveTab("home")}>
           <img 
             src="/logo.png" 
@@ -288,14 +253,13 @@ export default function Home() {
               {isDark ? "☀️" : "🌙"}
             </button>
 
-            <select 
-              value={lang} 
-              onChange={(e) => setLang(e.target.value as "am" | "en")}
-              className={`font-bold px-2 py-1.5 rounded-lg focus:outline-none cursor-pointer border transition text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-slate-50 text-[#00529B]"}`}
+            {/* Single Toggle Button for Language instead of Dropdown */}
+            <button
+              onClick={() => setLang(lang === "am" ? "en" : "am")}
+              className={`font-bold px-3 py-1.5 rounded-lg border transition text-xs ${isDark ? "border-slate-700 bg-[#1C2541] text-white hover:bg-slate-800" : "border-slate-300 bg-slate-50 text-[#00529B] hover:bg-slate-100"}`}
             >
-              <option value="am">አማርኛ</option>
-              <option value="en">English</option>
-            </select>
+              {lang === "am" ? "English" : "አማርኛ"}
+            </button>
           </div>
         </div>
       </nav>
@@ -387,49 +351,9 @@ export default function Home() {
           </section>
         )}
 
+        {/* BOOKING VIEW - Search removed, only booking form remains */}
         {activeTab === "booking" && (
           <div className="max-w-2xl mx-auto px-4 space-y-8 min-h-[70vh]">
-            <div className={`p-6 md:p-8 rounded-3xl shadow-lg border ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
-              <h3 className={`text-lg md:text-xl font-bold text-center mb-1 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.searchSecTitle}</h3>
-              <p className={`text-xs text-center mb-4 ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.searchSecSub}</p>
-
-              <form onSubmit={handleSearchBooking} className="flex gap-2">
-                <input 
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t.searchPh}
-                  className={`flex-1 rounded-xl px-4 py-2.5 border text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white" : "border-slate-300 bg-slate-50 text-slate-900"}`}
-                />
-                <button 
-                  type="submit"
-                  disabled={searchLoading}
-                  className="bg-[#00529B] hover:bg-[#00407a] text-white px-5 py-2.5 rounded-xl font-bold text-sm transition shadow"
-                >
-                  {searchLoading ? "..." : t.searchBtn}
-                </button>
-              </form>
-
-              {searchResult !== null && (
-                <div className="mt-4 space-y-3 max-h-60 overflow-y-auto">
-                  {searchResult.length === 0 ? (
-                    <p className={`text-xs text-center py-4 ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.noResult}</p>
-                  ) : (
-                    searchResult.map((item: any, idx: number) => (
-                      <div key={idx} className={`p-3.5 rounded-xl border text-xs space-y-1 ${isDark ? "border-slate-700 bg-[#0B132B]" : "border-slate-200 bg-slate-50"}`}>
-                        <div className="flex justify-between font-bold text-[#43B02A]">
-                          <span>ID: {item.booking_id}</span>
-                          <span className="uppercase">{item.customer_type}</span>
-                        </div>
-                        <p><span className="font-semibold">Name/Company:</span> {item.full_name || item.company_name}</p>
-                        <p><span className="font-semibold">Phone:</span> {item.phone || item.address}</p>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
-
             <div className={`p-6 md:p-10 rounded-3xl shadow-xl border transition-colors duration-300 ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
               <h3 className={`text-xl md:text-2xl font-bold text-center mb-2 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.formTitle}</h3>
               <p className={`text-xs text-center mb-6 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.formSub}</p>
