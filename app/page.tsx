@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function Home() {
   const [lang, setLang] = useState<"am" | "en">("am");
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [activeTab, setActiveTab] = useState<string>("home");
+  const [activeSection, setActiveSection] = useState<string>("home");
   const [customerType, setCustomerType] = useState<"individual" | "company">("individual");
   
   const [fullName, setFullName] = useState("");
@@ -21,6 +21,37 @@ export default function Home() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [generatedBookingId, setGeneratedBookingId] = useState("");
   const [vehicleCounts, setVehicleCounts] = useState<{ [key: string]: number }>({});
+
+  // Scroll spy to highlight active section in navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["home", "values", "services", "booking", "founders", "comments", "about"];
+      const scrollPosition = window.scrollY + 200;
+
+      for (const section of sections) {
+        const el = document.getElementById(section);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    setActiveSection(id);
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const handleVehicleToggle = (key: string) => {
     setVehicleCounts((prev) => {
@@ -229,13 +260,13 @@ export default function Home() {
   const isDark = theme === "dark";
 
   return (
-    <main className={`min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#0B132B] text-slate-100 selection:bg-[#43B02A] selection:text-white" : "bg-[#F8FAFC] text-slate-800 selection:bg-[#43B02A] selection:text-white"}`}>
+    <main className={`min-h-screen font-sans transition-colors duration-300 scroll-smooth ${isDark ? "bg-[#0B132B] text-slate-100 selection:bg-[#43B02A] selection:text-white" : "bg-[#F8FAFC] text-slate-800 selection:bg-[#43B02A] selection:text-white"}`}>
       
-      {/* Navigation Bar */}
+      {/* Navigation Bar - Sticky */}
       <nav className={`flex flex-col md:flex-row justify-between items-center px-6 md:px-16 py-3 backdrop-blur-md border-b sticky top-0 z-40 shadow-sm gap-3 transition-colors duration-300 ${isDark ? "bg-[#0B132B]/90 border-slate-800" : "bg-white/90 border-slate-200"}`}>
         
         {/* Logo */}
-        <div className="flex items-center gap-3 cursor-pointer self-start md:self-auto" onClick={() => setActiveTab("home")}>
+        <div className="flex items-center gap-3 cursor-pointer self-start md:self-auto" onClick={() => scrollToSection("home")}>
           <img 
             src="/logo.png" 
             alt="GreenSpark Solutions Logo" 
@@ -263,15 +294,15 @@ export default function Home() {
           </div>
         </div>
         
-        {/* Navigation Links and Controls */}
+        {/* Navigation Links with Smooth Scroll */}
         <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5 text-xs md:text-sm font-semibold">
-          <button onClick={() => setActiveTab("home")} className={`transition ${activeTab === "home" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navHome}</button>
-          <button onClick={() => setActiveTab("values")} className={`transition ${activeTab === "values" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navValues}</button>
-          <button onClick={() => setActiveTab("services")} className={`transition ${activeTab === "services" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navServices}</button>
-          <button onClick={() => setActiveTab("booking")} className={`transition ${activeTab === "booking" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navBooking}</button>
-          <button onClick={() => setActiveTab("founders")} className={`transition ${activeTab === "founders" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navFounders}</button>
-          <button onClick={() => setActiveTab("comments")} className={`transition ${activeTab === "comments" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navComments}</button>
-          <button onClick={() => setActiveTab("about")} className={`transition ${activeTab === "about" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navAbout}</button>
+          <button onClick={() => scrollToSection("home")} className={`transition ${activeSection === "home" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navHome}</button>
+          <button onClick={() => scrollToSection("values")} className={`transition ${activeSection === "values" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navValues}</button>
+          <button onClick={() => scrollToSection("services")} className={`transition ${activeSection === "services" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navServices}</button>
+          <button onClick={() => scrollToSection("booking")} className={`transition ${activeSection === "booking" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navBooking}</button>
+          <button onClick={() => scrollToSection("founders")} className={`transition ${activeSection === "founders" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navFounders}</button>
+          <button onClick={() => scrollToSection("comments")} className={`transition ${activeSection === "comments" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navComments}</button>
+          <button onClick={() => scrollToSection("about")} className={`transition ${activeSection === "about" ? "text-[#43B02A] font-bold underline underline-offset-4" : isDark ? "text-slate-300 hover:text-[#43B02A]" : "text-slate-600 hover:text-[#43B02A]"}`}>{t.navAbout}</button>
 
           <div className="flex items-center space-x-2 pl-2 border-l border-slate-300 dark:border-slate-700">
             <button
@@ -292,305 +323,300 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Dynamic Content Views */}
-      <div className="py-8">
-        {activeTab === "home" && (
-          <section className="flex flex-col items-center justify-center text-center px-4 max-w-5xl mx-auto min-h-[70vh]">
-            <h2 className={`text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight ${isDark ? "text-white" : "text-[#00529B]"}`}>
-              {t.heroTitle1} <span className="text-[#43B02A]">{t.heroTitle2}</span> {t.heroTitle3}
-            </h2>
-            <p className={`text-base md:text-xl mb-12 max-w-2xl leading-relaxed font-medium ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-              {t.heroDesc}
-            </p>
+      {/* Sections for Smooth Scrolling */}
+      <div className="space-y-24 py-12">
+        
+        {/* Home Section */}
+        <section id="home" className="flex flex-col items-center justify-center text-center px-4 max-w-5xl mx-auto min-h-[70vh] pt-10">
+          <h2 className={`text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight ${isDark ? "text-white" : "text-[#00529B]"}`}>
+            {t.heroTitle1} <span className="text-[#43B02A]">{t.heroTitle2}</span> {t.heroTitle3}
+          </h2>
+          <p className={`text-base md:text-xl mb-12 max-w-2xl leading-relaxed font-medium ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+            {t.heroDesc}
+          </p>
 
-            <div className={`w-full max-w-3xl p-6 rounded-2xl border mb-10 text-left flex flex-col md:flex-row items-center justify-between gap-4 shadow-md ${isDark ? "bg-[#1C2541] border-[#43B02A]" : "bg-green-50 border-[#43B02A]"}`}>
-              <div>
-                <h4 className="text-[#43B02A] font-bold text-base mb-1">{t.bulkAlertTitle}</h4>
-                <p className={`text-xs md:text-sm ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.bulkAlertDesc}</p>
-              </div>
-              <a 
-                href="tel:+251983470000"
-                className="whitespace-nowrap bg-[#00529B] hover:bg-[#00407a] text-white font-bold px-5 py-3 rounded-xl transition shadow text-xs md:text-sm"
-              >
-                {t.callUsBtn}
-              </a>
+          <div className={`w-full max-w-3xl p-6 rounded-2xl border mb-10 text-left flex flex-col md:flex-row items-center justify-between gap-4 shadow-md ${isDark ? "bg-[#1C2541] border-[#43B02A]" : "bg-green-50 border-[#43B02A]"}`}>
+            <div>
+              <h4 className="text-[#43B02A] font-bold text-base mb-1">{t.bulkAlertTitle}</h4>
+              <p className={`text-xs md:text-sm ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.bulkAlertDesc}</p>
+            </div>
+            <a 
+              href="tel:+251983470000"
+              className="whitespace-nowrap bg-[#00529B] hover:bg-[#00407a] text-white font-bold px-5 py-3 rounded-xl transition shadow text-xs md:text-sm"
+            >
+              {t.callUsBtn}
+            </a>
+          </div>
+
+          <div className="mt-6">
+            <button 
+              onClick={() => scrollToSection("booking")}
+              className="bg-[#43B02A] hover:bg-[#389623] text-white font-bold px-8 py-4 rounded-xl text-base shadow-lg transition"
+            >
+              {lang === "am" ? "አሁን ቦታ ይያዙ (Book Now)" : "Book Your Installation Now"}
+            </button>
+          </div>
+        </section>
+
+        {/* Values Section */}
+        <section id="values" className="max-w-5xl mx-auto px-4 min-h-[60vh] pt-10">
+          <div className="text-center mb-10">
+            <h3 className={`text-3xl font-bold mb-3 ${isDark ? "text-white" : "text-[#00529B]"}`}>
+              {lang === "am" ? "መሳሪያውን ሲያስገጥሙ የሚያገኟቸው ጥቅሞች (Values & Benefits)" : "Values & Benefits of Installation"}
+            </h3>
+            <p className={`text-sm max-w-xl mx-auto ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+              {lang === "am" 
+                ? "ማንኛውም ድርጅት ወይም ግለሰብ ይህንን የSUPERTECH ቴክኖሎጂ በመኪናው ታንከር ውስጥ ሲያስገጥም የሚከተሉትን ትላልቅ ጥቅሞች ያገኛል፦" 
+                : "Discover the tangible financial and environmental advantages when you install our eco-friendly solutions."}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            <div className={`p-8 rounded-2xl border transition shadow-sm ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
+              <div className="text-3xl mb-4">💰</div>
+              <h4 className="text-[#43B02A] font-bold text-xl mb-3">{t.feat1Title}</h4>
+              <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat1Desc}</p>
             </div>
 
-            <div className="mt-6">
-              <button 
-                onClick={() => setActiveTab("booking")}
-                className="bg-[#43B02A] hover:bg-[#389623] text-white font-bold px-8 py-4 rounded-xl text-base shadow-lg transition"
+            <div className={`p-8 rounded-2xl border transition shadow-sm ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
+              <div className="text-3xl mb-4">🌍</div>
+              <h4 className={`font-bold text-xl mb-3 ${isDark ? "text-[#60A5FA]" : "text-[#00529B]"}`}>{t.feat2Title}</h4>
+              <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat2Desc}</p>
+            </div>
+
+            <div className={`p-8 rounded-2xl border transition shadow-sm ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
+              <div className="text-3xl mb-4">⚙️</div>
+              <h4 className="text-[#43B02A] font-bold text-xl mb-3">{t.feat3Title}</h4>
+              <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat3Desc}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section */}
+        <section id="services" className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[60vh] pt-10">
+          <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Services</h3>
+          <p className={`text-base mb-8 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+            Providing advanced automotive equipment to reduce toxic gas emissions and optimize fuel consumption for private cars and fleet owners.
+          </p>
+          <div className={`p-8 rounded-2xl border text-left space-y-4 ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
+            <h4 className="text-[#43B02A] font-bold text-xl">{lang === "am" ? "የምንሰጣቸው ዋና ዋና አገልግሎቶች" : "Our Core Services"}</h4>
+            <ul className={`text-sm space-y-3 list-disc pl-5 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+              <li>{lang === "am" ? "የSUPERTECH ታንከር ማሽን ግዢ እና ሙያዊ ገጠማ አገልግሎት" : "SUPERTECH tank machine purchase and professional installation"}</li>
+              <li>{lang === "am" ? "ለድርጅት መኪናዎች (Fleet) የጅምላ ትዕዛዝ እና ድጋፍ" : "Fleet management bulk orders and technical support"}</li>
+              <li>{lang === "am" ? "የአካባቢ ጥበቃ እና የካይ ጋዝ ቅነሳ የሙያ ምክር አገልግሎት" : "Environmental protection and toxic gas reduction consultancy"}</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Booking Section */}
+        <section id="booking" className="max-w-2xl mx-auto px-4 space-y-8 pt-10">
+          <div className={`p-6 md:p-10 rounded-3xl shadow-xl border transition-colors duration-300 ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
+            <h3 className={`text-xl md:text-2xl font-bold text-center mb-2 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.formTitle}</h3>
+            <p className={`text-xs text-center mb-6 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.formSub}</p>
+
+            <div className={`flex p-1.5 rounded-xl border mb-6 ${isDark ? "bg-[#0B132B] border-slate-800" : "bg-slate-100 border-slate-200"}`}>
+              <button
+                type="button"
+                onClick={() => setCustomerType("individual")}
+                className={`flex-1 py-2.5 text-xs md:text-sm font-bold rounded-lg transition ${
+                  customerType === "individual"
+                    ? "bg-[#00529B] text-white shadow-sm"
+                    : isDark ? "text-slate-400 hover:text-white" : "text-slate-600 hover:text-slate-900"
+                }`}
               >
-                {lang === "am" ? "አሁን ቦታ ይያዙ (Book Now)" : "Book Your Installation Now"}
+                {t.tabIndividual}
+              </button>
+              <button
+                type="button"
+                onClick={() => setCustomerType("company")}
+                className={`flex-1 py-2.5 text-xs md:text-sm font-bold rounded-lg transition ${
+                  customerType === "company"
+                    ? "bg-[#00529B] text-white shadow-sm"
+                    : isDark ? "text-slate-400 hover:text-white" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                {t.tabCompany}
               </button>
             </div>
-          </section>
-        )}
 
-        {activeTab === "values" && (
-          <section className="max-w-5xl mx-auto px-4 min-h-[70vh]">
-            <div className="text-center mb-10">
-              <h3 className={`text-3xl font-bold mb-3 ${isDark ? "text-white" : "text-[#00529B]"}`}>
-                {lang === "am" ? "መሳሪያውን ሲያስገጥሙ የሚያገኟቸው ጥቅሞች (Values & Benefits)" : "Values & Benefits of Installation"}
-              </h3>
-              <p className={`text-sm max-w-xl mx-auto ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-                {lang === "am" 
-                  ? "ማንኛውም ድርጅት ወይም ግለሰብ ይህንን የSUPERTECH ቴክኖሎጂ በመኪናው ታንከር ውስጥ ሲያስገጥም የሚከተሉትን ትላልቅ ጥቅሞች ያገኛል፦" 
-                  : "Discover the tangible financial and environmental advantages when you install our eco-friendly solutions."}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-              <div className={`p-8 rounded-2xl border transition shadow-sm ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
-                <div className="text-3xl mb-4">💰</div>
-                <h4 className="text-[#43B02A] font-bold text-xl mb-3">{t.feat1Title}</h4>
-                <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat1Desc}</p>
+            {statusMessage && (
+              <div className={`p-4 rounded-xl text-sm mb-4 font-semibold text-center border ${isDark ? "bg-red-950/50 border-red-800 text-red-400" : "bg-red-50 border-red-300 text-red-600"}`}>
+                {statusMessage.text}
               </div>
+            )}
 
-              <div className={`p-8 rounded-2xl border transition shadow-sm ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
-                <div className="text-3xl mb-4">🌍</div>
-                <h4 className={`font-bold text-xl mb-3 ${isDark ? "text-[#60A5FA]" : "text-[#00529B]"}`}>{t.feat2Title}</h4>
-                <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat2Desc}</p>
-              </div>
-
-              <div className={`p-8 rounded-2xl border transition shadow-sm ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
-                <div className="text-3xl mb-4">⚙️</div>
-                <h4 className="text-[#43B02A] font-bold text-xl mb-3">{t.feat3Title}</h4>
-                <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-600"}`}>{t.feat3Desc}</p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {activeTab === "services" && (
-          <section className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[70vh]">
-            <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Services</h3>
-            <p className={`text-base mb-8 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-              Providing advanced automotive equipment to reduce toxic gas emissions and optimize fuel consumption for private cars and fleet owners.
-            </p>
-            <div className={`p-8 rounded-2xl border text-left space-y-4 ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
-              <h4 className="text-[#43B02A] font-bold text-xl">{lang === "am" ? "የምንሰጣቸው ዋና ዋና አገልግሎቶች" : "Our Core Services"}</h4>
-              <ul className={`text-sm space-y-3 list-disc pl-5 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
-                <li>{lang === "am" ? "የSUPERTECH ታንከር ማሽን ግዢ እና ሙያዊ ገጠማ አገልግሎት" : "SUPERTECH tank machine purchase and professional installation"}</li>
-                <li>{lang === "am" ? "ለድርጅት መኪናዎች (Fleet) የጅምላ ትዕዛዝ እና ድጋፍ" : "Fleet management bulk orders and technical support"}</li>
-                <li>{lang === "am" ? "የአካባቢ ጥበቃ እና የካይ ጋዝ ቅነሳ የሙያ ምክር አገልግሎት" : "Environmental protection and toxic gas reduction consultancy"}</li>
-              </ul>
-            </div>
-          </section>
-        )}
-
-        {activeTab === "booking" && (
-          <div className="max-w-2xl mx-auto px-4 space-y-8 min-h-[70vh]">
-            <div className={`p-6 md:p-10 rounded-3xl shadow-xl border transition-colors duration-300 ${isDark ? "border-slate-800 bg-[#1C2541]" : "border-slate-200 bg-white"}`}>
-              <h3 className={`text-xl md:text-2xl font-bold text-center mb-2 ${isDark ? "text-white" : "text-[#00529B]"}`}>{t.formTitle}</h3>
-              <p className={`text-xs text-center mb-6 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>{t.formSub}</p>
-
-              <div className={`flex p-1.5 rounded-xl border mb-6 ${isDark ? "bg-[#0B132B] border-slate-800" : "bg-slate-100 border-slate-200"}`}>
-                <button
-                  type="button"
-                  onClick={() => setCustomerType("individual")}
-                  className={`flex-1 py-2.5 text-xs md:text-sm font-bold rounded-lg transition ${
-                    customerType === "individual"
-                      ? "bg-[#00529B] text-white shadow-sm"
-                      : isDark ? "text-slate-400 hover:text-white" : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  {t.tabIndividual}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCustomerType("company")}
-                  className={`flex-1 py-2.5 text-xs md:text-sm font-bold rounded-lg transition ${
-                    customerType === "company"
-                      ? "bg-[#00529B] text-white shadow-sm"
-                      : isDark ? "text-slate-400 hover:text-white" : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  {t.tabCompany}
-                </button>
-              </div>
-
-              {statusMessage && (
-                <div className={`p-4 rounded-xl text-sm mb-4 font-semibold text-center border ${isDark ? "bg-red-950/50 border-red-800 text-red-400" : "bg-red-50 border-red-300 text-red-600"}`}>
-                  {statusMessage.text}
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {customerType === "individual" && (
+                <>
+                  <div>
+                    <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelFullName}</label>
+                    <input 
+                      type="text" 
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder={t.phFullName} 
+                      className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
+                    />
+                  </div>
+                  <div>
+                    <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelPhone}</label>
+                    <input 
+                      type="tel" 
+                      required
+                      maxLength={10}
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder={t.phPhone} 
+                      className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
+                    />
+                  </div>
+                </>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {customerType === "individual" && (
-                  <>
+              {customerType === "company" && (
+                <>
+                  <div>
+                    <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelCompanyName}</label>
+                    <input 
+                      type="text" 
+                      required
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder={t.phCompanyName} 
+                      className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelFullName}</label>
+                      <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelTin}</label>
                       <input 
                         type="text" 
                         required
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder={t.phFullName} 
+                        value={tin}
+                        onChange={(e) => setTin(e.target.value)}
+                        placeholder={t.phTin} 
                         className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
                       />
                     </div>
                     <div>
-                      <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelPhone}</label>
+                      <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelCompanyPhone}</label>
                       <input 
                         type="tel" 
                         required
                         maxLength={10}
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder={t.phPhone} 
+                        value={companyPhone}
+                        onChange={(e) => setCompanyPhone(e.target.value)}
+                        placeholder={t.phCompanyPhone} 
                         className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
                       />
                     </div>
-                  </>
-                )}
-
-                {customerType === "company" && (
-                  <>
-                    <div>
-                      <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelCompanyName}</label>
-                      <input 
-                        type="text" 
-                        required
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder={t.phCompanyName} 
-                        className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelTin}</label>
-                        <input 
-                          type="text" 
-                          required
-                          value={tin}
-                          onChange={(e) => setTin(e.target.value)}
-                          placeholder={t.phTin} 
-                          className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
-                        />
-                      </div>
-                      <div>
-                        <label className={`block text-sm font-semibold mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}>{t.labelCompanyPhone}</label>
-                        <input 
-                          type="tel" 
-                          required
-                          maxLength={10}
-                          value={companyPhone}
-                          onChange={(e) => setCompanyPhone(e.target.value)}
-                          placeholder={t.phCompanyPhone} 
-                          className={`w-full rounded-xl px-4 py-3 border transition text-sm focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#0B132B] text-white placeholder-slate-500" : "border-slate-300 bg-slate-50 text-slate-900"}`}
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <div className="pt-4">
-                  <label className={`block text-sm font-bold mb-3 ${isDark ? "text-slate-300" : "text-[#00529B]"}`}>
-                    {t.labelVehicleSelection}
-                  </label>
-
-                  <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-                    {vehicleList.map((item) => {
-                      const isSelected = vehicleCounts[item.key] !== undefined;
-                      return (
-                        <div 
-                          key={item.key} 
-                          className={`flex items-center justify-between p-3.5 rounded-xl border transition ${
-                            isSelected 
-                              ? isDark ? "border-[#43B02A] bg-[#43B02A]/10 shadow-sm" : "border-[#43B02A] bg-[#43B02A]/5 shadow-sm" 
-                              : isDark ? "border-slate-800 bg-[#0B132B]" : "border-slate-200 bg-slate-50"
-                          }`}
-                        >
-                          <label className="flex items-center space-x-3 cursor-pointer flex-1">
-                            <input 
-                              type="checkbox" 
-                              checked={isSelected}
-                              onChange={() => handleVehicleToggle(item.key)}
-                              className="w-4 h-4 accent-[#43B02A] rounded cursor-pointer"
-                            />
-                            <span className={`text-sm font-semibold ${isDark ? "text-slate-200" : "text-slate-700"}`}>{item.label}</span>
-                          </label>
-
-                          {isSelected && (
-                            <div className="flex items-center space-x-2">
-                              <span className={`text-xs font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>ብዛት፦</span>
-                              <input 
-                                type="number" 
-                                min="1"
-                                value={vehicleCounts[item.key]}
-                                onChange={(e) => handleCountChange(item.key, parseInt(e.target.value) || 1)}
-                                className={`w-16 rounded-xl px-2.5 py-1.5 text-center text-sm border focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-white text-slate-900"}`}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
                   </div>
+                </>
+              )}
+
+              <div className="pt-4">
+                <label className={`block text-sm font-bold mb-3 ${isDark ? "text-slate-300" : "text-[#00529B]"}`}>
+                  {t.labelVehicleSelection}
+                </label>
+
+                <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                  {vehicleList.map((item) => {
+                    const isSelected = vehicleCounts[item.key] !== undefined;
+                    return (
+                      <div 
+                        key={item.key} 
+                        className={`flex items-center justify-between p-3.5 rounded-xl border transition ${
+                          isSelected 
+                            ? isDark ? "border-[#43B02A] bg-[#43B02A]/10 shadow-sm" : "border-[#43B02A] bg-[#43B02A]/5 shadow-sm" 
+                            : isDark ? "border-slate-800 bg-[#0B132B]" : "border-slate-200 bg-slate-50"
+                        }`}
+                      >
+                        <label className="flex items-center space-x-3 cursor-pointer flex-1">
+                          <input 
+                            type="checkbox" 
+                            checked={isSelected}
+                            onChange={() => handleVehicleToggle(item.key)}
+                            className="w-4 h-4 accent-[#43B02A] rounded cursor-pointer"
+                          />
+                          <span className={`text-sm font-semibold ${isDark ? "text-slate-200" : "text-slate-700"}`}>{item.label}</span>
+                        </label>
+
+                        {isSelected && (
+                          <div className="flex items-center space-x-2">
+                            <span className={`text-xs font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>ብዛት፦</span>
+                            <input 
+                              type="number" 
+                              min="1"
+                              value={vehicleCounts[item.key]}
+                              onChange={(e) => handleCountChange(item.key, parseInt(e.target.value) || 1)}
+                              className={`w-16 rounded-xl px-2.5 py-1.5 text-center text-sm border focus:outline-none focus:border-[#43B02A] ${isDark ? "border-slate-700 bg-[#1C2541] text-white" : "border-slate-300 bg-white text-slate-900"}`}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
+              </div>
 
-                <button 
-                  type="submit" 
-                  disabled={loading}
-                  className="w-full bg-[#43B02A] hover:bg-[#389623] text-white font-bold py-3.5 rounded-xl transition mt-6 shadow-lg shadow-[#43B02A]/20 text-base disabled:opacity-50"
-                >
-                  {loading ? (lang === "am" ? "በመላክ ላይ..." : "Submitting...") : t.btnSubmit}
-                </button>
-              </form>
-            </div>
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full bg-[#43B02A] hover:bg-[#389623] text-white font-bold py-3.5 rounded-xl transition mt-6 shadow-lg shadow-[#43B02A]/20 text-base disabled:opacity-50"
+              >
+                {loading ? (lang === "am" ? "በመላክ ላይ..." : "Submitting...") : t.btnSubmit}
+              </button>
+            </form>
           </div>
-        )}
+        </section>
 
-        {activeTab === "founders" && (
-          <section className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[70vh]">
-            <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Founders</h3>
-            <p className={`text-base mb-8 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-              Founded by visionary experts dedicated to green technology and environmental protection.
+        {/* Founders Section */}
+        <section id="founders" className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[50vh] pt-10">
+          <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Founders</h3>
+          <p className={`text-base mb-8 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+            Founded by visionary experts dedicated to green technology and environmental protection.
+          </p>
+          <div className={`p-8 rounded-2xl border ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
+            <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+              {lang === "am" 
+                ? "የድርጅታችን መስራቾች በዘላቂ ኢነርጂ እና በአውቶሞቲቭ ቴክኖሎጂ ዘርፍ የረጅም ጊዜ ልምድ ያላቸው ባለሙያዎች ናቸው።" 
+                : "Our founders are visionary experts with extensive experience in sustainable energy and automotive engineering."}
             </p>
-            <div className={`p-8 rounded-2xl border ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
-              <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-700"}`}>
-                {lang === "am" 
-                  ? "የድርጅታችን መስራቾች በዘላቂ ኢነርጂ እና በአውቶሞቲቭ ቴክኖሎጂ ዘርፍ የረጅም ጊዜ ልምድ ያላቸው ባለሙያዎች ናቸው።" 
-                  : "Our founders are visionary experts with extensive experience in sustainable energy and automotive engineering."}
-              </p>
-            </div>
-          </section>
-        )}
+          </div>
+        </section>
 
-        {activeTab === "comments" && (
-          <section className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[70vh]">
-            <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Comments</h3>
-            <p className={`text-base mb-8 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-              Feedback and remarks regarding Supertech, Eco-Tech Solutions PLC, and Directive 1051/2017.
+        {/* Comments Section */}
+        <section id="comments" className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[50vh] pt-10">
+          <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>Comments</h3>
+          <p className={`text-base mb-8 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+            Feedback and remarks regarding Supertech, Eco-Tech Solutions PLC, and Directive 1051/2017.
+          </p>
+          <div className={`p-8 rounded-2xl border ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
+            <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+              {lang === "am" 
+                ? "ደንበኞቻችን ስለ መሳሪያው ውጤታማነት የሰጡዋቸው አስተያየቶች እዚህ ይገኛሉ።" 
+                : "Customer testimonials and feedback regarding our products and services will be showcased here."}
             </p>
-            <div className={`p-8 rounded-2xl border ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
-              <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-700"}`}>
-                {lang === "am" 
-                  ? "ደንበኞቻችን ስለ መሳሪያው ውጤታማነት የሰጡዋቸው አስተያየቶች እዚህ ይገኛሉ።" 
-                  : "Customer testimonials and feedback regarding our products and services will be showcased here."}
-              </p>
-            </div>
-          </section>
-        )}
+          </div>
+        </section>
 
-        {activeTab === "about" && (
-          <section className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[70vh]">
-            <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>About us</h3>
-            <p className={`text-base mb-8 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
-              GreenSpark Solutions PLC is committed to providing efficient fuel-saving and eco-friendly solutions.
+        {/* About Section */}
+        <section id="about" className="max-w-4xl mx-auto px-4 py-8 text-center min-h-[50vh] pt-10">
+          <h3 className={`text-3xl font-bold mb-4 ${isDark ? "text-white" : "text-[#00529B]"}`}>About us</h3>
+          <p className={`text-base mb-8 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
+            GreenSpark Solutions PLC is committed to providing efficient fuel-saving and eco-friendly solutions.
+          </p>
+          <div className={`p-8 rounded-2xl border text-left space-y-4 ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
+            <h4 className="text-[#43B02A] font-bold text-xl">{lang === "am" ? "ስለ ድርጅታችን" : "About GreenSpark Solutions PLC"}</h4>
+            <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+              {lang === "am"
+                ? "ግሪን ስፓርክ ሶሉሽንስ ኃ.የተ.የግ ማህበር ከአኮ-ቴክ ሶሉሽንስ ጋር በመተባበር የSUPERTECH መሣሪያዎችን በማከፋፈልና በማስገጥም ላይ ይገኛል። አላማችንም የአካባቢ ብክለትን በመቀነስ እና የነዳጅ ወጪን በማዳን ለሀገራችን እድገት አስተዋጽኦ ማድረግ ነው።"
+                : "GreenSpark Solutions PLC (in partnership with Eco-Tech Solutions) distributes SUPERTECH devices. Our goal is to reduce environmental air pollution and save fuel costs in compliance with national standards."}
             </p>
-            <div className={`p-8 rounded-2xl border text-left space-y-4 ${isDark ? "bg-[#1C2541] border-slate-800" : "bg-white border-slate-200"}`}>
-              <h4 className="text-[#43B02A] font-bold text-xl">{lang === "am" ? "ስለ ድርጅታችን" : "About GreenSpark Solutions PLC"}</h4>
-              <p className={`text-sm leading-relaxed ${isDark ? "text-slate-300" : "text-slate-700"}`}>
-                {lang === "am"
-                  ? "ግሪን ስፓርክ ሶሉሽንስ ኃ.የተ.የግ ማህበር ከአኮ-ቴክ ሶሉሽንስ ጋር በመተባበር የSUPERTECH መሣሪያዎችን በማከፋፈልና በማስገጥም ላይ ይገኛል። አላማችንም የአካባቢ ብክለትን በመቀነስ እና የነዳጅ ወጪን በማዳን ለሀገራችን እድገት አስተዋጽኦ ማድረግ ነው።"
-                  : "GreenSpark Solutions PLC (in partnership with Eco-Tech Solutions) distributes SUPERTECH devices. Our goal is to reduce environmental air pollution and save fuel costs in compliance with national standards."}
-              </p>
-            </div>
-          </section>
-        )}
+          </div>
+        </section>
+
       </div>
 
       {/* Success Modal */}
@@ -654,7 +680,7 @@ export default function Home() {
           <div className="space-y-3">
             <h3 className="text-base font-bold tracking-wide text-white">References & Links</h3>
             <ul className="space-y-2 text-xs text-slate-400">
-              <li><button onClick={() => setActiveTab("booking")} className="hover:text-[#43B02A] transition text-left">SUPERTECH Booking</button></li>
+              <li><button onClick={() => scrollToSection("booking")} className="hover:text-[#43B02A] transition text-left">SUPERTECH Booking</button></li>
               <li><span className="text-slate-300">Eco-Tech Solutions PLC</span></li>
               <li><span className="text-slate-300">Directive 1051/2017 Compliance</span></li>
             </ul>
